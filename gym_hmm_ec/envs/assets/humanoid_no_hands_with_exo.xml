@@ -60,6 +60,10 @@
         <body name="pelvis" pos="0 0 -.165" quat="1.000 0 -.002 0">
           <joint name="abdomen_x" pos="0 0 .1" axis="1 0 0" range="-35 35" class="big_joint"/>
           <geom name="butt" fromto="-.02 -.07 0 -.02 .07 0" size=".09"/>
+          
+          <geom name="fanny_pack_exo" pos="-0.1 0.0 0.1" type='box' size="0.02 0.1 0.05" rgba='0. 0. 1. 1.'/>
+
+          
           <site name="butt" class="touch" size=".091 .07" pos="-.02 0 0" zaxis="0 1 0"/>
           <body name="right_thigh" pos="0 -.1 -.04">
             <site name="right_hip" class="force-torque"/>
@@ -72,6 +76,11 @@
               <site name="right_knee" class="force-torque" pos="0 0 .02"/>
               <joint name="right_knee" pos="0 0 .02" axis="0 -1 0" range="-160 2"/>
               <geom name="right_shin" fromto="0 0 0 0 0 -.3"  size=".049"/>
+              
+              <geom name="right_shin_exo_rod" pos="0. -0.08 -0.15" size="0.02 0.175" rgba="0. 0. 1. 1."/>
+              <geom name="right_shin_exo_circle" type="ellipsoid" pos="0. -0.08 -0.175" size="0.05 0.01 0.05" rgba="0. 0. 1. 1."/>
+
+              
               <site name="right_shin" class="touch" pos="0 0 -.15" size=".05 .15"/>
               <body name="right_foot" pos="0 0 -.39">
                 <site name="right_ankle" class="force-torque"/>
@@ -99,6 +108,10 @@
               <site name="left_knee" class="force-torque" pos="0 0 .02"/>
               <joint name="left_knee" pos="0 0 .02" axis="0 -1 0" range="-160 2"/>
               <geom name="left_shin" fromto="0 0 0 0 0 -.3"  size=".049"/>
+
+              <geom name="left_shin_exo_rod" pos="0. 0.08 -0.15" size="0.02 0.175" rgba="0. 0. 1. 1."/>
+              <geom name="left_shin_exo_circle" type="ellipsoid" pos="0. 0.08 -0.175" size="0.05 0.01 0.05" rgba="0. 0. 1. 1."/>
+
               <site name="left_shin" class="touch"  pos="0 0 -.15" size=".05 .15"/>
               <body name="left_foot" pos="0 0 -.39">
                 <site name="left_ankle" class="force-torque"/>

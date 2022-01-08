@@ -18,22 +18,35 @@ class MujocoEnv(gym.Env):
     """Superclass for all MuJoCo environments.
     """
 
-    def __init__(self, model_path, frame_skip):
-        if model_path.startswith("/"):
-            fullpath = model_path
+    def __init__(self, model_name, frame_skip):
+        if model_name.startswith("/"):
+            fullpath = model_name
         else:
-            fullpath = os.path.join(os.path.dirname(__file__), "assets", model_path)
+            fullpath = os.path.join(os.path.dirname(__file__), "assets", model_name)
         if not path.exists(fullpath):    
             raise IOError("File %s does not exist" % fullpath)
 
         self.frame_skip = frame_skip
         self.model = mujoco_py.load_model_from_path(fullpath)
-        print(self.model.actuator_names)
+        
+
+        if not self.env_params['set_on_rack']:
+            # to remove the equality constraint if not required to set on rack
+
+            equality_constraint_id2type = {
+                                            'connect':0,
+                                            'weld':1,
+                                            'joint':2,
+                                            'tendon':3,
+                                            'distance':4
+                                           }
+            # assuming there is only one weld contraint and that is to set the torso on the rack
+            equality_const_id = np.where(self.model.eq_type == equality_constraint_id2type['weld'] )[0][0]      
+            self.model.eq_active[equality_const_id] = 0
 
         self.sim = mujoco_py.MjSim(self.model)
-        self.data = self.sim.data
         
-        if self.is_render:
+        if self.env_params['render']:
             self.viewer = mujoco_py.MjViewer(self.sim)
 
         self.metadata = {
@@ -78,7 +91,7 @@ class MujocoEnv(gym.Env):
     def reset(self): # -1 is random
         self.sim.reset()
         ob = self.reset_model()
-        if self.is_render and self.viewer is not None:
+        if self.env_params['render'] and self.viewer is not None:
             self.viewer_setup()
         return ob
 
@@ -143,7 +156,7 @@ class MujocoEnv(gym.Env):
         return self.viewer
 
     def get_body_com(self, body_name):
-        return self.data.get_body_xpos(body_name)
+        return self.sim.data.get_body_xpos(body_name)
 
     def state_vector(self):
         return np.concatenate([
