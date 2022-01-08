@@ -28,6 +28,8 @@ class MujocoEnv(gym.Env):
 
         self.frame_skip = frame_skip
         self.model = mujoco_py.load_model_from_path(fullpath)
+        print(self.model.actuator_names)
+
         self.sim = mujoco_py.MjSim(self.model)
         self.data = self.sim.data
         
@@ -90,7 +92,6 @@ class MujocoEnv(gym.Env):
         self.sim.set_state(new_state)
         self.sim.forward()
 
-    #================ ADDED BY G.C. ===========================
     def get_state(self):
         raise NotImplementedError
     
@@ -103,7 +104,6 @@ class MujocoEnv(gym.Env):
 
     def get_sensor_data(self,sensor_name):
         return self.sim.data.get_sensor(sensor_name)    
-    #================ ADDED BY G.C. ===========================
 
     @property
     def dt(self):
