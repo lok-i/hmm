@@ -9,9 +9,9 @@ In order to keep it experiment friendly, this codebase uses local scripts with v
 
 1. Download the MuJoCo version 2.1 binaries here: [Mujoco](https://mujoco.org/download).
 
-2. Extract the downloaded mujoco210 directory into ~/.mujoco/mujoco210.
+2. Extract the downloaded 'mujoco210' directory into '~/.mujoco/mujoco210'.
 
-If you want to specify a nonstandard location for the package, use the env variable MUJOCO_PY_MUJOCO_PATH.
+If you want to specify a nonstandard location for the package, use the env variable 'MUJOCO_PY_MUJOCO_PATH'.
 
 ## Install mujoco-py
 
