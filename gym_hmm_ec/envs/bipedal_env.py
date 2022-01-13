@@ -11,11 +11,21 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     def __init__(self,**kwargs):
         
         self.env_params = kwargs
-        necessary_args = ['render','model_name','set_on_rack']
-        for key in necessary_args:
-            if key not in self.env_params.keys():
-                raise Exception('necessary arguments are absent. Check:'+str(necessary_args))        
+        necessary_env_args = ['model_name']
         
+        default_env_args = {
+                          'render':True,
+                          'set_on_rack': False,
+                          'mocap':False
+                          }
+        
+        for key in necessary_env_args:
+            if key not in self.env_params.keys():
+                raise Exception('necessary arguments are absent. Check:'+str(necessary_env_args))        
+        
+        for key in default_env_args.keys():
+            if key not in self.env_params.keys():
+                self.env_params[key] = default_env_args[key]
         
         
         # base env config
@@ -33,7 +43,10 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         print("No. of actuated joints:",self.n_act_joints)
 
     def step(self,action):
-        applied_motor_torque = action
+        if self.env_params['mocap']:
+            applied_motor_torque = np.zeros(self.n_act_joints)
+        else:
+            applied_motor_torque = action
         n_step_same_target = 1
         self.do_simulation(applied_motor_torque, n_step_same_target)
         
@@ -48,6 +61,9 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
     def reset_model(self):
         # TBI
+        self.sim.forward()
+        if self.env_params['mocap']:
+            self.attach_mocap_objects()
         initial_obs = self.get_observation()
         print("Initial state:",initial_obs)
         return initial_obs
@@ -76,3 +92,17 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     def check_termination(self):
         # TBI
         return False
+    
+    def attach_mocap_objects(self):
+
+        for body_name in self.model.body_names:
+            if body_name not in ['world', 'floor'] and 'mocap_' not in body_name:
+
+                body_pos = self.sim.data.get_geom_xpos(body_name)
+
+                self.sim.data.set_mocap_pos('mocap_'+body_name, body_pos )
+        
+        
+
+
+

@@ -14,6 +14,14 @@ try:
 except ImportError as e:
     raise error.DependencyNotInstalled("{}. (HINT: you need to install mujoco_py, and also perform the setup instructions here: https://github.com/openai/mujoco-py/.)".format(e))
 
+equality_constraint_id2type = {
+                                'connect':0,
+                                'weld':1,
+                                'joint':2,
+                                'tendon':3,
+                                'distance':4
+                                }
+
 class MujocoEnv(gym.Env):
     """Superclass for all MuJoCo environments.
     """
@@ -28,24 +36,14 @@ class MujocoEnv(gym.Env):
 
         self.frame_skip = frame_skip
         self.model = mujoco_py.load_model_from_path(fullpath)
+
         
-
-        if not self.env_params['set_on_rack']:
-            # to remove the equality constraint if not required to set on rack
-
-            equality_constraint_id2type = {
-                                            'connect':0,
-                                            'weld':1,
-                                            'joint':2,
-                                            'tendon':3,
-                                            'distance':4
-                                           }
-            # assuming there is only one weld contraint and that is to set the torso on the rack
-            equality_const_id = np.where(self.model.eq_type == equality_constraint_id2type['weld'] )[0][0]      
-            self.model.eq_active[equality_const_id] = 0
-
         self.sim = mujoco_py.MjSim(self.model)
-        
+
+        # to deactivate gravity
+        # self.model.opt.gravity[2] = 0
+        # print(self.model.opt.gravity)
+
         if self.env_params['render']:
             self.viewer = mujoco_py.MjViewer(self.sim)
 
@@ -90,11 +88,32 @@ class MujocoEnv(gym.Env):
 
     def reset(self): # -1 is random
         self.sim.reset()
+
+        self.remove_all_weld_contraints()
         ob = self.reset_model()
+        self.set_required_weld_contraints()
         if self.env_params['render'] and self.viewer is not None:
             self.viewer_setup()
         return ob
 
+    def remove_all_weld_contraints(self):
+
+        for eq_id,eq_type in enumerate(self.model.eq_type):
+            if eq_type ==  equality_constraint_id2type['weld']:
+                self.model.eq_active[eq_id] = 0
+
+    def set_required_weld_contraints(self):
+
+        for eq_id,(eq_obj1id,eq_obj2id,eq_type) in enumerate(zip(self.model.eq_obj1id,self.model.eq_obj2id,self.model.eq_type)):
+            
+            if eq_type ==  equality_constraint_id2type['weld']:
+                
+                if self.model.body_id2name(eq_obj1id) == 'floor':
+                    if self.env_params['set_on_rack']:
+                        self.model.eq_active[eq_id] = 1
+                if 'mocap_' in self.model.body_id2name(eq_obj1id) or 'mocap_' in self.model.body_id2name(eq_obj2id):
+                    if self.env_params['mocap']:
+                        self.model.eq_active[eq_id] = 1 
     
     def set_state(self, qpos, qvel):
         
