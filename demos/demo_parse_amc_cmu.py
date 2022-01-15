@@ -24,7 +24,7 @@ index2joint = {
 
 traj_delta_t = 0.002
 # path to the amc file
-taskname = 'jump'
+taskname = 'run'
 filename = './gym_hmm_ec/envs/assets/cmu_mocap/'+ taskname +'.amc'
 converted = parse_amc.convert(
                                 filename,
@@ -92,6 +92,7 @@ print(torques_of_joints.shape)
 nrows = 2
 ncols = 4
 fig,axs = plt.subplots(nrows,ncols)
+fig.set_size_inches(18.5, 10.5)
 timesteps = traj_delta_t * np.arange(torques_of_joints.shape[0])
 for plot_id,joint_name in enumerate(joints_of_intrest):
 
@@ -103,10 +104,12 @@ for plot_id,joint_name in enumerate(joints_of_intrest):
     axs[row,col].set_ylabel("torques (Nm)")
     axs[row,col].set_xlabel("time (s)")
     # axs[row,col].set_ylim([-20, 20])
-    axs[row,col].legend()
+    axs[row,col].legend(loc='upper right')
     axs[row,col].grid()
 
-fig.suptitle('Torques from Inverse Dynamics of Task: '+taskname )
+fig.suptitle('ID for input type 2 (CMU Dataset as .amc) of Task: '+taskname )
+fig.tight_layout()
+plt.savefig('./evaluation_plots/ip_type2_'+taskname+'.jpg')
 plt.show()
 
 

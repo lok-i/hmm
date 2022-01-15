@@ -23,7 +23,10 @@ env.reset()
 if env.env_params['render']:
     env.viewer._paused = True
 
-for _ in range(5000):
+IK_joint_pos = []
+ID_joint_trq = []
+
+for _ in range(2000):
     
     for body_name in env.model.body_names:
         if 'mocap_' in body_name:
@@ -50,6 +53,45 @@ for _ in range(5000):
     
     print('IK:',env.sim.data.qpos[:])
     print('ID:',env.sim.data.qfrc_inverse)
+
+    IK_joint_pos.append(env.sim.data.qpos[3:].tolist())
+    ID_joint_trq.append(env.sim.data.qfrc_inverse[3:].tolist())
+env.close()
+
+IK_joint_pos = np.array(IK_joint_pos)
+ID_joint_trq = np.array(ID_joint_trq)
+
+nrows = 2
+ncols = 3
+fig,axs = plt.subplots(nrows,ncols)
+fig.set_size_inches(18.5, 10.5)
+timesteps = 0.0025 * np.arange(IK_joint_pos.shape[0])
+
+labels = ['Hip Flexion','Knee Flexion','Ankle Flexion',]
+
+for col in range(ncols):
+
+    axs[0,col].set_title(labels[col])
+    
+    axs[0,col].plot(timesteps, np.degrees(IK_joint_pos[:,col]),label='qpos')
+    axs[1,col].plot(timesteps, ID_joint_trq[:,col],label='qfrc')
+
+    axs[0,col].set_ylabel("angle (Degrees)")
+    axs[1,col].set_ylabel("torque (Nm)")
+
+    axs[0,col].set_xlabel("time (s)")
+    axs[1,col].set_xlabel("time (s)")
+
+    # axs[row,col].set_ylim([-20, 20])
+
+    axs[0,col].legend(loc='upper right')
+    axs[0,col].grid()
+    axs[1,col].legend(loc='upper right')
+    axs[1,col].grid()
+
+fig.suptitle('IK and ID for input type 1: Raw Markers' )
+fig.tight_layout()
+plt.savefig('./evaluation_plots/ip_type1_arbitary.jpg')
+plt.show()
     
 
-env.close()
