@@ -8,13 +8,13 @@ from mujoco_py import functions
 env_conf = {
             'set_on_rack': False,
             'render': True,
-            'model_name':'walker2D_mocap',
-            'mocap':True
+            'model_name':'humanoid_CMU_no_hands',
+            'mocap':False
             }
 
 env = BipedEnv(**env_conf)
 
-
+# initialse the env,reset simualtion
 env.reset()
 
 # keep the similation in pause until activated manually
@@ -23,17 +23,7 @@ if env.env_params['render']:
 
 for _ in range(2000):
     
-    for body_name in env.model.body_names:
-        if 'mocap_' in body_name:
-            env.sim.data.set_mocap_pos(body_name, env.sim.data.get_mocap_pos(body_name) - np.array([0.001,0.,0.]) )
-        #   env.sim.data.set_mocap_quat(body_name, np.array([0.7071068, 0, 0.7071068, 0,]) )
-
-    # print(env.model.body_mocapid)
-    # env.sim.data.mocap_pos[0] = env.sim.data.mocap_pos[0] + np.array([0.001,0.,0.])
     obs,reward,done,info = env.step(action = np.zeros(shape=env.n_act_joints))
-    # print(env.sim.data.body_xpos)
-    # exit()
 
-    
 
 env.close()

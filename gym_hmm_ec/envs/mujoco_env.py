@@ -2,6 +2,7 @@ import os
 import glfw
 import copy
 from mujoco_py.utils import rec_copy, rec_assign
+
 from gym import error, spaces
 from gym.utils import seeding
 import numpy as np
@@ -30,7 +31,7 @@ class MujocoEnv(gym.Env):
         if model_name.startswith("/"):
             fullpath = model_name
         else:
-            fullpath = os.path.join(os.path.dirname(__file__), "assets", model_name)
+            fullpath = os.path.join(os.path.dirname(__file__), "assets/models", model_name)
         if not path.exists(fullpath):    
             raise IOError("File %s does not exist" % fullpath)
 

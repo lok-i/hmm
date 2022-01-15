@@ -27,5 +27,5 @@ After testing the sucessfull isntallation of mujoco-py,to test the codebase,run
 
 # Usage Instructions
 
-Since it is a evolving code base, at present kindly follow the usage and implementations in [test_env.py](./test_env.py)
+Since it is a evolving code base, at present kindly follow the usage and implementations in [demos](./demos)
 
