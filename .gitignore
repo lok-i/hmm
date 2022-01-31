@@ -1,4 +1,5 @@
 gym_hmm_ec/envs/__pycache__/
 gym_hmm_ec/envs/utils/__pycache__/
 gym_hmm_ec/envs/assets/__pycache__/
+gym_hmm_ec/envs/assets/our_data/mocap_data/
 evaluation_plots/

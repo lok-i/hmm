@@ -1,0 +1,178 @@
+
+index2marker_info:
+  0: 
+    link_segment_name: torso
+    marker_name: C7
+  1:
+    link_segment_name: torso
+    marker_name: RSHO
+  2: 
+    link_segment_name: torso
+    marker_name: CLAV
+  3: 
+    link_segment_name: torso
+    marker_name: LSHO
+  4:
+    link_segment_name: pelvis
+    marker_name: LPSI
+  5:
+    link_segment_name: pelvis
+    marker_name: RPSI
+  6:
+    link_segment_name: pelvis
+    marker_name: RASI
+  7:
+    link_segment_name: pelvis
+    marker_name: LASI
+  8:
+    link_segment_name: right_hip
+    marker_name: RGT 
+  9:
+    link_segment_name: right_upper_leg
+    marker_name: RT1 
+  10:
+    link_segment_name: right_upper_leg
+    marker_name: RT2 
+  11:
+    link_segment_name: right_upper_leg
+    marker_name: RT3 
+  12:
+    link_segment_name: right_upper_leg
+    marker_name: RT4 
+  13:
+    link_segment_name: right_knee
+    marker_name: RKNL
+  14:
+    link_segment_name: right_knee
+    marker_name: RKNM
+  15:
+    link_segment_name: left_upper_leg
+    marker_name: LT1 
+  16:
+    link_segment_name: left_upper_leg
+    marker_name: LT2 
+  17:
+    link_segment_name: left_upper_leg
+    marker_name: LT3 
+  18:
+    link_segment_name: left_upper_leg
+    marker_name: LT4 
+  19:
+    link_segment_name: left_knee
+    marker_name: LKNL
+  20:
+    link_segment_name: left_knee
+    marker_name: LKNM
+  21:
+    link_segment_name: right_lower_leg
+    marker_name: RS1 
+  22:
+    link_segment_name: right_lower_leg
+    marker_name: RS2 
+  23:
+    link_segment_name: right_lower_leg
+    marker_name: RS3 
+  24:
+    link_segment_name: right_lower_leg
+    marker_name: RS4 
+  25:
+    link_segment_name: right_ankle
+    marker_name: RANL
+  26:
+    link_segment_name: right_ankle
+    marker_name: RANM
+  27:
+    link_segment_name: left_lower_leg
+    marker_name: LS1 
+  28:
+    link_segment_name: left_lower_leg
+    marker_name: LS2 
+  29:
+    link_segment_name: left_lower_leg
+    marker_name: LS3 
+  30:
+    link_segment_name: left_lower_leg
+    marker_name: LS4 
+  31:
+    link_segment_name: left_ankle
+    marker_name: LANL
+  32:
+    link_segment_name: left_ankle
+    marker_name: LANM
+  33:
+    link_segment_name: right_foot
+    marker_name: RHEE
+  34:
+    link_segment_name: right_foot
+    marker_name: RM5 
+  35:
+    link_segment_name: left_foot
+    marker_name: LHEE
+  36:
+    link_segment_name: left_foot
+    marker_name: LM1 
+  37:
+    link_segment_name: left_foot
+    marker_name: LM5 
+  38:
+    link_segment_name: right_foot
+    marker_name: RM1 
+  39:
+    link_segment_name: left_hip
+    marker_name: LGT
+
+segment2markers:
+  left_ankle:
+    31: LANL
+    32: LANM
+  left_foot:
+    35: LHEE
+    36: LM1
+    37: LM5
+  left_hip:
+    39: LGT
+  left_knee:
+    19: LKNL
+    20: LKNM
+  left_lower_leg:
+    27: LS1
+    28: LS2
+    29: LS3
+    30: LS4
+  left_upper_leg:
+    15: LT1
+    16: LT2
+    17: LT3
+    18: LT4
+  pelvis:
+    4: LPSI
+    5: RPSI
+    6: RASI
+    7: LASI
+  right_ankle:
+    25: RANL
+    26: RANM
+  right_foot:
+    33: RHEE
+    34: RM5
+    38: RM1
+  right_hip:
+    8: RGT
+  right_knee:
+    13: RKNL
+    14: RKNM
+  right_lower_leg:
+    21: RS1
+    22: RS2
+    23: RS3
+    24: RS4
+  right_upper_leg:
+    9: RT1
+    10: RT2
+    11: RT3
+    12: RT4
+  torso:
+    0: C7
+    1: RSHO
+    2: CLAV
+    3: LSHO

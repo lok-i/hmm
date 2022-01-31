@@ -1,0 +1,269 @@
+Header information:
+  parameter_block: 2
+      point_count: 40
+     analog_count: 180
+      first_frame: 1
+       last_frame: 38529
+          max_gap: 0
+     scale_factor: -0.009999999776482582
+       data_block: 20
+ analog_per_frame: 10
+       frame_rate: 100.0
+long_event_labels: True
+      event_block: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+
+ANALOG.DESCRIPTIONS: 1800B [100, 18]
+ANALOG.DESCRIPTIONS[0] = b'Bertec Force Plate [1]                                                                              '
+ANALOG.DESCRIPTIONS[1] = b'Bertec Force Plate [1]                                                                              '
+ANALOG.DESCRIPTIONS[2] = b'Bertec Force Plate [1]                                                                              '
+ANALOG.DESCRIPTIONS[3] = b'Bertec Force Plate [1]                                                                              '
+ANALOG.DESCRIPTIONS[4] = b'Bertec Force Plate [1]                                                                              '
+ANALOG.DESCRIPTIONS[5] = b'Bertec Force Plate [1]                                                                              '
+ANALOG.DESCRIPTIONS[6] = b'Bertec Force Plate [2]                                                                              '
+ANALOG.DESCRIPTIONS[7] = b'Bertec Force Plate [2]                                                                              '
+ANALOG.DESCRIPTIONS[8] = b'Bertec Force Plate [2]                                                                              '
+ANALOG.DESCRIPTIONS[9] = b'Bertec Force Plate [2]                                                                              '
+ANALOG.DESCRIPTIONS[10] = b'Bertec Force Plate [2]                                                                              '
+ANALOG.DESCRIPTIONS[11] = b'Bertec Force Plate [2]                                                                              '
+ANALOG.DESCRIPTIONS[12] = b'Bertec Force Plate [3]                                                                              '
+ANALOG.DESCRIPTIONS[13] = b'Bertec Force Plate [3]                                                                              '
+ANALOG.DESCRIPTIONS[14] = b'Bertec Force Plate [3]                                                                              '
+ANALOG.DESCRIPTIONS[15] = b'Bertec Force Plate [3]                                                                              '
+ANALOG.DESCRIPTIONS[16] = b'Bertec Force Plate [3]                                                                              '
+ANALOG.DESCRIPTIONS[17] = b'Bertec Force Plate [3]                                                                              '
+ANALOG.GAIN: 36B [18]
+ANALOG.GAIN = [1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1]
+ANALOG.GEN_SCALE: 4B []
+ANALOG.GEN_SCALE = 1.0
+ANALOG.LABELS: 288B [16, 18]
+ANALOG.LABELS[0] = b'Force.Fx1       '
+ANALOG.LABELS[1] = b'Force.Fy1       '
+ANALOG.LABELS[2] = b'Force.Fz1       '
+ANALOG.LABELS[3] = b'Moment.Mx1      '
+ANALOG.LABELS[4] = b'Moment.My1      '
+ANALOG.LABELS[5] = b'Moment.Mz1      '
+ANALOG.LABELS[6] = b'Force.Fx2       '
+ANALOG.LABELS[7] = b'Force.Fy2       '
+ANALOG.LABELS[8] = b'Force.Fz2       '
+ANALOG.LABELS[9] = b'Moment.Mx2      '
+ANALOG.LABELS[10] = b'Moment.My2      '
+ANALOG.LABELS[11] = b'Moment.Mz2      '
+ANALOG.LABELS[12] = b'Force.Fx3       '
+ANALOG.LABELS[13] = b'Force.Fy3       '
+ANALOG.LABELS[14] = b'Force.Fz3       '
+ANALOG.LABELS[15] = b'Moment.Mx3      '
+ANALOG.LABELS[16] = b'Moment.My3      '
+ANALOG.LABELS[17] = b'Moment.Mz3      '
+ANALOG.OFFSET: 36B [18]
+ANALOG.OFFSET = [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+ANALOG.RATE: 4B []
+ANALOG.RATE = 1000.0
+ANALOG.SCALE: 72B [18]
+ANALOG.SCALE = [1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]
+ANALOG.UNITS: 144B [8, 18]
+ANALOG.UNITS[0] = b'N       '
+ANALOG.UNITS[1] = b'N       '
+ANALOG.UNITS[2] = b'N       '
+ANALOG.UNITS[3] = b'Nmm     '
+ANALOG.UNITS[4] = b'Nmm     '
+ANALOG.UNITS[5] = b'Nmm     '
+ANALOG.UNITS[6] = b'N       '
+ANALOG.UNITS[7] = b'N       '
+ANALOG.UNITS[8] = b'N       '
+ANALOG.UNITS[9] = b'Nmm     '
+ANALOG.UNITS[10] = b'Nmm     '
+ANALOG.UNITS[11] = b'Nmm     '
+ANALOG.UNITS[12] = b'N       '
+ANALOG.UNITS[13] = b'N       '
+ANALOG.UNITS[14] = b'N       '
+ANALOG.UNITS[15] = b'Nmm     '
+ANALOG.UNITS[16] = b'Nmm     '
+ANALOG.UNITS[17] = b'Nmm     '
+ANALOG.USED: 2B []
+ANALOG.USED = 18
+
+ANALYSIS.USED: 2B []
+ANALYSIS.USED = 0
+
+EVENT.USED: 2B []
+EVENT.USED = 0
+
+EVENT_CONTEXT.COLOURS: 24B [3, 4]
+EVENT_CONTEXT.COLOURS[0] = [255 164   0]
+EVENT_CONTEXT.COLOURS[1] = [255   0   0]
+EVENT_CONTEXT.COLOURS[2] = [  0 255   0]
+EVENT_CONTEXT.COLOURS[3] = [50 50 50]
+EVENT_CONTEXT.DESCRIPTIONS: 128B [32, 4]
+EVENT_CONTEXT.DESCRIPTIONS[0] = b'For other events                '
+EVENT_CONTEXT.DESCRIPTIONS[1] = b'Left side                       '
+EVENT_CONTEXT.DESCRIPTIONS[2] = b'Right side                      '
+EVENT_CONTEXT.DESCRIPTIONS[3] = b'No context                      '
+EVENT_CONTEXT.ICON_IDS: 8B [4]
+EVENT_CONTEXT.ICON_IDS = [0 1 2 3]
+EVENT_CONTEXT.LABELS: 64B [16, 4]
+EVENT_CONTEXT.LABELS[0] = b'General         '
+EVENT_CONTEXT.LABELS[1] = b'Left            '
+EVENT_CONTEXT.LABELS[2] = b'Right           '
+EVENT_CONTEXT.LABELS[3] = b'Invalid         '
+EVENT_CONTEXT.USED: 2B []
+EVENT_CONTEXT.USED = 4
+
+FORCE_PLATFORM.CHANNEL: 36B [6, 3]
+FORCE_PLATFORM.CHANNEL[0] = [1 2 3 4 5 6]
+FORCE_PLATFORM.CHANNEL[1] = [ 7  8  9 10 11 12]
+FORCE_PLATFORM.CHANNEL[2] = [13 14 15 16 17 18]
+FORCE_PLATFORM.CORNERS: 144B [3, 4, 3]
+FORCE_PLATFORM.CORNERS[0][0] = [   5. 1217.    0.]
+FORCE_PLATFORM.CORNERS[0][1] = [ 555. 1217.    0.]
+FORCE_PLATFORM.CORNERS[0][2] = [ 555. -653.    0.]
+FORCE_PLATFORM.CORNERS[0][3] = [   5. -653.    0.]
+FORCE_PLATFORM.CORNERS[1][0] = [-555. 1217.    0.]
+FORCE_PLATFORM.CORNERS[1][1] = [  -5. 1217.    0.]
+FORCE_PLATFORM.CORNERS[1][2] = [  -5. -653.    0.]
+FORCE_PLATFORM.CORNERS[1][3] = [-555. -653.    0.]
+FORCE_PLATFORM.CORNERS[2][0] = [ -892. -2300.     0.]
+FORCE_PLATFORM.CORNERS[2][1] = [ -492. -2300.     0.]
+FORCE_PLATFORM.CORNERS[2][2] = [ -492. -2900.     0.]
+FORCE_PLATFORM.CORNERS[2][3] = [ -892. -2900.     0.]
+FORCE_PLATFORM.ORIGIN: 36B [3, 3]
+FORCE_PLATFORM.ORIGIN[0] = [-280.  -935.     2.5]
+FORCE_PLATFORM.ORIGIN[1] = [ 275.  -935.     2.5]
+FORCE_PLATFORM.ORIGIN[2] = [0. 0. 0.]
+FORCE_PLATFORM.TYPE: 6B [3]
+FORCE_PLATFORM.TYPE = [2 2 2]
+FORCE_PLATFORM.USED: 2B []
+FORCE_PLATFORM.USED = 3
+FORCE_PLATFORM.ZERO: 4B [2]
+FORCE_PLATFORM.ZERO = [1 0]
+
+MANUFACTURER.COMPANY: 5B [5]
+MANUFACTURER.COMPANY = b'Vicon'
+MANUFACTURER.SOFTWARE: 11B [11]
+MANUFACTURER.SOFTWARE = b'Vicon Nexus'
+MANUFACTURER.VERSION_LABEL: 14B [14]
+MANUFACTURER.VERSION_LABEL = b'2.12.1.133760h'
+
+POINT.DATA_START: 2B []
+POINT.DATA_START = 20
+POINT.DESCRIPTIONS: 4000B [100, 40]
+POINT.DESCRIPTIONS[0] = b'                                                                                                    '
+POINT.DESCRIPTIONS[1] = b'                                                                                                    '
+POINT.DESCRIPTIONS[2] = b'                                                                                                    '
+POINT.DESCRIPTIONS[3] = b'                                                                                                    '
+POINT.DESCRIPTIONS[4] = b'                                                                                                    '
+POINT.DESCRIPTIONS[5] = b'                                                                                                    '
+POINT.DESCRIPTIONS[6] = b'                                                                                                    '
+POINT.DESCRIPTIONS[7] = b'                                                                                                    '
+POINT.DESCRIPTIONS[8] = b'                                                                                                    '
+POINT.DESCRIPTIONS[9] = b'                                                                                                    '
+POINT.DESCRIPTIONS[10] = b'                                                                                                    '
+POINT.DESCRIPTIONS[11] = b'                                                                                                    '
+POINT.DESCRIPTIONS[12] = b'                                                                                                    '
+POINT.DESCRIPTIONS[13] = b'                                                                                                    '
+POINT.DESCRIPTIONS[14] = b'                                                                                                    '
+POINT.DESCRIPTIONS[15] = b'                                                                                                    '
+POINT.DESCRIPTIONS[16] = b'                                                                                                    '
+POINT.DESCRIPTIONS[17] = b'                                                                                                    '
+POINT.DESCRIPTIONS[18] = b'                                                                                                    '
+POINT.DESCRIPTIONS[19] = b'                                                                                                    '
+POINT.DESCRIPTIONS[20] = b'                                                                                                    '
+POINT.DESCRIPTIONS[21] = b'                                                                                                    '
+POINT.DESCRIPTIONS[22] = b'                                                                                                    '
+POINT.DESCRIPTIONS[23] = b'                                                                                                    '
+POINT.DESCRIPTIONS[24] = b'                                                                                                    '
+POINT.DESCRIPTIONS[25] = b'                                                                                                    '
+POINT.DESCRIPTIONS[26] = b'                                                                                                    '
+POINT.DESCRIPTIONS[27] = b'                                                                                                    '
+POINT.DESCRIPTIONS[28] = b'                                                                                                    '
+POINT.DESCRIPTIONS[29] = b'                                                                                                    '
+POINT.DESCRIPTIONS[30] = b'                                                                                                    '
+POINT.DESCRIPTIONS[31] = b'                                                                                                    '
+POINT.DESCRIPTIONS[32] = b'                                                                                                    '
+POINT.DESCRIPTIONS[33] = b'                                                                                                    '
+POINT.DESCRIPTIONS[34] = b'                                                                                                    '
+POINT.DESCRIPTIONS[35] = b'                                                                                                    '
+POINT.DESCRIPTIONS[36] = b'                                                                                                    '
+POINT.DESCRIPTIONS[37] = b'                                                                                                    '
+POINT.DESCRIPTIONS[38] = b'                                                                                                    '
+POINT.DESCRIPTIONS[39] = b'                                                                                                    '
+POINT.FRAMES: 2B []
+POINT.FRAMES = -27007
+POINT.LABELS: 1200B [30, 40]
+POINT.LABELS[0] = b'C7                            '
+POINT.LABELS[1] = b'RSHO                          '
+POINT.LABELS[2] = b'CLAV                          '
+POINT.LABELS[3] = b'LSHO                          '
+POINT.LABELS[4] = b'LPSI                          '
+POINT.LABELS[5] = b'RPSI                          '
+POINT.LABELS[6] = b'RASI                          '
+POINT.LABELS[7] = b'LASI                          '
+POINT.LABELS[8] = b'RGT                           '
+POINT.LABELS[9] = b'RT1                           '
+POINT.LABELS[10] = b'RT2                           '
+POINT.LABELS[11] = b'RT3                           '
+POINT.LABELS[12] = b'RT4                           '
+POINT.LABELS[13] = b'RKNL                          '
+POINT.LABELS[14] = b'RKNM                          '
+POINT.LABELS[15] = b'LT1                           '
+POINT.LABELS[16] = b'LT2                           '
+POINT.LABELS[17] = b'LT3                           '
+POINT.LABELS[18] = b'LT4                           '
+POINT.LABELS[19] = b'LKNL                          '
+POINT.LABELS[20] = b'LKNM                          '
+POINT.LABELS[21] = b'RS1                           '
+POINT.LABELS[22] = b'RS2                           '
+POINT.LABELS[23] = b'RS3                           '
+POINT.LABELS[24] = b'RS4                           '
+POINT.LABELS[25] = b'RANL                          '
+POINT.LABELS[26] = b'RANM                          '
+POINT.LABELS[27] = b'LS1                           '
+POINT.LABELS[28] = b'LS2                           '
+POINT.LABELS[29] = b'LS3                           '
+POINT.LABELS[30] = b'LS4                           '
+POINT.LABELS[31] = b'LANL                          '
+POINT.LABELS[32] = b'LANM                          '
+POINT.LABELS[33] = b'RHEE                          '
+POINT.LABELS[34] = b'RM5                           '
+POINT.LABELS[35] = b'LHEE                          '
+POINT.LABELS[36] = b'LM1                           '
+POINT.LABELS[37] = b'LM5                           '
+POINT.LABELS[38] = b'RM1                           '
+POINT.LABELS[39] = b'LGT                           '
+POINT.MOVIE_DELAY: 0B [0]
+POINT.MOVIE_ID: 0B [32, 0]
+POINT.RATE: 4B []
+POINT.RATE = 100.0
+POINT.SCALE: 4B []
+POINT.SCALE = -0.01
+POINT.UNITS: 2B [2]
+POINT.UNITS = b'mm'
+POINT.USED: 2B []
+POINT.USED = 40
+POINT.X_SCREEN: 2B [2]
+POINT.X_SCREEN = b'+X'
+POINT.Y_SCREEN: 2B [2]
+POINT.Y_SCREEN = b'+Z'
+
+SUBJECTS.IS_STATIC: 2B []
+SUBJECTS.IS_STATIC = 0
+SUBJECTS.MARKER_SETS: 32B [32, 1]
+SUBJECTS.MARKER_SETS[0] = b'SplitWalking                    '
+SUBJECTS.NAMES: 32B [32, 1]
+SUBJECTS.NAMES[0] = b'AB2                             '
+SUBJECTS.USED: 2B []
+SUBJECTS.USED = 1
+SUBJECTS.USES_PREFIXES: 2B []
+SUBJECTS.USES_PREFIXES = 0
+
+TRIAL.ACTUAL_END_FIELD: 4B [2]
+TRIAL.ACTUAL_END_FIELD = [-27007      0]
+TRIAL.ACTUAL_START_FIELD: 4B [2]
+TRIAL.ACTUAL_START_FIELD = [1 0]
+TRIAL.CAMERA_RATE: 4B []
+TRIAL.CAMERA_RATE = 100.0
+TRIAL.X_DIRECTION: 2B []
+TRIAL.X_DIRECTION = 1
+TRIAL.Y_DIRECTION: 2B []
+TRIAL.Y_DIRECTION = 3
+TRIAL.Z_DIRECTION: 2B []
+TRIAL.Z_DIRECTION = 5
