@@ -8,6 +8,7 @@ from pytransform3d.rotations import random_axis_angle, matrix_from_axis_angle
 from pytransform3d.plot_utils import make_3d_axis, plot_capsule
 
 
+
 random_state = np.random.RandomState(42)
 # ax = make_3d_axis(1)
 
@@ -43,38 +44,48 @@ pts_to_plt = np.array(pts_to_plt)
 
 time_step = 0
 marker_pos_at_time_step = pts_to_plt[time_step]
-print(marker_pos_at_time_step.shape)
+# print(marker_pos_at_time_step.shape)
 
-link_name = 'right_upper_leg'
-
-marker_index_of_link = list(link_marker_info[link_name].keys())
-pts_in_link = []
-for marker_index in marker_index_of_link:
-
-    marker_pos_in_m = 0.001* marker_pos_at_time_step[marker_index,0:3] # mm -> m
-    pts_in_link.append(marker_pos_in_m.tolist())
-
-pts_in_link = np.array(pts_in_link)
-
-# print(pts_to_plt.shape)
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
 
-for marker_index, pt in zip( marker_index_of_link ,pts_in_link ):
-    marker_name = link_marker_info[link_name][marker_index]
-    ax.scatter(pt[0],pt[1],pt[2],label=marker_name)
+
+link_names = ['right_hip','right_upper_leg','right_knee']
+
+pts_in_link = []
+
+for link_name in link_names:
+    marker_index_of_link = list(link_marker_info[link_name].keys())
+    for marker_index in marker_index_of_link:
+
+        marker_pos_in_m = 0.001* marker_pos_at_time_step[marker_index,0:3] # mm -> m
+        
+        pts_in_link.append(marker_pos_in_m.tolist())
+        marker_name = link_marker_info[link_name][marker_index]
+        ax.scatter(marker_pos_in_m[0],marker_pos_in_m[1],marker_pos_in_m[2],label=marker_name)
+
+pts_in_link = np.array(pts_in_link)
+print(pts_in_link.shape)
+
+# print(pts_in_link.shape)
+# exit()
+
+
+
+
 
 ax.set_xlabel('X Label')
 ax.set_ylabel('Y Label')
 ax.set_zlabel('Z Label')
 ax.legend()
+ax.view_init(elev=0, azim=-90)
 
 capsule2origin = np.eye(4)#random_transform(random_state)
 for i in range(3):
     capsule2origin[i][3] = np.mean(pts_in_link[:,i])
 
-# print(capsule2origin)
+print(capsule2origin)
 
 height = 0.2
 radius = 0.05
@@ -83,4 +94,5 @@ plot_capsule(ax=ax, A2B=capsule2origin, height=height, radius=radius,
              color="r", alpha=0.5, wireframe=False)
 
 plt.show()
+
 
