@@ -1,0 +1,183 @@
+<mujoco model="mocap markerset">
+  <option timestep="0.01"/> <!-- set it based on the framerate of marker collection,i.e. 1/framerate-->
+
+  <statistic extent="2" center="0 0 1"/>
+  <asset>
+        <texture type="skybox" builtin="gradient" rgb1=".4 .5 .6" rgb2="0 0 0"
+            width="100" height="100"/>
+        <texture builtin="flat" height="1278" mark="cross" markrgb="1 1 1" name="texgeom" random="0.01" rgb1="0.8 0.6 0.4" rgb2="0.8 0.6 0.4" type="cube" width="127"/>
+        <material name="mocap_material" rgba='0.22 1. 0.07 1.'/>
+        <material name='grid' reflectance='0.000000' texrepeat='1 1' texture='texplane' texuniform='true'/>
+        <texture builtin='checker' height='512' name='texplane' rgb1='0.2 0.2 0.2' rgb2='0.3 0.3 0.3' type='2d' width='512'/>
+  </asset>
+
+  <worldbody>
+    <body name="floor" pos="0 0 0" euler="0 0 90">
+      <geom name="floor" type="plane" conaffinity="1" pos="248 0 0" size="250 .8 .2" material="grid" zaxis="0 0 1"/>
+    </body>
+
+    <body mocap='true' name="m0" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m1" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m2" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m3" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m4" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m5" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m6" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m7" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m8" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m9" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m10" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m11" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m12" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m13" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m14" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m15" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m16" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m17" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m18" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m19" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m20" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m21" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m22" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m23" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m24" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m25" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m26" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m27" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m28" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m29" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m30" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m31" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m32" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m33" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m34" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m35" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m36" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m37" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m38" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m39" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+
+
+   </worldbody>
+ 
+</mujoco>
