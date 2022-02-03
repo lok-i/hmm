@@ -3,6 +3,18 @@ import numpy as np
 from tqdm import tqdm
 import mujoco_py
 
+def euler_to_quaternion(base_rpy):
+
+    roll = base_rpy[0]
+    pitch = base_rpy[1]
+    yaw = base_rpy[2]
+
+    qx = np.sin(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) - np.cos(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
+    qy = np.cos(roll/2) * np.sin(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.cos(pitch/2) * np.sin(yaw/2)
+    qz = np.cos(roll/2) * np.cos(pitch/2) * np.sin(yaw/2) - np.sin(roll/2) * np.sin(pitch/2) * np.cos(yaw/2)
+    qw = np.cos(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
+
+    return [qw, qx, qy, qz]
 
 
 assets_path = './gym_hmm_ec/envs/assets/'
@@ -12,9 +24,6 @@ c3d_file_name = 'mocap_data/Trial_1.c3d'
 
 # load data from c3d of  mocap data of 40 marker set
 marker_positions = []
-
-
-
 
 
 with open( assets_path+"our_data/"+c3d_file_name , 'rb') as handle:
@@ -29,14 +38,11 @@ with open( assets_path+"our_data/"+c3d_file_name , 'rb') as handle:
         # print('Frame {}'.format(data[0],data[1].shape,data[2][0]))
         all_marker = []
         
-        # if data[0] % 10 == 0:
         for pt in data[1]:
             all_marker.append(pt[0:3].tolist())
     
         marker_positions.append(all_marker)
-        
-        # if data[0] > 100:
-        #     break
+
 marker_positions = 0.001*np.array(marker_positions)
 
 print("Marker Pos. Traj. Shape:", marker_positions.shape)
@@ -61,11 +67,10 @@ viewer.cam.azimuth = 220
 
 # play simulation 
 for frame in marker_positions:
-
     for i in range(frame.shape[0]):
         marker_name = 'm'+str(i)
         sim.data.set_mocap_pos(marker_name, frame[i,:] )
-    
+
     sim.step()
     viewer.render()
 

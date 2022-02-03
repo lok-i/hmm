@@ -8,9 +8,10 @@
         <texture type="skybox" builtin="gradient" rgb1=".4 .5 .6" rgb2="0 0 0"
             width="100" height="100"/>
         <texture builtin="flat" height="1278" mark="cross" markrgb="1 1 1" name="texgeom" random="0.01" rgb1="0.8 0.6 0.4" rgb2="0.8 0.6 0.4" type="cube" width="127"/>
-        <material name="self" texture="texgeom" texuniform="true"/>ss
+        <material name="self" rgba='0. 1. 0. 0.3' texture="texgeom" texuniform="true"/>
         <material name='grid' reflectance='0.000000' texrepeat='1 1' texture='texplane' texuniform='true'/>
         <texture builtin='checker' height='512' name='texplane' rgb1='0.2 0.2 0.2' rgb2='0.3 0.3 0.3' type='2d' width='512'/>
+        <material name="mocap_material" rgba='0.22 1. 0.07 1.'/>
   </asset>
   
   <default>
@@ -24,13 +25,13 @@
           <joint stiffness="20"/>
         </default>
       </default>
-      <site size=".04" group="3"/>
+      <!-- <site size=".04" group="3"/>
       <default class="force-torque">
         <site type="box" size=".01 .01 .02" rgba="1 0 0 1" />
       </default>
       <default class="touch">
         <site type="capsule" rgba="0 0 1 .3"/>
-      </default>
+      </default> -->
     </default>
   </default>
 
@@ -38,77 +39,278 @@
     <body name="floor" pos="0 0 0" childclass="body">
       <geom name="floor" type="plane" conaffinity="1" size="100 100 .2" material="grid"/>
     </body>
+    <!-- MOCAP markers start-->
+    <body mocap='true' name="m0" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m1" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m2" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m3" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m4" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m5" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m6" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m7" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m8" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m9" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m10" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m11" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m12" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m13" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m14" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m15" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m16" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m17" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m18" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m19" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m20" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m21" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m22" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m23" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m24" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m25" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m26" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m27" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m28" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m29" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m30" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m31" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m32" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m33" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m34" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m35" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m36" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m37" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m38" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m39" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+
+
+    <!-- MOCAP markers end-->
+
+
     <body name="torso" pos="0 0 1.5" childclass="body">
       <light name="top" pos="0 0 2" mode="trackcom"/>
       <camera name="back" pos="-3 0 1" xyaxes="0 -1 0 1 0 2" mode="trackcom"/>
       <camera name="side" pos="0 -3 1" xyaxes="1 0 0 0 1 2" mode="trackcom"/>
       <freejoint name="root"/>
-      <site name="root" class="force-torque"/>
+      <!-- <site name="root" class="force-torque"/> -->
       <geom name="torso" fromto="0 -.07 0 0 .07 0" size=".07"/>
+      <site name="C7" type="sphere" rgba="1. 0. 0. 1." pos="-0.07 0 0.05" size="0.01"/>
+      <site name="RSHO" type="sphere" rgba="1. 0. 0. 1." pos="0 -.14 0.025" size="0.01"/>
+      <site name="LSHO" type="sphere" rgba="1. 0. 0. 1." pos="0 .14 0.025" size="0.01"/>
+      <site name="CLAV" type="sphere" rgba="1. 0. 0. 1." pos=".07 0 0" size="0.01"/>
+
       <geom name="upper_waist" fromto="-.01 -.06 -.12 -.01 .06 -.12" size=".06"/>
-      <site name="torso" class="touch" type="box" pos="0 0 -.05" size=".075 .14 .13"/>
+      <!-- <site name="torso" class="touch" type="box" pos="0 0 -.05" size=".075 .14 .13"/> -->
       <body name="head" pos="0 0 .19">
         <geom name="head" type="sphere" size=".09"/>
-        <site name="head" class="touch" type="sphere" size=".091"/>
+        <!-- <site name="head" class="touch" type="sphere" size=".091"/> -->
         <camera name="egocentric" pos=".09 0 0" xyaxes="0 -1 0 .1 0 1" fovy="80"/>
       </body>
       <body name="lower_waist" pos="-.01 0 -.260" quat="1.000 0 -.002 0">
         <geom name="lower_waist" fromto="0 -.06 0 0 .06 0" size=".06"/>
-        <site name="lower_waist" class="touch" size=".061 .06" zaxis="0 1 0"/>
+        <!-- <site name="lower_waist" class="touch" size=".061 .06" zaxis="0 1 0"/> -->
         <joint name="abdomen_z" pos="0 0 .065" axis="0 0 1" range="-45 45" class="big_stiff_joint"/>
         <joint name="abdomen_y" pos="0 0 .065" axis="0 1 0" range="-75 30" class="big_joint"/>
         <body name="pelvis" pos="0 0 -.165" quat="1.000 0 -.002 0">
           <joint name="abdomen_x" pos="0 0 .1" axis="1 0 0" range="-35 35" class="big_joint"/>
+          <site name="RASI" type="sphere" rgba="1. 0. 0. 1." pos="0.06 -.11 0.05" size="0.01"/>
+          <site name="LASI" type="sphere" rgba="1. 0. 0. 1." pos="0.06 .11 0.05" size="0.01"/>
+          <site name="RPSI" type="sphere" rgba="1. 0. 0. 1." pos="-.11 -0.025 0.1" size="0.01"/>
+          <site name="LPSI" type="sphere" rgba="1. 0. 0. 1." pos="-.11 0.025 0.1" size="0.01"/>
+
           <geom name="butt" fromto="-.02 -.07 0 -.02 .07 0" size=".09"/>
-          <site name="butt" class="touch" size=".091 .07" pos="-.02 0 0" zaxis="0 1 0"/>
+          <!-- <site name="butt" class="touch" size=".091 .07" pos="-.02 0 0" zaxis="0 1 0"/> -->
           <body name="right_thigh" pos="0 -.1 -.04">
-            <site name="right_hip" class="force-torque"/>
+            <!-- <site name="right_hip" class="force-torque"/> -->
             <joint name="right_hip_x" axis="1 0 0" range="-25 5"   class="big_joint"/>
             <joint name="right_hip_z" axis="0 0 1" range="-60 35"  class="big_joint"/>
             <joint name="right_hip_y" axis="0 1 0" range="-110 20" class="big_stiff_joint"/>
             <geom name="right_thigh" fromto="0 0 0 0 .01 -.34" size=".06"/>
-            <site name="right_thigh" class="touch" pos="0 .005 -.17" size=".061 .17" zaxis="0 -1 34"/>
+            <!-- <site name="right_thigh" class="touch" pos="0 .005 -.17" size=".061 .17" zaxis="0 -1 34"/> -->
             <body name="right_shin" pos="0 .01 -.403">
-              <site name="right_knee" class="force-torque" pos="0 0 .02"/>
+              <!-- <site name="right_knee" class="force-torque" pos="0 0 .02"/> -->
               <joint name="right_knee" pos="0 0 .02" axis="0 -1 0" range="-160 2"/>
+              <site name="RKNL" type="sphere" rgba="1. 0. 0. 1." pos="0 -.049 .02" size="0.01"/>
+              <site name="RKNM" type="sphere" rgba="1. 0. 0. 1." pos="0 0.049 .02" size="0.01"/>
+
               <geom name="right_shin" fromto="0 0 0 0 0 -.3"  size=".049"/>
-              <site name="right_shin" class="touch" pos="0 0 -.15" size=".05 .15"/>
+              <!-- <site name="right_shin" class="touch" pos="0 0 -.15" size=".05 .15"/> -->
               <body name="right_foot" pos="0 0 -.39">
-                <site name="right_ankle" class="force-torque"/>
+                <!-- <site name="right_ankle" class="force-torque"/> -->
+                <site name="right_foot" type="sphere" rgba="1. 0. 0. 1." pos="0 0 0" size="0.01"/>
                 
                 <joint name="right_ankle_y" pos="0 0 .08" axis="0 1 0"   range="-50 50" stiffness="6"/>
                 <joint name="right_ankle_x" pos="0 0 .04" axis="1 0 .5" range="-50 50" stiffness="3"/>
-                
+
+                <!-- <site name="origin" type="sphere" rgba="1. 0. 0. 1." pos="0 0 0" size="0.01"/> -->
+
+
                 <geom name="right_right_foot" fromto="-.07 -.02 0 .14 -.04 0" size=".027"/>
                 <geom name="left_right_foot" fromto="-.07 0 0 .14  .02 0" size=".027"/>
-                
-                <site name="right_right_foot" class="touch" pos=".035 -.03 0" size=".03 .11" zaxis="21 -2 0"/>
-                <site name="left_right_foot" class="touch" pos=".035 .01 0" size=".03 .11" zaxis="21 2 0"/>
+
+                <site name="RANL" type="sphere" rgba="1. 0. 0. 1." pos="0 -.049 0.04" size="0.01"/>
+                <site name="RANM" type="sphere" rgba="1. 0. 0. 1." pos="0 0.049 0.04" size="0.01"/>
+
+                <site name="RM5" type="sphere" rgba="1. 0. 0. 1." pos="0.14 -.04 .027" size="0.01"/>
+                <site name="RM1" type="sphere" rgba="1. 0. 0. 1." pos="0.14 0.02 .027" size="0.01"/>
+                <site name="RHEE" type="sphere" rgba="1. 0. 0. 1." pos="-0.05 -.01 .027" size="0.01"/> 
+
+                <!-- <site name="right_right_foot" class="touch" pos=".035 -.03 0" size=".03 .11" zaxis="21 -2 0"/> -->
+                <!-- <site name="left_right_foot" class="touch" pos=".035 .01 0" size=".03 .11" zaxis="21 2 0"/> -->
 
               </body>
             </body>
           </body>
           <body name="left_thigh" pos="0 .1 -.04">
-            <site name="left_hip" class="force-torque"/>
+            <!-- <site name="left_hip" class="force-torque"/> -->
             <joint name="left_hip_x" axis="-1 0 0" range="-25 5"  class="big_joint"/>
             <joint name="left_hip_z" axis="0 0 -1" range="-60 35" class="big_joint"/>
             <joint name="left_hip_y" axis="0 1 0" range="-120 20" class="big_stiff_joint"/>
             <geom name="left_thigh" fromto="0 0 0 0 -.01 -.34" size=".06"/>
-            <site name="left_thigh" class="touch" pos="0 -.005 -.17" size=".061 .17" zaxis="0 1 34"/>
+            <!-- <site name="left_thigh" class="touch" pos="0 -.005 -.17" size=".061 .17" zaxis="0 1 34"/> -->
             <body name="left_shin" pos="0 -.01 -.403">
-              <site name="left_knee" class="force-torque" pos="0 0 .02"/>
+              <!-- <site name="left_knee" class="force-torque" pos="0 0 .02"/> -->
               <joint name="left_knee" pos="0 0 .02" axis="0 -1 0" range="-160 2"/>
               <geom name="left_shin" fromto="0 0 0 0 0 -.3"  size=".049"/>
-              <site name="left_shin" class="touch"  pos="0 0 -.15" size=".05 .15"/>
+              <site name="LKNL" type="sphere" rgba="1. 0. 0. 1." pos="0 -.049 .02" size="0.01"/>
+              <site name="LKNM" type="sphere" rgba="1. 0. 0. 1." pos="0 0.049 .02" size="0.01"/>
+
+              <!-- <site name="left_shin" class="touch"  pos="0 0 -.15" size=".05 .15"/> -->
               <body name="left_foot" pos="0 0 -.39">
-                <site name="left_ankle" class="force-torque"/>
+                <!-- <site name="left_ankle" class="force-torque"/> -->
                 <joint name="left_ankle_y" pos="0 0 .08" axis="0 1 0"   range="-50 50" stiffness="6"/>
                 <joint name="left_ankle_x" pos="0 0 .04" axis="1 0 .5" range="-50 50" stiffness="3"/>
+
                 <geom name="left_left_foot" fromto="-.07 .02 0 .14 .04 0" size=".027"/>
                 <geom name="right_left_foot" fromto="-.07 0 0 .14  -.02 0" size=".027"/>
 
-                <site name="right_left_foot" class="touch" pos=".035 -.01 0" size=".03 .11" zaxis="21 -2 0"/>
-                <site name="left_left_foot" class="touch" pos=".035 .03 0" size=".03 .11" zaxis="21 2 0"/>
+                <site name="LANL" type="sphere" rgba="1. 0. 0. 1." pos="0 -.049 0.04" size="0.01"/>
+                <site name="LANM" type="sphere" rgba="1. 0. 0. 1." pos="0 0.049 0.04" size="0.01"/>
+
+                <site name="LM5" type="sphere" rgba="1. 0. 0. 1." pos="0.14 .04 .027" size="0.01"/>
+                <site name="LM1" type="sphere" rgba="1. 0. 0. 1." pos="0.14 -0.02 .027" size="0.01"/>
+                <site name="LHEE" type="sphere" rgba="1. 0. 0. 1." pos="-0.05 0.01 .027" size="0.01"/> 
+
+                <!-- <site name="right_left_foot" class="touch" pos=".035 -.01 0" size=".03 .11" zaxis="21 -2 0"/> -->
+                <!-- <site name="left_left_foot" class="touch" pos=".035 .03 0" size=".03 .11" zaxis="21 2 0"/> -->
               </body>
             </body>
           </body>
@@ -136,13 +338,13 @@
   </actuator>
 
   <equality>
-    <weld name='world_root' active="true" body1='floor' body2='torso' relpose="0. 0. 2. 1. 0 0 0"/>
+    <weld name='world_root' active="false" body1='floor' body2='torso' relpose="0. 0. 2. 1. 0 0 0"/>
     <joint name="abdomen_y" active="true" joint1="abdomen_y"/>
     <joint name="abdomen_z" active="true" joint1="abdomen_z"/>
     <joint name="abdomen_x" active="true" joint1="abdomen_x"/>
   </equality>
 
-  <sensor>
+  <!-- <sensor>
     <subtreelinvel name="torso_subtreelinvel" body="torso"/>
     <accelerometer name="torso_accel"    site="root"/>
     <velocimeter name="torso_vel"        site="root"/>
@@ -175,7 +377,7 @@
     <touch name="right_left_foot_touch"  site="right_left_foot"/>
     <touch name="left_left_foot_touch"   site="left_left_foot"/>
 
-  </sensor>
+  </sensor> -->
 
 </mujoco>
 
