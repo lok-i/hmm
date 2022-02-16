@@ -118,7 +118,7 @@ env.viewer.cam.azimuth = 180
 
 for n_frame in range(19):
     print("Frame:",n_frame)
-    frame = np.load(assets_path+"our_data/frame_rand"+str(n_frame)+".npy")
+    frame = np.load(assets_path+"our_data/mocap_data/frame_rand"+str(n_frame)+".npy")
 
     target_qpos = np.zeros(len(env.sim.data.qpos))
     for step in range(500):
