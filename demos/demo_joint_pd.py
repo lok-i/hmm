@@ -13,6 +13,7 @@ env_conf = {
 env = BipedEnv(**env_conf)
 
 # Joint level PD controller setup
+# torque = Kp ( q_des - q) + Kd (dq_des - dq)
 pd_controller = PDController(
                              kps=np.full(env.n_act_joints,10.),
                              kds=np.full(env.n_act_joints,0.1),
@@ -28,7 +29,7 @@ tau_list = []
 
 
 # select the joint to test
-joint_actuator_to_chk = "left_knee"
+joint_actuator_to_chk = "right_knee"
 actuator_id_being_chkd = env.model.actuator_name2id(joint_actuator_to_chk) 
 base_dof = env.sim.data.qpos.shape[0] - env.n_act_joints
 

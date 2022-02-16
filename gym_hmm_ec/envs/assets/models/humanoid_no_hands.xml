@@ -8,7 +8,7 @@
         <texture type="skybox" builtin="gradient" rgb1=".4 .5 .6" rgb2="0 0 0"
             width="100" height="100"/>
         <texture builtin="flat" height="1278" mark="cross" markrgb="1 1 1" name="texgeom" random="0.01" rgb1="0.8 0.6 0.4" rgb2="0.8 0.6 0.4" type="cube" width="127"/>
-        <material name="self" texture="texgeom" texuniform="true"/>ss
+        <material name="self" texture="texgeom" texuniform="true"/>
         <material name='grid' reflectance='0.000000' texrepeat='1 1' texture='texplane' texuniform='true'/>
         <texture builtin='checker' height='512' name='texplane' rgb1='0.2 0.2 0.2' rgb2='0.3 0.3 0.3' type='2d' width='512'/>
   </asset>

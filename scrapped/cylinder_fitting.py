@@ -19,25 +19,28 @@ config_file = open(assets_path + marker_conf_file_name,'r+')
 marker_conf = yaml.load(config_file, Loader=yaml.FullLoader)
 
 link_marker_info = marker_conf['segment2markers']
- 
-pts_to_plt = []
-with open( assets_path+c3d_file_name , 'rb') as handle:
+fig = plt.figure()
+ax = fig.add_subplot(projection='3d')
 
-    reader = c3d.Reader(handle)
-    for data in reader.read_frames():
 
-        # print('Frame {}'.format(data[0],data[1].shape,data[2][0]))
-        all_marker = []
+# pts_to_plt = []
+# with open( assets_path+c3d_file_name , 'rb') as handle:
+
+#     reader = c3d.Reader(handle)
+#     for data in reader.read_frames():
+
+#         # print('Frame {}'.format(data[0],data[1].shape,data[2][0]))
+#         all_marker = []
         
-        if data[0] % 100 == 0:
-            for pt in data[1]:
-                all_marker.append(pt[0:3].tolist())
+#         if data[0] % 100 == 0:
+#             for pt in data[1]:
+#                 all_marker.append(pt[0:3].tolist())
         
-            pts_to_plt.append(all_marker)
+#             pts_to_plt.append(all_marker)
         
-        # if data[0] > 100:
-        #     break
-pts_to_plt = np.array(pts_to_plt)
+#         # if data[0] > 100:
+#         #     break
+# pts_to_plt = np.array(pts_to_plt)
 
 def error_func(params,x,y,z):
     '''
@@ -71,19 +74,48 @@ def error_func(params,x,y,z):
     return costs
 
 
-time_step = 0
-marker_pos_at_time_step = pts_to_plt[time_step]
-# print(marker_pos_at_time_step.shape)
+# time_step = 0
+# marker_pos_at_time_step = pts_to_plt[time_step]
+# # print(marker_pos_at_time_step.shape)
 
-# intialise plot and scatter points
+# # intialise plot and scatter points
 
-fig = plt.figure()
-ax = fig.add_subplot(projection='3d')
 
+
+
+# link_names = [ 
+#                 # 'left_hip','left_upper_leg','left_knee',
+#                 'right_hip','right_upper_leg','right_knee'
+#             ]
+
+# pts_in_link = []
+
+# for link_name in link_names:
+#     marker_index_of_link = list(link_marker_info[link_name].keys())
+#     for marker_index in marker_index_of_link:
+
+#         marker_pos_in_m = 0.001* marker_pos_at_time_step[marker_index,0:3] # mm -> m
+        
+#         pts_in_link.append(marker_pos_in_m.tolist())
+#         marker_name = link_marker_info[link_name][marker_index]
+#         ax.scatter(marker_pos_in_m[0],marker_pos_in_m[1],marker_pos_in_m[2],label=marker_name)
+
+        
+# pts_in_link = np.array(pts_in_link)
+# print("No. of points:",pts_in_link.shape)
+
+
+
+frame = np.load(assets_path+"frame_rand0.npy")
 
 link_names = [ 
-                # 'left_hip','left_upper_leg','left_knee',
-                'right_hip','right_upper_leg','right_knee'
+                # 'left_hip','left_upper_leg',
+                # 'left_knee',
+                'right_hip', 'right_upper_leg',
+                'right_knee',
+                # 'pelvis'
+                # 'right_ankle'
+
             ]
 
 pts_in_link = []
@@ -92,7 +124,7 @@ for link_name in link_names:
     marker_index_of_link = list(link_marker_info[link_name].keys())
     for marker_index in marker_index_of_link:
 
-        marker_pos_in_m = 0.001* marker_pos_at_time_step[marker_index,0:3] # mm -> m
+        marker_pos_in_m = frame [marker_index,0:3] # mm -> m
         
         pts_in_link.append(marker_pos_in_m.tolist())
         marker_name = link_marker_info[link_name][marker_index]
@@ -106,8 +138,6 @@ print("No. of points:",pts_in_link.shape)
 x = pts_in_link[:,0]
 y = pts_in_link[:,1]
 z = pts_in_link[:,2]
-
-hull = ConvexHull(pts_in_link)
 
 # x = np.array([0,0,-2,2,1.414,-1.414,1.414])
 # y = np.array([-2,2,0,0,1.414,-1.414,-1.414])
@@ -126,7 +156,7 @@ mid_knee = 0.5* (pts_in_link[-1] + pts_in_link[-2] )
 hip_pt = pts_in_link[0]
 C0 = 0.5 * ( hip_pt+ mid_knee ) 
 W0 = np.array([0,0,1.])
-r0 = 0.1 # in meteres
+r0 = 0.05 # in meteres
 
 params0 =  np.concatenate((C0,W0,[r0]))    #[]#0.5*(np.array(max_bound) + np.array(min_bound) ) #[0,0,-0.5,0.1,0.5,2,5]
 
@@ -155,7 +185,6 @@ print(" Sollution Parameters",res_1.x)
 
 #### other plotts
 
-capsule2origin = np.eye(4)#random_transform(random_state)
 
 
 # C = est_p[0:3]
@@ -190,37 +219,41 @@ else:
     x_cap = np.array([1,1,k])
 
 
+
+# print(capsule2origin)
+# print(np.linalg.det(capsule2origin[0:3,0:3]))
+height = 0.3
+radius = R
+
+intial_frame = np.eye(4)#random_transform(random_state)
+intial_frame[:3,0] = np.array([1,0,0])
+intial_frame[:3,1] = np.array([0,1,0])
+intial_frame[:3,2] =np.array([0,0,1])
+intial_frame[:3,3] = C0
+plot_transform(ax=ax, A2B= intial_frame, s=0.03,strict_check=False,name='intial guess')
+
+capsule2origin = np.eye(4)#random_transform(random_state)
+
 capsule2origin[:3,0] = (1.0/np.linalg.norm(x_cap))*x_cap
 y_cap = np.cross(W,x_cap)
 capsule2origin[:3,1] = (1.0/np.linalg.norm(y_cap))*y_cap
 capsule2origin[:3,2] = (1.0/np.linalg.norm(W))*W
 capsule2origin[:3,3] = C
 
-# print(capsule2origin)
-# print(np.linalg.det(capsule2origin[0:3,0:3]))
-height = 2
-radius = R
-plot_transform(ax=ax, A2B=capsule2origin, s=0.03,strict_check=False)
-# plot_capsule(ax=ax, A2B=capsule2origin, height=height, radius=radius,
-#              color="r", alpha=0.5, wireframe=False)
+plot_transform(ax=ax, A2B=capsule2origin, s=0.03,strict_check=False,name='final soln.')
+plot_capsule(ax=ax, A2B=intial_frame, height=height, radius=r0,
+             color="blue", alpha=0.3, wireframe=False)
 
+# ax.scatter(C0[0],C0[1],C0[2],label='C0')
+# ax.scatter(C[0],C[1],C[2],label='C')
+
+
+
+hull = ConvexHull(pts_in_link)
 for s in hull.simplices:
     s = np.append(s, s[0])  # Here we cycle back to the first coordinate
     ax.plot(pts_in_link[s, 0], pts_in_link[s, 1], pts_in_link[s, 2], "r-")
 
-
-ax.scatter(C0[0],C0[1],C0[2],label='C0')
-ax.scatter(C[0],C[1],C[2],label='C')
-
-
-ax.plot( [C0[0],C0[0]+W0[0]],
-         [C0[1],C0[1]+W0[1]],
-         [C0[2],C0[2]+W0[2]],
-         label='W0')
-ax.plot( [C[0],C[0]+W[0]],
-         [C[1],C[1]+W[1]],
-         [C[2],C[2]+W[2]],
-         label='W')
 
 ax.set_xlabel('X Label')
 ax.set_ylabel('Y Label')
@@ -230,4 +263,7 @@ ax.set_ylim([0.5,1.0])
 ax.set_zlim([0.5,1.0])
 ax.legend()
 ax.view_init(elev=0, azim=90)
+# ax.view_init(elev=15, azim=270+45)
+
+ax.set_title("Fitting a Cylinder for Right Thigh Link")
 plt.show()
