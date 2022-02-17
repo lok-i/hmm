@@ -6,7 +6,7 @@ import numpy as np
 import mujoco_py
 
 assets_path = './gym_hmm_ec/envs/assets/'
-model_name = 'testWrite'
+model_name = 'humanoid_no_hands_mocap_generated'
 model = mujoco_py.load_model_from_path(assets_path+"models/"+model_name+".xml")
 sim = mujoco_py.MjSim(model)
 viewer = mujoco_py.MjViewer(sim)
