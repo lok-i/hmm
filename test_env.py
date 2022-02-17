@@ -22,11 +22,20 @@ for i in range(3):
 viewer.cam.elevation = -15
 viewer.cam.azimuth = 220
 
-
 # play simulation 
+
+# marker_positions = np.load(assets_path + 'our_data/pose_esti/trial_1/3d_pose_coordinates_1.npy')
+# for frame in marker_positions:
+#     for i in range(frame.shape[0]):
+#         marker_name = 'm'+str(i)
+#         sim.data.set_mocap_pos(marker_name, frame[i,:] )
+#     sim.step()
+#     viewer.render()
+
 while True:
     sim.step()
     viewer.render()
+
 
 
 

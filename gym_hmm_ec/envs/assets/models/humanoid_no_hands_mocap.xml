@@ -263,8 +263,7 @@
                 <joint name="right_ankle_x" pos="0 0 .04" axis="1 0 .5" range="-50 50" stiffness="3"/>
 
                 <!-- <site name="origin" type="sphere" rgba="1. 0. 0. 1." pos="0 0 0" size="0.01"/> -->
-
-
+                
                 <geom name="right_right_foot" fromto="-.07 -.02 0 .14 -.04 0" size=".027"/>
                 <geom name="left_right_foot" fromto="-.07 0 0 .14  .02 0" size=".027"/>
 

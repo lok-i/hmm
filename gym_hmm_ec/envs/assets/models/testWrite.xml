@@ -8,7 +8,127 @@
     <body name="floor" pos="0 0 0">
       <geom name="floor" class="/" type="plane" conaffinity="1" size="100 100 0.20000000000000001" pos="0 0 0"/>
     </body>
-    <body name="torso" pos="0 0 1.5">
+    <body name="m0" mocap="true" pos="0 0 0">
+      <geom name="m0" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m1" mocap="true" pos="0 0 0">
+      <geom name="m1" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m2" mocap="true" pos="0 0 0">
+      <geom name="m2" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m3" mocap="true" pos="0 0 0">
+      <geom name="m3" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m4" mocap="true" pos="0 0 0">
+      <geom name="m4" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m5" mocap="true" pos="0 0 0">
+      <geom name="m5" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m6" mocap="true" pos="0 0 0">
+      <geom name="m6" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m7" mocap="true" pos="0 0 0">
+      <geom name="m7" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m8" mocap="true" pos="0 0 0">
+      <geom name="m8" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m9" mocap="true" pos="0 0 0">
+      <geom name="m9" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m10" mocap="true" pos="0 0 0">
+      <geom name="m10" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m11" mocap="true" pos="0 0 0">
+      <geom name="m11" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m12" mocap="true" pos="0 0 0">
+      <geom name="m12" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m13" mocap="true" pos="0 0 0">
+      <geom name="m13" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m14" mocap="true" pos="0 0 0">
+      <geom name="m14" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m15" mocap="true" pos="0 0 0">
+      <geom name="m15" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m16" mocap="true" pos="0 0 0">
+      <geom name="m16" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m17" mocap="true" pos="0 0 0">
+      <geom name="m17" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m18" mocap="true" pos="0 0 0">
+      <geom name="m18" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m19" mocap="true" pos="0 0 0">
+      <geom name="m19" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m20" mocap="true" pos="0 0 0">
+      <geom name="m20" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m21" mocap="true" pos="0 0 0">
+      <geom name="m21" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m22" mocap="true" pos="0 0 0">
+      <geom name="m22" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m23" mocap="true" pos="0 0 0">
+      <geom name="m23" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m24" mocap="true" pos="0 0 0">
+      <geom name="m24" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m25" mocap="true" pos="0 0 0">
+      <geom name="m25" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m26" mocap="true" pos="0 0 0">
+      <geom name="m26" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m27" mocap="true" pos="0 0 0">
+      <geom name="m27" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m28" mocap="true" pos="0 0 0">
+      <geom name="m28" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m29" mocap="true" pos="0 0 0">
+      <geom name="m29" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m30" mocap="true" pos="0 0 0">
+      <geom name="m30" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m31" mocap="true" pos="0 0 0">
+      <geom name="m31" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m32" mocap="true" pos="0 0 0">
+      <geom name="m32" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m33" mocap="true" pos="0 0 0">
+      <geom name="m33" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m34" mocap="true" pos="0 0 0">
+      <geom name="m34" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m35" mocap="true" pos="0 0 0">
+      <geom name="m35" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m36" mocap="true" pos="0 0 0">
+      <geom name="m36" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m37" mocap="true" pos="0 0 0">
+      <geom name="m37" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m38" mocap="true" pos="0 0 0">
+      <geom name="m38" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="m39" mocap="true" pos="0 0 0">
+      <geom name="m39" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
+    </body>
+    <body name="torso" pos="0 0 1.5919999999999999">
       <freejoint name="root"/>
       <geom name="torso" class="/" type="capsule" size="0.070000000000000007" fromto="0 -0.070000000000000007 0 0 0.070000000000000007 0"/>
       <geom name="upper_waist" class="/" type="capsule" size="0.059999999999999998" fromto="-0.01 -0.059999999999999998 -0.12 -0.01 0.059999999999999998 -0.12"/>
@@ -28,15 +148,15 @@
               <joint name="left_leg/hip_x" class="left_leg/" type="hinge" axis="1 0 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="10.0" range="-25 5" armature="0.01" damping="5.0"/>
               <joint name="left_leg/hip_z" class="left_leg/" type="hinge" axis="0 0 1" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="10.0" range="-60 35" armature="0.01" damping="5.0"/>
               <joint name="left_leg/hip_y" class="left_leg/" type="hinge" axis="0 1 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="20.0" range="-110 20" armature="0.01" damping="5.0"/>
-              <geom name="left_leg/thigh" class="left_leg/" type="capsule" size="0.059999999999999998" fromto="0 0 0 0 0.02 -0.68000000000000005"/>
-              <body name="left_leg/shin" pos="0 0.01 -0.40300000000000002">
+              <geom name="left_leg/thigh" class="left_leg/" type="capsule" size="0.059999999999999998" fromto="0 0 0 0 -0.01 -0.34000000000000002"/>
+              <body name="left_leg/shin" pos="0 -0.01 -0.40300000000000002">
                 <joint name="left_leg/knee" class="left_leg/" type="hinge" pos="0 0 0.02" axis="0 -1 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="1.0" range="-160 2" armature="0.01" damping="0.2"/>
                 <geom name="left_leg/shin" class="left_leg/" type="capsule" size="0.049000000000000002" fromto="0 0 0 0 0 -0.29999999999999999"/>
                 <body name="left_leg/foot" pos="0 0 -0.39000000000000001">
                   <joint name="left_leg/ankle_y" class="left_leg/" type="hinge" pos="0 0 0.080000000000000002" axis="0 1 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="6.0" range="-50 50" armature="0.01" damping="0.2"/>
                   <joint name="left_leg/ankle_x" class="left_leg/" type="hinge" pos="0 0 0.040000000000000001" axis="1 0 0.5" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="3.0" range="-50 50" armature="0.01" damping="0.2"/>
-                  <geom name="left_leg/right_foot" class="left_leg/" type="capsule" size="0.027" fromto="-0.070000000000000007 -0.02 0 0.14000000000000001 -0.040000000000000001 0"/>
-                  <geom name="left_leg/left_foot" class="left_leg/" type="capsule" size="0.027" fromto="-0.070000000000000007 0 0 0.14000000000000001 0.02 0"/>
+                  <geom name="left_leg/right_foot" class="left_leg/" type="capsule" size="0.027" fromto="-0.070000000000000007 0.02 0 0.14000000000000001 0.040000000000000001 0"/>
+                  <geom name="left_leg/left_foot" class="left_leg/" type="capsule" size="0.027" fromto="-0.070000000000000007 -0 0 0.14000000000000001 -0.02 0"/>
                 </body>
               </body>
             </body>
