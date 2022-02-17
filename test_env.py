@@ -5,47 +5,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import mujoco_py
 
-assets_path = './gym_hmm_ec/envs/assets/'
-model_name = 'humanoid_no_hands_mocap_generated'
-model = mujoco_py.load_model_from_path(assets_path+"models/"+model_name+".xml")
-sim = mujoco_py.MjSim(model)
-viewer = mujoco_py.MjViewer(sim)
-
-sim.reset()
-
-viewer._paused = True
-viewer.cam.distance = 6
-cam_pos = [0.0, 0.0, 0.0]
-
-for i in range(3):        
-    viewer.cam.lookat[i]= cam_pos[i] 
-viewer.cam.elevation = -15
-viewer.cam.azimuth = 220
-
-# play simulation 
-
-# marker_positions = np.load(assets_path + 'our_data/pose_esti/trial_1/3d_pose_coordinates_1.npy')
-# for frame in marker_positions:
-#     for i in range(frame.shape[0]):
-#         marker_name = 'm'+str(i)
-#         sim.data.set_mocap_pos(marker_name, frame[i,:] )
-#     sim.step()
-#     viewer.render()
-
-while True:
-    sim.step()
-    viewer.render()
-
-
-
-
-'''
+# TODO: Fix the mocap integration of env with the generated model
 # environment config and setup
 env_conf = {
-            'set_on_rack': True,
+            'set_on_rack': False,
             'render': True,
-            'model_name':'humanoid_no_hands',
-            'mocap':False
+            'model_name':'humanoid_no_hands_mocap_generated',
+            'mocap':False # problem when true
             }
 
 env = BipedEnv(**env_conf)
@@ -57,14 +23,10 @@ env.reset()
 if env.env_params['render']:
     env.viewer._paused = True
 
-for _ in range(2000):
+while True:
 
-    # for sensors
-    sensor_name = 'torso_gyro'
-    sensor_val = env.sim.data.get_sensor(sensor_name)
-    print(_,sensor_name,sensor_val)
     control_actions = np.zeros(shape=env.n_act_joints)
     obs,reward,done,info = env.step(action = control_actions )
 
 env.close()
-'''
+

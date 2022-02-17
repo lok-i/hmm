@@ -120,6 +120,20 @@ class Leg(object):
               r*np.sin(theta), 
               ]
               ) 
+    # <motor name="right_hip_x"     gear="40"  joint="right_hip_x"/> <!-- roll -->
+    # <motor name="right_hip_z"     gear="40"  joint="right_hip_z"/> <!-- yaw -->
+    # <motor name="right_hip_y"     gear="120" joint="right_hip_y"/> <!-- pitch -->
+    # <motor name="right_knee"      gear="80"  joint="right_knee"/> <!-- pitch -->
+    # <motor name="right_ankle_y"   gear="20"  joint="right_ankle_y"/> <!-- pitch -->
+    # <motor name="right_ankle_x"   gear="20"  joint="right_ankle_x"/> <!-- roll -->
+
+    self.mjcf_model.actuator.add("motor",name='hip_x',gear=[40],joint='hip_x')
+    self.mjcf_model.actuator.add("motor",name='hip_z',gear=[40],joint='hip_z')
+    self.mjcf_model.actuator.add("motor",name='hip_y',gear=[120],joint='hip_y')
+
+    self.mjcf_model.actuator.add("motor",name='knee',gear=[80],joint='knee')
+    self.mjcf_model.actuator.add("motor",name='ankle_y',gear=[20],joint='ankle_y')
+    self.mjcf_model.actuator.add("motor",name='ankle_x',gear=[20],joint='ankle_x')
 
 class Humanoid(object):
 
@@ -373,11 +387,21 @@ class Humanoid(object):
               ]
               )  
 
+
+      
+    # <motor name="abdomen_y"       gear="40"  joint="abdomen_y"/>
+    # <motor name="abdomen_z"       gear="40"  joint="abdomen_z"/>
+    # <motor name="abdomen_x"       gear="40"  joint="abdomen_x"/>
+
+    self.mjcf_model.actuator.add("motor",name='abdomen_y',gear=[40],joint='abdomen_y')
+    self.mjcf_model.actuator.add("motor",name='abdomen_z',gear=[40],joint='abdomen_z')
+    self.mjcf_model.actuator.add("motor",name='abdomen_x',gear=[40],joint='abdomen_x')
+
+
     left_leg_site = self.pelvis.add(
         'site', name='left_leg_site',size=[1e-6]*3, pos=[0, torso_b_scale*.1 ,torso_h_scale*-.04])
     right_leg_site = self.pelvis.add(
         'site', name='right_leg_site',size=[1e-6]*3, pos=[0, torso_b_scale*-.1 ,torso_h_scale*-.04])
-
     
     self.left_leg = Leg(name='left_leg',
                         symetric_transform = -1.,
@@ -393,6 +417,16 @@ class Humanoid(object):
                         )
     right_leg_site.attach(self.right_leg.mjcf_model)
 
+    # <equality>
+    #   <weld name='world_root' active="false" body1='floor' body2='torso' relpose="0. 0. 2. 1. 0 0 0"/>
+    #   <joint name="abdomen_y" active="true" joint1="abdomen_y"/>
+    #   <joint name="abdomen_z" active="true" joint1="abdomen_z"/>
+    #   <joint name="abdomen_x" active="true" joint1="abdomen_x"/>
+    # </equality>
+    self.mjcf_model.equality.add("weld",name='world_root',active='False',body1='floor', body2='torso',relpose=[0., 0., 2., 1., 0, 0, 0,])
+    self.mjcf_model.equality.add("joint",name='abdomen_y',active='False',joint1='abdomen_y')
+    self.mjcf_model.equality.add("joint",name='abdomen_z',active='False',joint1='abdomen_z')
+    self.mjcf_model.equality.add("joint",name='abdomen_x',active='False',joint1='abdomen_x')
 
 
 if __name__ == '__main__':
