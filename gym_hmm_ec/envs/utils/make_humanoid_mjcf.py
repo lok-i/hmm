@@ -11,8 +11,10 @@ from dm_control import mjcf
 import numpy as np
 import argparse 
 import yaml
+import os
 
-# TODO: Add, actuators, equality, colours, light and material, if required
+
+# TODO: Add colours and material, if required
 class Leg(object):
 
   def __init__( 
@@ -249,12 +251,19 @@ class Humanoid(object):
 
     self.mjcf_model = mjcf.RootElement(model=name)
 
-    # <material name='grid' reflectance='0.000000' texrepeat='1 1' texture='texplane' texuniform='true'/>
     # <body name="floor" pos="0 0 0" childclass="body">
     #   <geom name="floor" type="plane" conaffinity="1" size="100 100 .2" material="grid"/>
     # </body>
+    
     self.floor= self.mjcf_model.worldbody.add('body', name='floor',pos=[0,0,0])
-    self.floor.add('geom',name='floor',type='plane',pos=[0,0,0],conaffinity=1, size=[100, 100, .2])
+    # <texture builtin='checker' height='512' name='texplane' rgb1='0.2 0.2 0.2' rgb2='0.3 0.3 0.3' type='2d' width='512'/>
+    self.mjcf_model.asset.add('texture', builtin='checker', height=512, name='texplane', rgb1=[0.2, 0.2, 0.2], rgb2=[0.3, 0.3, 0.3], type='2d', width=512)
+    # <material name='grid' reflectance='0.000000' texrepeat='1 1' texture='texplane' texuniform='true'/>
+    self.mjcf_model.asset.add('material', name='grid', reflectance=0.0, texrepeat=[1, 1], texture='texplane', texuniform=True)
+
+
+    
+    self.floor.add('geom',name='floor',type='plane',pos=[0,0,0],conaffinity=1, size=[100, 100, .2],material='grid')
     
     #add n markers
     for i in range(40):
@@ -282,15 +291,14 @@ class Humanoid(object):
 
     initial_torso_height = ground_clearence + torso_h_scale*0.585 + max_thigh_length + max_shin_length + max_foot_radius
     self.torso = self.mjcf_model.worldbody.add('body', name='torso',pos=[0,0,initial_torso_height])#pos= base_pos)#[0, -.1 ,-.04])
-    # <site name="C7" type="sphere" rgba="1. 0. 0. 1." pos="-0.07 0 0.05" size="0.01"/>
     #   <light name="top" pos="0 0 2" mode="trackcom"/>
+    self.torso.add('light',name='top',pos=[0, 0, 2],mode='trackcom')
     #   <camera name="back" pos="-3 0 1" xyaxes="0 -1 0 1 0 2" mode="trackcom"/>
+    self.torso.add('camera',name='back',pos=[-3, 0, 1],xyaxes=[0, -1, 0, 1, 0, 2] ,mode='trackcom')
     #   <camera name="side" pos="0 -3 1" xyaxes="1 0 0 0 1 2" mode="trackcom"/>
+    self.torso.add('camera',name='side',pos=[0, -3, 1],xyaxes=[1, 0, 0, 0, 1, 2] ,mode='trackcom')
     #   <freejoint name="root"/>
     self.torso.add('freejoint',name='root')
-    #   <!-- <site name="root" class="force-torque"/> -->
-
-    #   <geom name="torso" fromto="0 -.07 0 0 .07 0" size=".07"/>
     y1 = -.07
     y2 =  .07
     alpha = (torso_b_scale - 1) * (y2 - y1) * 0.5
@@ -298,7 +306,7 @@ class Humanoid(object):
     link_name = 'torso'
     link_radius = torso_h_scale*.07
     link_length = y2+alpha - (y1 - alpha)
-
+    #   <geom name="torso" fromto="0 -.07 0 0 .07 0" size=".07"/>
     self.torso.add('geom', name='torso', type='capsule',
                        fromto=[0, y1 - alpha, 0, 0, y2+alpha, 0], size=[link_radius])  
     
@@ -335,9 +343,9 @@ class Humanoid(object):
     self.head = self.torso.add('body', name='head',pos=[0, 0, torso_h_scale*.19])
     #     <geom name="head" type="sphere" size=".09"/>
     self.head.add('geom', name='head', type='sphere', size=[head_r_scale*.09])  
-    #     <!-- <site name="head" class="touch" type="sphere" size=".091"/> -->
     #     <camera name="egocentric" pos=".09 0 0" xyaxes="0 -1 0 .1 0 1" fovy="80"/>
-    #   </body>
+    self.torso.add('camera',name='egocentric',pos=[.09, 0, 0],xyaxes=[0, -1, 0, 0.1, 1, 2] ,fovy="80")
+    
 
     #   <body name="lower_waist" pos="-.01 0 -.260" quat="1.000 0 -.002 0">
     self.lower_waist = self.torso.add('body', name='lower_waist',pos=[-.01, 0, torso_h_scale*-.260],quat=[1.000, 0, -.002, 0])
@@ -433,12 +441,15 @@ if __name__ == '__main__':
 
   parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
+  parser.add_argument('--conf_filename',help='config file to generate the xml file for',default='default_humanoid_mjcf_conf',type=str)
+  parser.add_argument('--xml_filename',help='file name to be given to the generated xml',default='humanoid_no_hands_mocap_generated',type=str)
   parser.add_argument('--update_humanoid_conf',help='whether to rewrtie the defaul humanoid model config',default=False, action='store_true')
 
   args = parser.parse_args()  
 
   assets_path = './gym_hmm_ec/envs/assets/'
-  conf_file_name = 'default_humanoid_mjcf_conf.yaml'
+  conf_file_name = args.conf_filename+'.yaml'
+
   if args.update_humanoid_conf:
 
     full_humanoid_conf ={               
@@ -549,16 +560,23 @@ if __name__ == '__main__':
                                   }
                                 }
                                 }
-
-
-    config_file = open(assets_path+"models/"+ conf_file_name,'w')
-    marker_conf = yaml.dump(full_humanoid_conf, config_file)
+    key = 'y'
+    if os.path.exists(assets_path+"models/model_confs/"+ conf_file_name):
+      print( 'Warning: the file '+conf_file_name+' already exists, wanna rewrite ?[y/n]',end=' ')
+      key = input()    
+    if key == 'y':
+      print("File Updated")
+      config_file = open(assets_path+"models/model_confs/"+ conf_file_name,'w')
+      marker_conf = yaml.dump(full_humanoid_conf, config_file)
 
   # load the nominal default conf pre-saved
-  config_file = open(assets_path+"models/"+ conf_file_name,'r+')
+
+  config_file = open(assets_path+"models/model_confs/"+ conf_file_name,'r+')
   full_humanoid_conf = yaml.load(config_file, Loader=yaml.FullLoader)
+  print(conf_file_name)
   body = Humanoid(name='humanoid',
                   **full_humanoid_conf
                   )
   physics = mjcf.Physics.from_mjcf_model(body.mjcf_model)
-  mjcf.export_with_assets(body.mjcf_model,"./gym_hmm_ec/envs/assets/models","humanoid_no_hands_mocap_generated.xml")
+
+  mjcf.export_with_assets(body.mjcf_model,"./gym_hmm_ec/envs/assets/models",args.xml_filename+'.xml')

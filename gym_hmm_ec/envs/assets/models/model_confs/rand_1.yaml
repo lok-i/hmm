@@ -1,0 +1,17 @@
+leg_scales:
+  left_leg:
+    foot_l_scale: 0.887461591512881
+    foot_r_scale: 0.887461591512881
+    shin_h_scale: 1.3222070480309343
+    shin_r_scale: 0.7630251008603993
+    thigh_h_scale: 1.2969629649401802
+    thigh_r_scale: 0.9556236449629957
+  right_leg:
+    foot_l_scale: 0.887461591512881
+    foot_r_scale: 0.887461591512881
+    shin_h_scale: 1.3222070480309343
+    shin_r_scale: 0.7630251008603993
+    thigh_h_scale: 1.2969629649401802
+    thigh_r_scale: 0.9556236449629957
+torso_b_scale: 2.0436048445732307
+torso_h_scale: 0.9028570307141461

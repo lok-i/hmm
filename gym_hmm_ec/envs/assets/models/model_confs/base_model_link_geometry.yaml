@@ -1,0 +1,37 @@
+humanoid:
+  head:
+    type: sphere
+    radius: 0.09
+  torso_all:
+    type: cuboid
+    length: 0.585
+    breadth: 0.14 
+  torso: 
+    type: capsule
+    length: 0.14
+    radius: 0.07
+  upper_waist: 
+    type: capsule
+    length: 0.12
+    radius: 0.06
+  lower_waist: 
+    type: capsule
+    length: 0.12
+    radius: 0.06  
+  pelvis: 
+    type: capsule
+    length: 0.14
+    radius: 0.09  
+  thigh:
+    type: capsule 
+    length: 0.34
+    radius: 0.06
+  shin: 
+    type: capsule
+    length: 0.3
+    radius: 0.049
+  foot: 
+    type: capsule
+    length: 0.21
+    radius: 0.027
+  

@@ -73,14 +73,14 @@ marker_pos_params:
         theta: -30
   pelvis:
     LASI:
-      k: 1.5
+      k: 1.0
       theta: 40
     LPSI:
       k: 0.3
       r_nominal: 0.11
       theta: 115
     RASI:
-      k: -1.5
+      k: -1.0
       theta: 40
     RPSI:
       k: -0.3
@@ -151,10 +151,10 @@ marker_pos_params:
       k: 0.0
       theta: 20
     LSHO:
-      k: 1.5
+      k: 1.0
       theta: 90
     RSHO:
-      k: -1.5
+      k: -1.0
       theta: 90
 torso_b_scale: 1.0
 torso_h_scale: 1.0

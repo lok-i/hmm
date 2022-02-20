@@ -3,14 +3,14 @@ from gym_hmm_ec.envs.bipedal_env import BipedEnv
 from gym_hmm_ec.controllers.pd_controller import PDController 
 import matplotlib.pyplot as plt
 import numpy as np
-import mujoco_py
+from mujoco_py.generated import const
 
 # TODO: Fix the mocap integration of env with the generated model
 # environment config and setup
 env_conf = {
             'set_on_rack': False,
             'render': True,
-            'model_name':'humanoid_no_hands_mocap_generated',
+            'model_name': 'rand_1',
             'mocap':False # problem when true
             }
 

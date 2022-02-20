@@ -7,7 +7,7 @@ import numpy as np
 env_conf = {
             'set_on_rack': True,
             'render': True,
-            'model_name':'humanoid_no_hands_with_exo'
+            'model_name':'humanoid_no_hands_mocap_generated'
             }
 
 env = BipedEnv(**env_conf)
@@ -29,7 +29,7 @@ tau_list = []
 
 
 # select the joint to test
-joint_actuator_to_chk = "right_knee"
+joint_actuator_to_chk = "right_leg/ankle_x"
 actuator_id_being_chkd = env.model.actuator_name2id(joint_actuator_to_chk) 
 base_dof = env.sim.data.qpos.shape[0] - env.n_act_joints
 

@@ -176,3 +176,45 @@ segment2markers:
     1: RSHO
     2: CLAV
     3: LSHO
+
+marker_name2id:
+  C7: 0
+  CLAV: 2
+  LANL: 31
+  LANM: 32
+  LASI: 7
+  LGT: 39
+  LHEE: 35
+  LKNL: 19
+  LKNM: 20
+  LM1: 36
+  LM5: 37
+  LPSI: 4
+  LS1: 27
+  LS2: 28
+  LS3: 29
+  LS4: 30
+  LSHO: 3
+  LT1: 15
+  LT2: 16
+  LT3: 17
+  LT4: 18
+  RANL: 25
+  RANM: 26
+  RASI: 6
+  RGT: 8
+  RHEE: 33
+  RKNL: 13
+  RKNM: 14
+  RM1: 38
+  RM5: 34
+  RPSI: 5
+  RS1: 21
+  RS2: 22
+  RS3: 23
+  RS4: 24
+  RSHO: 1
+  RT1: 9
+  RT2: 10
+  RT3: 11
+  RT4: 12

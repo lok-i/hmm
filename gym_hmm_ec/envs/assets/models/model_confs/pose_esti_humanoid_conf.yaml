@@ -1,0 +1,79 @@
+head_r_scale: 1.0
+leg_scales:
+  left_leg:
+    foot_l_scale: 1.0
+    foot_r_scale: 1.0
+    shin_h_scale: 1.0
+    shin_r_scale: 1.0
+    thigh_h_scale: 1.0
+    thigh_r_scale: 1.0
+  right_leg:
+    foot_l_scale: 1.0
+    foot_r_scale: 1.0
+    shin_h_scale: 1.0
+    shin_r_scale: 1.0
+    thigh_h_scale: 1.0
+    thigh_r_scale: 1.0
+marker_pos_params:
+  left_leg:
+    foot:
+      TOE:
+        k: 1.5
+        theta: 90
+      HEEL:
+        k: -0.75
+        theta: 90
+    shin:
+      KNEE:
+        k: 1.
+        theta: 0
+        r_nominal: 0
+    thigh:
+      HIP:
+        k: 1.
+        theta: 0
+        r_nominal: 0
+  pelvis:
+    CENTRE:
+        k: 0
+        theta: 0
+        r_nominal: 0
+  right_leg:
+    foot:
+      TOE:
+        k: 1.5
+        theta: 90
+      HEEL:
+        k: -0.75
+        theta: 90
+    shin:
+      KNEE:
+        k: 1.
+        theta: 0
+        r_nominal: 0
+    thigh:
+      HIP:
+        k: 1.
+        theta: 0
+        r_nominal: 0
+  torso:
+    C7:
+      k: 0.0
+      r_nominal: 0.09
+      theta: 120
+    LCLAV:
+      k: 0.5
+      theta: 90
+      r_nominal: 0.05
+    RCLAV:
+      k: -0.5
+      theta: 90
+      r_nominal: 0.05
+    LSHO:
+      k: 1.5
+      theta: 90
+    RSHO:
+      k: -1.5
+      theta: 90
+torso_b_scale: 1.0
+torso_h_scale: 1.0

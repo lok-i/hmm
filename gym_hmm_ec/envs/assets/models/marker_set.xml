@@ -179,7 +179,85 @@
       <geom type='sphere' size="0.01" material="mocap_material"/>
     </body>
 
+    <body mocap='true' name="m40" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
 
+    <body mocap='true' name="m41" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m42" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m43" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m44" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m45" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m46" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m47" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m48" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m49" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m50" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m51" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m52" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m53" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m54" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m55" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m56" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m57" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m58" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
+
+    <body mocap='true' name="m59" pos="1 0 0" >
+      <geom type='sphere' size="0.01" material="mocap_material"/>
+    </body>
 
    </worldbody>
  
