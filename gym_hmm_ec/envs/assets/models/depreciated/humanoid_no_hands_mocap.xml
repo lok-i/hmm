@@ -250,8 +250,8 @@
             <body name="right_shin" pos="0 .01 -.403">
               <!-- <site name="right_knee" class="force-torque" pos="0 0 .02"/> -->
               <joint name="right_knee" pos="0 0 .02" axis="0 -1 0" range="-160 2"/>
-              <site name="RKNL" type="sphere" rgba="1. 0. 0. 1." pos="0 -.06 .04" size="0.01"/>
-              <site name="RKNM" type="sphere" rgba="1. 0. 0. 1." pos="0 0.06 .06" size="0.01"/>
+              <site name="right_leg/RKNL" type="sphere" rgba="1. 0. 0. 1." pos="0 -.06 .04" size="0.01"/>
+              <site name="right_leg/RKNM" type="sphere" rgba="1. 0. 0. 1." pos="0 0.06 .06" size="0.01"/>
 
               <geom name="right_shin" fromto="0 0 0 0 0 -.3"  size=".049"/>
               <!-- <site name="right_shin" class="touch" pos="0 0 -.15" size=".05 .15"/> -->
@@ -267,12 +267,12 @@
                 <geom name="right_right_foot" fromto="-.07 -.02 0 .14 -.04 0" size=".027"/>
                 <geom name="left_right_foot" fromto="-.07 0 0 .14  .02 0" size=".027"/>
 
-                <site name="RANL" type="sphere" rgba="1. 0. 0. 1." pos="-0.06 -.035 0.04" size="0.01"/>
-                <site name="RANM" type="sphere" rgba="1. 0. 0. 1." pos="-0.06 0.035 0.04" size="0.01"/>
+                <site name="right_leg/RANL" type="sphere" rgba="1. 0. 0. 1." pos="-0.06 -.035 0.04" size="0.01"/>
+                <site name="right_leg/RANM" type="sphere" rgba="1. 0. 0. 1." pos="-0.06 0.035 0.04" size="0.01"/>
 
-                <site name="RM5" type="sphere" rgba="1. 0. 0. 1." pos="0.14 -.04 .027" size="0.01"/>
-                <site name="RM1" type="sphere" rgba="1. 0. 0. 1." pos="0.14 0.02 .027" size="0.01"/>
-                <site name="RHEE" type="sphere" rgba="1. 0. 0. 1." pos="-0.05 -.01 .027" size="0.01"/> 
+                <site name="right_leg/RM5" type="sphere" rgba="1. 0. 0. 1." pos="0.14 -.04 .027" size="0.01"/>
+                <site name="right_leg/RM1" type="sphere" rgba="1. 0. 0. 1." pos="0.14 0.02 .027" size="0.01"/>
+                <site name="right_leg/RHEE" type="sphere" rgba="1. 0. 0. 1." pos="-0.05 -.01 .027" size="0.01"/> 
 
                 <!-- <site name="right_right_foot" class="touch" pos=".035 -.03 0" size=".03 .11" zaxis="21 -2 0"/> -->
                 <!-- <site name="left_right_foot" class="touch" pos=".035 .01 0" size=".03 .11" zaxis="21 2 0"/> -->
@@ -291,8 +291,8 @@
               <!-- <site name="left_knee" class="force-torque" pos="0 0 .02"/> -->
               <joint name="left_knee" pos="0 0 .02" axis="0 -1 0" range="-160 2"/>
               <geom name="left_shin" fromto="0 0 0 0 0 -.3"  size=".049"/>
-              <site name="LKNL" type="sphere" rgba="1. 0. 0. 1." pos="0 -.049 .02" size="0.01"/>
-              <site name="LKNM" type="sphere" rgba="1. 0. 0. 1." pos="0 0.049 .02" size="0.01"/>
+              <site name="left_leg/LKNL" type="sphere" rgba="1. 0. 0. 1." pos="0 -.049 .02" size="0.01"/>
+              <site name="left_leg/LKNM" type="sphere" rgba="1. 0. 0. 1." pos="0 0.049 .02" size="0.01"/>
 
               <!-- <site name="left_shin" class="touch"  pos="0 0 -.15" size=".05 .15"/> -->
               <body name="left_foot" pos="0 0 -.39">
@@ -303,12 +303,12 @@
                 <geom name="left_left_foot" fromto="-.07 .02 0 .14 .04 0" size=".027"/>
                 <geom name="right_left_foot" fromto="-.07 0 0 .14  -.02 0" size=".027"/>
 
-                <site name="LANL" type="sphere" rgba="1. 0. 0. 1." pos="0 -.049 0.04" size="0.01"/>
-                <site name="LANM" type="sphere" rgba="1. 0. 0. 1." pos="0 0.049 0.04" size="0.01"/>
+                <site name="left_leg/LANL" type="sphere" rgba="1. 0. 0. 1." pos="0 -.049 0.04" size="0.01"/>
+                <site name="left_leg/LANM" type="sphere" rgba="1. 0. 0. 1." pos="0 0.049 0.04" size="0.01"/>
 
-                <site name="LM5" type="sphere" rgba="1. 0. 0. 1." pos="0.14 .04 .027" size="0.01"/>
-                <site name="LM1" type="sphere" rgba="1. 0. 0. 1." pos="0.14 -0.02 .027" size="0.01"/>
-                <site name="LHEE" type="sphere" rgba="1. 0. 0. 1." pos="-0.05 0.01 .027" size="0.01"/> 
+                <site name="left_leg/LM5" type="sphere" rgba="1. 0. 0. 1." pos="0.14 .04 .027" size="0.01"/>
+                <site name="left_leg/LM1" type="sphere" rgba="1. 0. 0. 1." pos="0.14 -0.02 .027" size="0.01"/>
+                <site name="left_leg/LHEE" type="sphere" rgba="1. 0. 0. 1." pos="-0.05 0.01 .027" size="0.01"/> 
 
                 <!-- <site name="right_left_foot" class="touch" pos=".035 -.01 0" size=".03 .11" zaxis="21 -2 0"/> -->
                 <!-- <site name="left_left_foot" class="touch" pos=".035 .03 0" size=".03 .11" zaxis="21 2 0"/> -->

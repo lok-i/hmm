@@ -234,9 +234,9 @@
   </worldbody>
   <equality>
     <weld name="world_root" class="/" active="false" body1="floor" body2="torso" relpose="0 0 2 1 0 0 0"/>
-    <joint name="abdomen_y" class="/" active="false" joint1="abdomen_y"/>
-    <joint name="abdomen_z" class="/" active="false" joint1="abdomen_z"/>
-    <joint name="abdomen_x" class="/" active="false" joint1="abdomen_x"/>
+    <joint name="abdomen_y" class="/" active="true" joint1="abdomen_y"/>
+    <joint name="abdomen_z" class="/" active="true" joint1="abdomen_z"/>
+    <joint name="abdomen_x" class="/" active="true" joint1="abdomen_x"/>
   </equality>
   <actuator>
     <motor name="abdomen_y" class="/" gear="40" joint="abdomen_y"/>

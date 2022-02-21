@@ -12,7 +12,7 @@ marker_conf_file_name = 'marker_config.yaml'
 
 
 if VIEW_MARKER_BASED_DATA:
-    c3d_file_name = 'mocap_data/Trial_1.c3d'
+    c3d_file_name = 'mocap_data/c3ds/Trial_1.c3d'
     # load data from c3d of  mocap data of 40 marker set
     marker_positions = []
     
@@ -60,11 +60,10 @@ viewer.cam.azimuth = 220
 
 
 # play simulation 
-for frame in marker_positions:
+for f_i,frame in enumerate(marker_positions):
     for i in range(frame.shape[0]):
         marker_name = 'm'+str(i)
         sim.data.set_mocap_pos(marker_name, frame[i,:] )
-
     sim.step()
     viewer.render()
 

@@ -1,19 +1,6 @@
-# Copyright 2017-2018 The dm_control Authors.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or  implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ============================================================================
 
-"""Functions for computing inverse kinematics on MuJoCo models."""
+
+"""Functions for computing inverse kinematics for multi site on MuJoCo models."""
 
 import collections
 
@@ -35,7 +22,7 @@ IKResult = collections.namedtuple(
 
 
 def qpos_from_site_pose(physics,
-                        site_name,
+                        site_names,
                         target_pos=None,
                         target_quat=None,
                         joint_names=None,
@@ -47,75 +34,32 @@ def qpos_from_site_pose(physics,
                         progress_thresh=20.0,
                         max_steps=100,
                         inplace=False):
-  """Find joint positions that satisfy a target site position and/or rotation.
-  Args:
-    physics: A `mujoco.Physics` instance.
-    site_name: A string specifying the name of the target site.
-    target_pos: A (3,) numpy array specifying the desired Cartesian position of
-      the site, or None if the position should be unconstrained (default).
-      One or both of `target_pos` or `target_quat` must be specified.
-    target_quat: A (4,) numpy array specifying the desired orientation of the
-      site as a quaternion, or None if the orientation should be unconstrained
-      (default). One or both of `target_pos` or `target_quat` must be specified.
-    joint_names: (optional) A list, tuple or numpy array specifying the names of
-      one or more joints that can be manipulated in order to achieve the target
-      site pose. If None (default), all joints may be manipulated.
-    tol: (optional) Precision goal for `qpos` (the maximum value of `err_norm`
-      in the stopping criterion).
-    rot_weight: (optional) Determines the weight given to rotational error
-      relative to translational error.
-    regularization_threshold: (optional) L2 regularization will be used when
-      inverting the Jacobian whilst `err_norm` is greater than this value.
-    regularization_strength: (optional) Coefficient of the quadratic penalty
-      on joint movements.
-    max_update_norm: (optional) The maximum L2 norm of the update applied to
-      the joint positions on each iteration. The update vector will be scaled
-      such that its magnitude never exceeds this value.
-    progress_thresh: (optional) If `err_norm` divided by the magnitude of the
-      joint position update is greater than this value then the optimization
-      will terminate prematurely. This is a useful heuristic to avoid getting
-      stuck in local minima.
-    max_steps: (optional) The maximum number of iterations to perform.
-    inplace: (optional) If True, `physics.data` will be modified in place.
-      Default value is False, i.e. a copy of `physics.data` will be made.
-  Returns:
-    An `IKResult` namedtuple with the following fields:
-      qpos: An (nq,) numpy array of joint positions.
-      err_norm: A float, the weighted sum of L2 norms for the residual
-        translational and rotational errors.
-      steps: An int, the number of iterations that were performed.
-      success: Boolean, True if we converged on a solution within `max_steps`,
-        False otherwise.
-  Raises:
-    ValueError: If both `target_pos` and `target_quat` are None, or if
-      `joint_names` has an invalid type.
-  """
 
   dtype = physics.data.qpos.dtype
-
+  n_sites = len(site_names)
   if target_pos is not None and target_quat is not None:
-    jac = np.empty((6, physics.model.nv), dtype=dtype)
-    err = np.empty(6, dtype=dtype)
-    jac_pos, jac_rot = jac[:3], jac[3:]
-    err_pos, err_rot = err[:3], err[3:]
+    jac = np.empty((n_sites,6, physics.model.nv), dtype=dtype)
+    err = np.empty(n_sites,6, dtype=dtype)
+    jac_pos, jac_rot = jac[:,:3], jac[3:]
+    err_pos, err_rot = err[:,:3], err[3:]
   else:
-    jac = np.empty((3, physics.model.nv), dtype=dtype)
-    err = np.empty(3, dtype=dtype)
+    jac = np.empty((n_sites,3, physics.model.nv), dtype=dtype)
+    err = np.empty((n_sites,3), dtype=dtype)
     if target_pos is not None:
       jac_pos, jac_rot = jac, None
       err_pos, err_rot = err, None
-    elif target_quat is not None:
-      jac_pos, jac_rot = None, jac
-      err_pos, err_rot = None, err
+    # elif target_quat is not None:
+    #   jac_pos, jac_rot = None, jac
+    #   err_pos, err_rot = None, err
     else:
       raise ValueError(_REQUIRE_TARGET_POS_OR_QUAT)
 
   update_nv = np.zeros(physics.model.nv, dtype=dtype)
 
-  if target_quat is not None:
-    site_xquat = np.empty(4, dtype=dtype)
-    neg_site_xquat = np.empty(4, dtype=dtype)
-    err_rot_quat = np.empty(4, dtype=dtype)
+#   if target_quat is not None:
+#     site_xquat = np.empty(4, dtype=dtype)
+#     neg_site_xquat = np.empty(4, dtype=dtype)
+#     err_rot_quat = np.empty(4, dtype=dtype)
 
   if not inplace:
     physics = physics.copy(share_model=True)
@@ -124,12 +68,18 @@ def qpos_from_site_pose(physics,
   mjlib.mj_fwdPosition(physics.model.ptr, physics.data.ptr)
 
   # Convert site name to index.
-  site_id = physics.model.name2id(site_name, 'site')
+  site_id = []
+  site_xpos = np.zeros((n_sites,3))
+  site_xmat = np.zeros((n_sites,9))
 
-  # These are views onto the underlying MuJoCo buffers. mj_fwdPosition will
-  # update them in place, so we can avoid indexing overhead in the main loop.
-  site_xpos = physics.named.data.site_xpos[site_name]
-  site_xmat = physics.named.data.site_xmat[site_name]
+  for i,site_name in enumerate(site_names): 
+    site_id.append( physics.model.name2id(site_name, 'site') )
+
+    # These are views onto the underlying MuJoCo buffers. mj_fwdPosition will
+    # update them in place, so we can avoid indexing overhead in the main loop.
+    
+    site_xpos[i] = physics.named.data.site_xpos[site_name]
+    site_xmat[i] = physics.named.data.site_xmat[site_name]
 
   # This is an index into the rows of `update` and the columns of `jac`
   # that selects DOFs associated with joints that we are allowed to manipulate.
@@ -154,28 +104,37 @@ def qpos_from_site_pose(physics,
   for steps in range(max_steps):
 
     err_norm = 0.0
+    # update site positions
+    for i,site_name in enumerate(site_names): 
+        site_xpos[i] = physics.named.data.site_xpos[site_name]
+        site_xmat[i] = physics.named.data.site_xmat[site_name]
 
     if target_pos is not None:
-      # Translational error.
-      err_pos[:] = target_pos - site_xpos
-      err_norm += np.linalg.norm(err_pos)
-    if target_quat is not None:
-      # Rotational error.
-      mjlib.mju_mat2Quat(site_xquat, site_xmat)
-      mjlib.mju_negQuat(neg_site_xquat, site_xquat)
-      mjlib.mju_mulQuat(err_rot_quat, target_quat, neg_site_xquat)
-      mjlib.mju_quat2Vel(err_rot, err_rot_quat, 1)
-      err_norm += np.linalg.norm(err_rot) * rot_weight
-
+      for i in range(n_sites):
+          # Translational error.
+        #   print(target_pos[i], site_xpos[i])
+          err_pos[i,:] = target_pos[i] - site_xpos[i]
+          err_norm += np.linalg.norm(err_pos[i])
+    
+    # if target_quat is not None:
+    #   for i in range(n_sites):
+    #     # Rotational error.
+    #     mjlib.mju_mat2Quat(site_xquat[i], site_xmat[i])
+    #     mjlib.mju_negQuat(neg_site_xquat[i], site_xquat[i])
+    #     mjlib.mju_mulQuat(err_rot_quat, target_quat, neg_site_xquat)
+    #     mjlib.mju_quat2Vel(err_rot, err_rot_quat, 1)
+    #     err_norm += np.linalg.norm(err_rot) * rot_weight
     if err_norm < tol:
       logging.debug('Converged after %i steps: err_norm=%3g', steps, err_norm)
       success = True
       break
     else:
       # TODO(b/112141670): Generalize this to other entities besides sites.
-      mjlib.mj_jacSite(
-          physics.model.ptr, physics.data.ptr, jac_pos, jac_rot, site_id)
-      jac_joints = jac[:, dof_indices]
+      
+      for i in range(n_sites):
+        if jac_rot == None:
+            mjlib.mj_jacSite(physics.model.ptr, physics.data.ptr, jac_pos[i], jac_rot, site_id[i])
+      jac_joints = jac[:,:, dof_indices]
 
       # TODO(b/112141592): This does not take joint limits into consideration.
       reg_strength = (
@@ -183,7 +142,8 @@ def qpos_from_site_pose(physics,
           else 0.0)
       update_joints = nullspace_method(
           jac_joints, err, regularization_strength=reg_strength)
-
+      
+    #   print('step',steps, update_joints,err_norm, tol)
       update_norm = np.linalg.norm(update_joints)
 
       # Check whether we are still making enough progress, and halt if not.
@@ -192,6 +152,7 @@ def qpos_from_site_pose(physics,
         logging.debug('Step %2i: err_norm / update_norm (%3g) > '
                       'tolerance (%3g). Halting due to insufficient progress',
                       steps, progress_criterion, progress_thresh)
+        # print('Terminated due to insufficient pogress in step',steps)
         break
 
       if update_norm > max_update_norm:
@@ -227,24 +188,27 @@ def qpos_from_site_pose(physics,
   return IKResult(qpos=qpos, err_norm=err_norm, steps=steps, success=success)
 
 def nullspace_method(jac_joints, delta, regularization_strength=0.0):
-  """Calculates the joint velocities to achieve a specified end effector delta.
-  Args:
-    jac_joints: The Jacobian of the end effector with respect to the joints. A
-      numpy array of shape `(ndelta, nv)`, where `ndelta` is the size of `delta`
-      and `nv` is the number of degrees of freedom.
-    delta: The desired end-effector delta. A numpy array of shape `(3,)` or
-      `(6,)` containing either position deltas, rotation deltas, or both.
-    regularization_strength: (optional) Coefficient of the quadratic penalty
-      on joint movements. Default is zero, i.e. no regularization.
-  Returns:
-    An `(nv,)` numpy array of joint velocities.
+  """Calculates the joint velocities to achieve a specified end effector deltas.
   Reference:
     Buss, S. R. S. (2004). Introduction to inverse kinematics with jacobian
     transpose, pseudoinverse and damped least squares methods.
     https://www.math.ucsd.edu/~sbuss/ResearchWeb/ikmethods/iksurvey.pdf
   """
-  hess_approx = jac_joints.T.dot(jac_joints)
-  joint_delta = jac_joints.T.dot(delta)
+  n_sites = delta.shape[0]
+
+  for i in range(n_sites):
+      if i == 0:
+          A = jac_joints[i].T.dot(jac_joints[i])
+          b = jac_joints[i].T.dot(delta[i])
+      else:
+          A += jac_joints[i].T.dot(jac_joints[i])
+          b += jac_joints[i].T.dot(delta[i])
+
+  hess_approx = A
+  joint_delta = b
+#   hess_approx = jac_joints.T.dot(jac_joints)
+#   joint_delta = jac_joints.T.dot(delta)
+  
   if regularization_strength > 0:
     # L2 regularization
     hess_approx += np.eye(hess_approx.shape[0]) * regularization_strength
@@ -253,69 +217,4 @@ def nullspace_method(jac_joints, delta, regularization_strength=0.0):
     return np.linalg.lstsq(hess_approx, joint_delta, rcond=-1)[0]
 
 
-
-
-if __name__ == '__main__':
-  As = np.array(
-                [
-                  [
-                  [1,1],
-                  [1,-1],
-                  ],
-                  [
-                    [3,1],
-                    [5,-1],
-                  ],
-                ]
-                )
-  bs = np.array([
-                  [1,1],
-                  [1,1],
-
-  ])
-
-
-  # As = np.array(
-  #               [
-  #                 [
-  #                  [1,2,3],
-  #                  [4,5,6],
-  #                  [7,8,9]
-  #                 ],
-  #                 [
-  #                  [10,11,12],
-  #                  [13,14,15],
-  #                  [16,17,18]
-  #                 ],
-  #               ]
-  #               )
-  # bs = np.array([
-  #                 [1,2,4],
-  #                 [5,7,6],
-
-  # ])
-
-  def compute_residual(x):
-    costs = []
-    for A,b in zip(As,bs):
-      A = np.atleast_2d(A)
-      b = np.atleast_2d(b).T
-      x = np.atleast_2d(x)
-      if x.shape[0] == 1:
-        x = x.T
-      # print('x',x.shape)
-      Ax_b = A.dot(x) - b
-      # print(Ax_b.shape)
-      costs = Ax_b.T.dot(Ax_b)[0][0]
-
-    return np.array(costs)
-
-
-  from scipy.optimize import least_squares
-
-  x0 = np.array([2, 2])
-
-  # x0 = np.array([2, 2,2])
-  res_1 = least_squares(compute_residual, x0)
-  print(res_1.x,res_1.cost,res_1.optimality)
 
