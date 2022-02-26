@@ -33,7 +33,6 @@ if __name__ == '__main__':
     # marker config
     marker_config_file = open(assets_path+"our_data/marker_data/confs/"+ args.mocap_npz_filename.partition('_from_')[0]+'.yaml','r+')
     marker_conf = yaml.load(marker_config_file, Loader=yaml.FullLoader)
-    print(marker_conf['marker_name2id'])
     # exit()
 
 
