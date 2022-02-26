@@ -4,6 +4,8 @@ import gym
 import math
 from gym import utils
 from gym import spaces
+from mujoco_py.generated import const
+from gym_hmm_ec.envs.utils import misc_functions
 import gym_hmm_ec.envs.mujoco_env as mujoco_env
 
 class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
@@ -102,7 +104,18 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
                 self.sim.data.set_mocap_pos('mocap_'+body_name, body_pos )
         
-        
+    def view_vector_arrows(self,vec,vec_point,vec_max=20,vec_txt=''):
+
+        vec_mag = np.round(np.linalg.norm(vec),1) 
+        arrow_scale = vec_mag/vec_max
+        self.viewer.add_marker(
+                    pos=vec_point , #position of the arrow
+                    size= arrow_scale*np.array([0.03,0.03,1]), #size of the arrow
+                    mat= misc_functions.calc_rotation_vec_a2b(vec), # orientation as a matrix
+                    rgba=np.array([0.,0.,1.,1.]),#color of the arrow
+                    type=const.GEOM_ARROW,
+                    label= vec_txt,
+                    )        
 
 
 

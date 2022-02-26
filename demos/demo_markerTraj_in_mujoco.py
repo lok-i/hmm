@@ -7,12 +7,11 @@ VIEW_MARKER_BASED_DATA = True
 
 assets_path = './gym_hmm_ec/envs/assets/'
 model_name = 'marker_set'
-marker_conf_file_name = 'marker_config.yaml'
 
 
 
 if VIEW_MARKER_BASED_DATA:
-    c3d_file_name = 'mocap_data/c3ds/Trial_1.c3d'
+    c3d_file_name = 'marker_data/c3ds/AB1_Session1_Right6_Left6.c3d'#Trial_1.c3d'
     # load data from c3d of  mocap data of 40 marker set
     marker_positions = []
     

@@ -1,6 +1,6 @@
 
 
-"""Functions for computing inverse kinematics for multi site on MuJoCo models."""
+"""Functions for computing inverse kinematics for multiple site on MuJoCo models."""
 
 import collections
 

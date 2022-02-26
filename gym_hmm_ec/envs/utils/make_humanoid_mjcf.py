@@ -432,23 +432,22 @@ class Humanoid(object):
     #   <joint name="abdomen_x" active="true" joint1="abdomen_x"/>
     # </equality>
     self.mjcf_model.equality.add("weld",name='world_root',active='False',body1='floor', body2='torso',relpose=[0., 0., 2., 1., 0, 0, 0,])
-    self.mjcf_model.equality.add("joint",name='abdomen_y',active='False',joint1='abdomen_y')
-    self.mjcf_model.equality.add("joint",name='abdomen_z',active='False',joint1='abdomen_z')
-    self.mjcf_model.equality.add("joint",name='abdomen_x',active='False',joint1='abdomen_x')
+    self.mjcf_model.equality.add("joint",name='abdomen_y',active='True',joint1='abdomen_y')
+    self.mjcf_model.equality.add("joint",name='abdomen_z',active='True',joint1='abdomen_z')
+    self.mjcf_model.equality.add("joint",name='abdomen_x',active='True',joint1='abdomen_x')
 
 
 if __name__ == '__main__':
 
   parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-  parser.add_argument('--conf_filename',help='config file to generate the xml file for',default='default_humanoid_mjcf_conf',type=str)
-  parser.add_argument('--xml_filename',help='file name to be given to the generated xml',default='humanoid_no_hands_mocap_generated',type=str)
+  parser.add_argument('--conf_xml_filename',help='common filename of xml and conf',default='default_humanoid_mjcf_conf',type=str)
   parser.add_argument('--update_humanoid_conf',help='whether to rewrtie the defaul humanoid model config',default=False, action='store_true')
 
   args = parser.parse_args()  
 
   assets_path = './gym_hmm_ec/envs/assets/'
-  conf_file_name = args.conf_filename+'.yaml'
+  conf_file_name = args.conf_xml_filename+'.yaml'
 
   if args.update_humanoid_conf:
 
@@ -570,7 +569,6 @@ if __name__ == '__main__':
       marker_conf = yaml.dump(full_humanoid_conf, config_file)
 
   # load the nominal default conf pre-saved
-
   config_file = open(assets_path+"models/model_confs/"+ conf_file_name,'r+')
   full_humanoid_conf = yaml.load(config_file, Loader=yaml.FullLoader)
   print(conf_file_name)
@@ -579,4 +577,4 @@ if __name__ == '__main__':
                   )
   physics = mjcf.Physics.from_mjcf_model(body.mjcf_model)
 
-  mjcf.export_with_assets(body.mjcf_model,"./gym_hmm_ec/envs/assets/models",args.xml_filename+'.xml')
+  mjcf.export_with_assets(body.mjcf_model,"./gym_hmm_ec/envs/assets/models",args.conf_xml_filename+'.xml')

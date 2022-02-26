@@ -8,7 +8,7 @@ from mujoco_py.generated import const
 # TODO: Fix the mocap integration of env with the generated model
 # environment config and setup
 env_conf = {
-            'set_on_rack': False,
+            'set_on_rack': True,
             'render': True,
             'model_name': 'rand_1',
             'mocap':False # problem when true

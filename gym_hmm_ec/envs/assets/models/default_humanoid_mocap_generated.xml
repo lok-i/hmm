@@ -140,8 +140,8 @@
       <geom name="torso" class="/" type="capsule" size="0.070000000000000007" fromto="0 -0.070000000000000007 0 0 0.070000000000000007 0"/>
       <site name="C7" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="-0.044999999999999978 0 0.077942286340599479"/>
       <site name="CLAV" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.065778483455013595 0 0.023941410032796814"/>
-      <site name="LSHO" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="4.2862637970157367e-18 0.070000000000000007 0.070000000000000007"/>
-      <site name="RSHO" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="4.2862637970157367e-18 -0.070000000000000007 0.070000000000000007"/>
+      <site name="LSHO" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="4.2862637970157367e-18 0.10500000000000001 0.070000000000000007"/>
+      <site name="RSHO" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="4.2862637970157367e-18 -0.10500000000000001 0.070000000000000007"/>
       <geom name="upper_waist" class="/" type="capsule" size="0.059999999999999998" fromto="-0.01 -0.059999999999999998 -0.12 -0.01 0.059999999999999998 -0.12"/>
       <body name="head" pos="0 0 0.19">
         <geom name="head" class="/" type="sphere" size="0.089999999999999997"/>
@@ -154,9 +154,9 @@
         <body name="pelvis" pos="0 0 -0.16500000000000001" quat="1 0 -0.002 0">
           <joint name="abdomen_x" class="/" type="hinge" pos="0 0 0.10000000000000001" axis="1 0 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="10.0" range="-35 35" armature="0.01" damping="5.0"/>
           <geom name="butt" class="/" type="capsule" size="0.089999999999999997" fromto="-0.02 -0.070000000000000007 0 -0.02 0.070000000000000007 0"/>
-          <site name="LASI" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.048943999880708008 0.070000000000000007 0.057850884871788529"/>
+          <site name="LASI" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.048943999880708008 0.10500000000000001 0.057850884871788529"/>
           <site name="LPSI" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="-0.066488008791476927 0.021000000000000001 0.0996938565740315"/>
-          <site name="RASI" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.048943999880708008 -0.070000000000000007 0.057850884871788529"/>
+          <site name="RASI" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.048943999880708008 -0.10500000000000001 0.057850884871788529"/>
           <site name="RPSI" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="-0.066488008791476927 -0.021000000000000001 0.0996938565740315"/>
           <site name="left_leg_site" class="/" size="9.9999999999999995e-07 9.9999999999999995e-07 9.9999999999999995e-07" pos="0 0.10000000000000001 -0.040000000000000001"/>
           <body pos="0 0.10000000000000001 -0.040000000000000001" name="left_leg/">
