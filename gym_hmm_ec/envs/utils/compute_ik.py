@@ -27,7 +27,7 @@ if __name__ == '__main__':
     env_conf = {
                 'set_on_rack': False,
                 'render': args.render,
-                'model_name':'default_humanoid_mocap_generated',
+                'model_name': 'default_humanoid_mocap_generated_updated',
                 'mocap':False
                 }
     # marker config

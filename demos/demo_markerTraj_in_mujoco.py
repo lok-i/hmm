@@ -4,6 +4,7 @@ from tqdm import tqdm
 import mujoco_py
 
 VIEW_MARKER_BASED_DATA = True
+STATIC_AVG_POSE = True
 
 assets_path = './gym_hmm_ec/envs/assets/'
 model_name = 'marker_set'
@@ -11,7 +12,7 @@ model_name = 'marker_set'
 
 
 if VIEW_MARKER_BASED_DATA:
-    c3d_file_name = 'marker_data/c3ds/AB1_Session1_Right6_Left6.c3d'#Trial_1.c3d'
+    c3d_file_name = 'marker_data/c3ds/AB1_Session1_Static.c3d'#AB1_Session1_Right6_Left6.c3d'#Trial_1.c3d'
     # load data from c3d of  mocap data of 40 marker set
     marker_positions = []
     
@@ -58,13 +59,25 @@ viewer.cam.elevation = -15
 viewer.cam.azimuth = 220
 
 
-# play simulation 
-for f_i,frame in enumerate(marker_positions):
-    for i in range(frame.shape[0]):
-        marker_name = 'm'+str(i)
-        sim.data.set_mocap_pos(marker_name, frame[i,:] )
-    sim.step()
-    viewer.render()
+if STATIC_AVG_POSE:
+    qpos_avg = np.mean(marker_positions,axis=0)
+    # print(qpos_avg.shape)
+    while True:
+        for i in range(qpos_avg.shape[0]):
+            marker_name = 'm'+str(i)
+            sim.data.set_mocap_pos(marker_name, qpos_avg[i,:] )
+        sim.step()
+        viewer.render()
+        
+
+else:
+    # play simulation 
+    for f_i,frame in enumerate(marker_positions):
+        for i in range(frame.shape[0]):
+            marker_name = 'm'+str(i)
+            sim.data.set_mocap_pos(marker_name, frame[i,:] )
+        sim.step()
+        viewer.render()
 
 
 

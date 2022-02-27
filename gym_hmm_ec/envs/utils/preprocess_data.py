@@ -36,12 +36,13 @@ def generate_npz_file(
                         matFile_path,
                         npzFile_path,
                         confFile_path,
+                        load_mat,
                         roi_start = 0.,
-                        roi_stop = None
+                        roi_stop = None,
                         ):
 
-
-    mat_data = scipy.io.loadmat(matFile_path)
+    if load_mat:
+        mat_data = scipy.io.loadmat(matFile_path)
     with open( dataFile_path , 'rb') as handle:
         reader = c3d.Reader(handle)
         
@@ -54,7 +55,7 @@ def generate_npz_file(
         grf_data = []
         cop_data = []
 
-        print([0])
+        
         for data in reader.read_frames():
             pbar.update(1)        
             
@@ -64,20 +65,22 @@ def generate_npz_file(
                 
                 # just the first analog reading in the frame
                 grf_data.append(data[2][:,0].tolist())
-                
-                # read the cop's
-                p1 = mat_data['forceStruct']['p1'][0][0][data[0]].tolist()
-                p2 = mat_data['forceStruct']['p2'][0][0][data[0]].tolist()
-                p3 = mat_data['forceStruct']['p3'][0][0][data[0]].tolist()
+                if load_mat:
+                    # read the cop's
+                    p1 = mat_data['forceStruct']['p1'][0][0][data[0]].tolist()
+                    p2 = mat_data['forceStruct']['p2'][0][0][data[0]].tolist()
+                    p3 = mat_data['forceStruct']['p3'][0][0][data[0]].tolist()
 
-                cop_data.append(p1+p2+p3)
+                    cop_data.append(p1+p2+p3)
 
             if data[0] > roi_stop:
                 break
 
     # mm to m
     marker_positions = 0.001*np.array(marker_positions)
-    cop_data = 0.001*np.array(cop_data)
+    if load_mat:
+        cop_data = 0.001*np.array(cop_data)
+    # cop_data = np.array(cop_data)
 
     # for forces, only moments should be converted from Nmm to Nm
     grf_data = np.array(grf_data)
@@ -93,10 +96,16 @@ def generate_npz_file(
         
     print("Marker Pos. Traj. Shape:", marker_positions.shape)
     print("GRF Traj. Shape:", grf_data.shape)
-    print("COP Traj. Shape:", cop_data.shape)
+    if load_mat:
+        print("COP Traj. Shape:", cop_data.shape)
 
     # save the npz file
-    np.savez_compressed(npzFile_path,marker_positions=marker_positions,grfs=grf_data,cops=cop_data)
+    if load_mat:
+        np.savez_compressed(npzFile_path,marker_positions=marker_positions,grfs=grf_data,cops=cop_data)
+    else:
+        np.savez_compressed(npzFile_path,marker_positions=marker_positions,grfs=grf_data)
+
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -104,6 +113,7 @@ if __name__ == '__main__':
     parser.add_argument('--c3d_filename',help='name of the c3d file',default='AB1_Session1_Right6_Left6',type=str)
     parser.add_argument('--roi_start',help='start index of the region of intrest',default=0,type=int)
     parser.add_argument('--roi_stop',help='stop index of the region of intrest',default=None,type=int)
+    parser.add_argument('--static',help='whether given file is a static file',default=False, action='store_true')
 
     args = parser.parse_args()  
 
@@ -132,4 +142,5 @@ if __name__ == '__main__':
                         confFile_path=conf_filepath,
                         roi_start=args.roi_start,
                         roi_stop =args.roi_stop,
+                        load_mat = not args.static
                     )    

@@ -10,7 +10,7 @@ from mujoco_py.generated import const
 env_conf = {
             'set_on_rack': True,
             'render': True,
-            'model_name': 'rand_1',
+            'model_name': 'default_humanoid_mocap_generated_updated',
             'mocap':False # problem when true
             }
 
@@ -22,6 +22,7 @@ env.reset()
 # keep the similation in pause until activated manually
 if env.env_params['render']:
     env.viewer._paused = True
+
 
 while True:
 
