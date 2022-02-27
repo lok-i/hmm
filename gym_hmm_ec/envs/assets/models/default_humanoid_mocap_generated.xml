@@ -9,10 +9,7 @@
     <material name="grid" class="/" texture="texplane" texrepeat="1 1" texuniform="true" reflectance="0.0"/>
   </asset>
   <worldbody>
-    <!-- <body name="floor" pos="0 0 0"> -->
-    
     <geom name="floor" class="/" type="plane" conaffinity="1" size="100 100 0.20000000000000001" material="grid" pos="0 0 0"/>
-    <!-- </body> -->
     <body name="torso" pos="0 0 1.5919999999999999">
       <light name="top" class="/" mode="trackcom" pos="0 0 2"/>
       <camera name="back" class="/" mode="trackcom" pos="-3 0 1" xyaxes="0 -1 0 1 0 2"/>
@@ -25,8 +22,7 @@
       <site name="RSHO" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="4.2862637970157367e-18 -0.10500000000000001 0.070000000000000007"/>
       <geom name="upper_waist" class="/" type="capsule" size="0.059999999999999998" fromto="-0.01 -0.059999999999999998 -0.12 -0.01 0.059999999999999998 -0.12"/>
       <body name="head" pos="0 0 0.19">
-       <!-- NOTE CHANGE -->
-        <geom name="head" pos='0 0 0' class="/" type="sphere" size="0.089999999999999997"/>
+        <geom name="head" class="/" type="sphere" size="0.089999999999999997" pos="0 0 0"/>
       </body>
       <camera name="egocentric" class="/" fovy="80.0" pos="0.089999999999999997 0 0" xyaxes="0 -1 0 0.10000000000000001 1 2"/>
       <body name="lower_waist" pos="-0.01 0 -0.26000000000000001" quat="1 0 -0.002 0">
@@ -113,7 +109,6 @@
         </body>
       </body>
     </body>
-    <!-- NOTE CHANGE -->
     <body name="m0" mocap="true" pos="0 0 0">
       <geom name="m0" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
     </body>
@@ -234,13 +229,9 @@
     <body name="m39" mocap="true" pos="0 0 0">
       <geom name="m39" class="/" type="sphere" size="0.01" rgba="0 1 0 1"/>
     </body>
-
-
-
   </worldbody>
   <equality>
-    <!-- NOTE CHANGE -->
-    <weld name="world_root" class="/" active="true" body1="torso" relpose="0 0 2 1 0 0 0"/>
+    <weld name="world_root" class="/" active="false" body1="torso" relpose="0 0 -2 1 0 0 0"/>
     <joint name="abdomen_y" class="/" active="true" joint1="abdomen_y"/>
     <joint name="abdomen_z" class="/" active="true" joint1="abdomen_z"/>
     <joint name="abdomen_x" class="/" active="true" joint1="abdomen_x"/>

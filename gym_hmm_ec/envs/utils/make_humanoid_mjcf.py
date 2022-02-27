@@ -255,7 +255,7 @@ class Humanoid(object):
     #   <geom name="floor" type="plane" conaffinity="1" size="100 100 .2" material="grid"/>
     # </body>
     
-    self.floor= self.mjcf_model.worldbody.add('body', name='floor',pos=[0,0,0])
+    # self.floor= self.mjcf_model.worldbody.add('body', name='floor',pos=[0,0,0])
     # <texture builtin='checker' height='512' name='texplane' rgb1='0.2 0.2 0.2' rgb2='0.3 0.3 0.3' type='2d' width='512'/>
     self.mjcf_model.asset.add('texture', builtin='checker', height=512, name='texplane', rgb1=[0.2, 0.2, 0.2], rgb2=[0.3, 0.3, 0.3], type='2d', width=512)
     # <material name='grid' reflectance='0.000000' texrepeat='1 1' texture='texplane' texuniform='true'/>
@@ -263,12 +263,8 @@ class Humanoid(object):
 
 
     
-    self.floor.add('geom',name='floor',type='plane',pos=[0,0,0],conaffinity=1, size=[100, 100, .2],material='grid')
+    self.floor = self.mjcf_model.worldbody.add('geom',name='floor',type='plane',pos=[0,0,0],conaffinity=1, size=[100, 100, .2],material='grid')
     
-    #add n markers
-    for i in range(40):
-      self.marker = self.mjcf_model.worldbody.add('body', name='m'+str(i),mocap=True,pos=[0,0,0])
-      self.marker.add('geom',name='m'+str(i),type='sphere', size=[0.01],rgba=[0.,1.,0.,1.0])
 
     #<body name="torso" pos="0 0 1.5" childclass="body">
 
@@ -342,7 +338,7 @@ class Humanoid(object):
     #   <body name="head" pos="0 0 .19">
     self.head = self.torso.add('body', name='head',pos=[0, 0, torso_h_scale*.19])
     #     <geom name="head" type="sphere" size=".09"/>
-    self.head.add('geom', name='head', type='sphere', size=[head_r_scale*.09])  
+    self.head.add('geom', name='head',pos=[0, 0, 0], type='sphere', size=[head_r_scale*.09])  
     #     <camera name="egocentric" pos=".09 0 0" xyaxes="0 -1 0 .1 0 1" fovy="80"/>
     self.torso.add('camera',name='egocentric',pos=[.09, 0, 0],xyaxes=[0, -1, 0, 0.1, 1, 2] ,fovy="80")
     
@@ -393,7 +389,12 @@ class Humanoid(object):
               k*0.5*link_length ,
               r*np.sin(theta), 
               ]
-              )  
+              )
+
+    #add n markers
+    for i in range(40):
+      self.marker = self.mjcf_model.worldbody.add('body', name='m'+str(i),mocap=True,pos=[0,0,0])
+      self.marker.add('geom',name='m'+str(i),type='sphere', size=[0.01],rgba=[0.,1.,0.,1.0])
 
 
       
@@ -431,7 +432,7 @@ class Humanoid(object):
     #   <joint name="abdomen_z" active="true" joint1="abdomen_z"/>
     #   <joint name="abdomen_x" active="true" joint1="abdomen_x"/>
     # </equality>
-    self.mjcf_model.equality.add("weld",name='world_root',active='False',body1='floor', body2='torso',relpose=[0., 0., 2., 1., 0, 0, 0,])
+    self.mjcf_model.equality.add("weld",name='world_root',active='False',body1='torso',relpose=[0., 0., -2., 1., 0, 0, 0,])
     self.mjcf_model.equality.add("joint",name='abdomen_y',active='True',joint1='abdomen_y')
     self.mjcf_model.equality.add("joint",name='abdomen_z',active='True',joint1='abdomen_z')
     self.mjcf_model.equality.add("joint",name='abdomen_x',active='True',joint1='abdomen_x')

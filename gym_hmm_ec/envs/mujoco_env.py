@@ -109,9 +109,10 @@ class MujocoEnv(gym.Env):
             
             if eq_type ==  equality_constraint_id2type['weld']:
                 
-                if self.model.body_id2name(eq_obj1id) == 'floor':
+                if self.model.body_id2name(eq_obj2id) == 'world':
                     if self.env_params['set_on_rack']:
                         self.model.eq_active[eq_id] = 1
+                
                 if 'mocap_' in self.model.body_id2name(eq_obj1id) or 'mocap_' in self.model.body_id2name(eq_obj2id):
                     if self.env_params['mocap']:
                         self.model.eq_active[eq_id] = 1 
