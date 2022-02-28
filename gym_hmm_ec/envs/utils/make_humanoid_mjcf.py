@@ -28,6 +28,7 @@ class Leg(object):
               shin_r_scale = 1.,
               foot_l_scale = 1.,
               foot_r_scale = 1.,
+             force_points_per_m_in_foot = 48              
               ):
 
     self.mjcf_model = mjcf.RootElement(model=name)
@@ -101,6 +102,7 @@ class Leg(object):
     alpha = (foot_l_scale - 1) * (x2 - x1) * 0.5
     # <geom name="right_right_foot" fromto="-.07 -.02 0 .14 -.04 0" size=".027"/>    
     
+      
     self.foot.add('geom', name='right_foot',type='capsule',fromto=[x1 - alpha, symetric_transform*-.02, 0, x2+alpha, symetric_transform*-.02, 0],size=[foot_r_scale*.027])
     # <geom name="left_right_foot" fromto="-.07 0 0 .14  .02 0" size=".027"/>
     self.foot.add('geom', name='left_foot',type='capsule',fromto=[x1 - alpha, symetric_transform*.02, 0, x2+alpha,  symetric_transform*.02, 0],size=[foot_r_scale*.027])
@@ -122,6 +124,23 @@ class Leg(object):
               r*np.sin(theta), 
               ]
               ) 
+    nmarkers_along_length = int(link_length*force_points_per_m_in_foot)
+    nmarkers_along_breadth = int(4*foot_radius*force_points_per_m_in_foot)
+    
+    l_pixel = link_length/nmarkers_along_length
+    b_pixel = (4*foot_radius)/nmarkers_along_breadth
+
+    for along_l in range(nmarkers_along_length):
+      for along_b in range(nmarkers_along_breadth):
+        m_pos = [ 
+                  l_pixel*along_l + x1,
+                  b_pixel*along_b + -.02-foot_radius,
+                  -foot_radius
+                  ]
+        self.foot.add('body',name='ffp'+str(along_l)+str(along_b),
+                             pos=m_pos)
+
+
     # <motor name="right_hip_x"     gear="40"  joint="right_hip_x"/> <!-- roll -->
     # <motor name="right_hip_z"     gear="40"  joint="right_hip_z"/> <!-- yaw -->
     # <motor name="right_hip_y"     gear="120" joint="right_hip_y"/> <!-- pitch -->
@@ -144,6 +163,7 @@ class Humanoid(object):
                torso_h_scale = 1.0,
                torso_b_scale = 1.0,
                head_r_scale = 1.0,
+               force_points_per_m_in_foot = 48,
                leg_scales =  
                             {
                                 'left_leg':                           
@@ -392,12 +412,11 @@ class Humanoid(object):
               )
 
     #add n markers
+    # NOTE: TBC, n marers
     for i in range(40):
       self.marker = self.mjcf_model.worldbody.add('body', name='m'+str(i),mocap=True,pos=[0,0,0])
       self.marker.add('geom',name='m'+str(i),type='sphere', size=[0.01],rgba=[0.,1.,0.,1.0])
 
-
-      
     # <motor name="abdomen_y"       gear="40"  joint="abdomen_y"/>
     # <motor name="abdomen_z"       gear="40"  joint="abdomen_z"/>
     # <motor name="abdomen_x"       gear="40"  joint="abdomen_x"/>
@@ -415,12 +434,14 @@ class Humanoid(object):
     self.left_leg = Leg(name='left_leg',
                         symetric_transform = -1.,
                         marker_pos_params = marker_pos_params['left_leg'],
+                       force_points_per_m_in_foot =  force_points_per_m_in_foot,
                         **leg_scales['left_leg']
                         )
     left_leg_site.attach(self.left_leg.mjcf_model)
 
     self.right_leg = Leg(name='right_leg',
                         symetric_transform = 1.,
+                       force_points_per_m_in_foot =  force_points_per_m_in_foot,
                         marker_pos_params = marker_pos_params['right_leg'],
                         **leg_scales['right_leg']
                         )
@@ -456,6 +477,7 @@ if __name__ == '__main__':
                   'torso_h_scale' : 1.0,
                   'torso_b_scale' : 1.0,
                   'head_r_scale' : 1.0,
+                  
                   'leg_scales' :  {
 
                                     'left_leg':                           

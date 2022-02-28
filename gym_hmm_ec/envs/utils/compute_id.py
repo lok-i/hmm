@@ -27,7 +27,7 @@ if __name__ == '__main__':
     env_conf = {
                 'set_on_rack': False,
                 'render': args.render,
-                'model_name':'default_humanoid_mocap_generated',
+                'model_name':'default_humanoid_mocap_generated_updated',
                 'mocap':False
                 }
     # marker config
@@ -146,6 +146,10 @@ if __name__ == '__main__':
         # env.viewer.cam.azimuth += 0.25 #180 
         step += 1
 
+    if args.export_solns:
+        id_solns = np.array(id_solns)
+        print('ID Soln Shape',id_solns.shape)
+        np.savez_compressed(assets_path+"our_data/id_solns/"+args.mocap_npz_filename, id_solns=id_solns)
 
 
     if args.plot_solns:
@@ -190,36 +194,36 @@ if __name__ == '__main__':
             axs[row,col].plot(
                                 time_scale, 
                                 id_solns[:,joint_id],
-                                label=joint_id2name[joint_id]
                                 )
+            axs[row,col].set_title(joint_id2name[joint_id])
             if col == 0:
                 # left grf
                 axs_twin = axs[row,col].twinx()
                 axs_twin.plot(
                             time_scale, 
                             mocap_data['grfs'][:, marker_conf['forces_name2id']['Force.Fz2']],
-                            alpha=0.75,
+                            alpha=0.6,
                             color='red',
-                            label='left_leg/Fz'
+                            linestyle = '-.'
                             )
+                axs_twin.set_ylabel('left_leg/Fz')
             else:
                 # right grf
                 axs_twin = axs[row,col].twinx()
                 axs_twin.plot(
                                 time_scale, 
                                 mocap_data['grfs'][:, marker_conf['forces_name2id']['Force.Fz1']],
-                                alpha=0.75,
+                                alpha=0.6,
                                 color='red',
-                                label='right_leg/Fz'
-
+                                linestyle = '-.'
                                 )
+                axs_twin.set_ylabel('right_leg/Fz')
 
             # axs[row,col].plot(timesteps, torques_of_joints_contact[:,plot_id],label=joint_name)
 
             axs[row,col].set_ylabel("torques (Nm)")
             axs[row,col].set_xlabel("time (s)")
-            # axs[row,col].set_ylim([-20, 20])
-            axs[row,col].legend(loc='upper right')
+            # axs[row,col].legend(loc='upper right')
             axs[row,col].grid()
             plot_id +=1 
 

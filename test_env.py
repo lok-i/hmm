@@ -10,7 +10,7 @@ from mujoco_py.generated import const
 env_conf = {
             'set_on_rack': False,
             'render': True,
-            'model_name': 'default_humanoid_mocap_generated_updated',
+            'model_name': 'default_humanoid_mocap_generated',
             'mocap':False # problem when true
             }
 

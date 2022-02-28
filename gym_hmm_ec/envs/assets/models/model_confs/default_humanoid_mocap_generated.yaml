@@ -14,6 +14,9 @@ leg_scales:
     shin_r_scale: 1.0
     thigh_h_scale: 1.0
     thigh_r_scale: 1.0
+
+force_points_per_m_in_foot: 48
+
 marker_pos_params:
   left_leg:
     foot:
