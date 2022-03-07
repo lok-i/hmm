@@ -42,55 +42,63 @@ class Leg(object):
     self.hip_y = self.thigh.add('joint', name='hip_y', type='hinge',damping=5,stiffness=20, axis=[0, 1, 0], range=[-110, 20], armature=.01, limited=True, solimplimit=[0, .99 ,.01])
     # <geom name="right_thigh" fromto="0 0 0 0 .01 -.34" size=".06"/>
     
-    link_name = 'thigh'
-    link_radius = thigh_r_scale*0.06
-    link_length = thigh_h_scale*.34  
+    thigh_name = 'thigh'
+    thigh_radius = thigh_r_scale*0.06
+    thigh_length = thigh_h_scale*.34 - thigh_radius  
     self.thigh.add('geom', name='thigh', type='capsule',
-                       fromto=[0, 0, thigh_h_scale*0, 0, symetric_transform*.01, -link_length ], size=[link_radius])
-    for t_m in marker_pos_params[link_name]:
+                       fromto=[0, 0, thigh_h_scale*0, 0, symetric_transform*.01 , -thigh_length ], size=[thigh_radius])
+    for t_m in marker_pos_params[thigh_name]:
       
-      r = thigh_r_scale*marker_pos_params[link_name][t_m]['r_nominal'] if 'r_nominal' in marker_pos_params[link_name][t_m].keys() else link_radius
-      theta = np.radians(marker_pos_params[link_name][t_m]['theta'])
-      k = marker_pos_params[link_name][t_m]['k']
+      r = thigh_r_scale*marker_pos_params[thigh_name][t_m]['r_nominal'] if 'r_nominal' in marker_pos_params[thigh_name][t_m].keys() else thigh_radius
+      theta = np.radians(marker_pos_params[thigh_name][t_m]['theta'])
+      k = marker_pos_params[thigh_name][t_m]['k']
       
       self.thigh.add(
           'site', name=t_m,type="sphere", rgba="1. 0. 0. 1.",size=[0.01], 
           pos=[
               r*np.cos(theta), 
               r*np.sin(theta), 
-              k*0.5*link_length - 0.5*link_length,
+              k*0.5*thigh_length - 0.5*thigh_length,
               ]
-              )                         
+              )                       
 
     #  <body name="right_shin" pos="0 .01 -.403">
-    self.shin = self.thigh.add('body', name='shin',pos=[0, symetric_transform*.01, thigh_h_scale*-.403])
+    self.shin = self.thigh.add('body', name='shin',
+                                pos=[0, 
+                                     symetric_transform*.01, 
+                                     thigh_h_scale*-.403 + thigh_radius]
+                                     )
     # <joint name="right_knee" pos="0 0 .02" axis="0 -1 0" range="-160 2"/>
-    self.knee = self.shin.add('joint', name='knee', pos=[0, 0, .02], type='hinge',damping=0.2,stiffness=1, axis=[0, -1, 0], range=[-160, 2], armature=.01, limited=True, solimplimit=[0, .99 ,.01])
+    self.knee = self.shin.add('joint', name='knee', 
+                              pos=[0, 0, .02],
+                              type='hinge',damping=0.2,stiffness=1, 
+                              axis=[0, -1, 0], range=[-160, 2], 
+                              armature=.01, limited=True, solimplimit=[0, .99 ,.01])
     # <geom name="right_shin" fromto="0 0 0 0 0 -.3"  size=".049"/>
     
-    link_name = 'shin'
-    link_radius = shin_r_scale*.049
-    link_length = shin_h_scale*.3
-    self.shin.add('geom', name='shin',type='capsule',fromto=[0, 0, 0, 0, 0, -link_length ],size=[link_radius])
-    for t_m in marker_pos_params[link_name]:
+    shin_name = 'shin'
+    shin_radius = shin_r_scale*.049
+    shin_length = shin_h_scale*.3 - 2*shin_radius
+    self.shin.add('geom', name='shin',type='capsule',fromto=[0, 0, 0, 0, 0, -shin_length ],size=[shin_radius])
+    for t_m in marker_pos_params[shin_name]:
       
-      r = shin_r_scale*marker_pos_params[link_name][t_m]['r_nominal'] if 'r_nominal' in marker_pos_params[link_name][t_m].keys() else link_radius
-      theta = np.radians(marker_pos_params[link_name][t_m]['theta'])
-      k = marker_pos_params[link_name][t_m]['k']
+      r = shin_r_scale*marker_pos_params[shin_name][t_m]['r_nominal'] if 'r_nominal' in marker_pos_params[shin_name][t_m].keys() else shin_radius
+      theta = np.radians(marker_pos_params[shin_name][t_m]['theta'])
+      k = marker_pos_params[shin_name][t_m]['k']
       
       self.shin.add(
           'site', name=t_m,type="sphere", rgba="1. 0. 0. 1.",size=[0.01], 
           pos=[
               r*np.cos(theta), 
               r*np.sin(theta), 
-              k*0.5*link_length - 0.5*link_length,
+              k*0.5*shin_length - 0.5*shin_length,
               ]
               )                         
 
 
     ankle_clearence =  0.063
     foot_radius = foot_r_scale*.027
-    self.foot = self.shin.add('body',name='foot',pos=[0, 0, (shin_h_scale*-.3) - (foot_radius+ ankle_clearence) ])
+    self.foot = self.shin.add('body',name='foot',pos=[0, 0, (shin_h_scale*-.3) - (foot_radius+ ankle_clearence) + 2*shin_radius ])
     # <joint name="right_ankle_y" pos="0 0 .08" axis="0 1 0"   range="-50 50" stiffness="6"/>
     self.ankle_y = self.foot.add('joint', name='ankle_y', pos=[0, 0, .08], type='hinge',damping=0.2,stiffness=6, axis=[0, 1, 0], range=[-50, 50], armature=.01, limited=True, solimplimit=[0, .99 ,.01])
     # <joint name="right_ankle_x" pos="0 0 .04" axis="1 0 .5" range="-50 50" stiffness="3"/>
@@ -129,7 +137,6 @@ class Leg(object):
     
     l_pixel = link_length/nmarkers_along_length
     b_pixel = (4*foot_radius)/nmarkers_along_breadth
-
     for along_l in range(nmarkers_along_length):
       for along_b in range(nmarkers_along_breadth):
         m_pos = [ 
@@ -137,7 +144,7 @@ class Leg(object):
                   b_pixel*along_b + -.02-foot_radius,
                   -foot_radius
                   ]
-        self.foot.add('body',name='ffp'+str(along_l)+str(along_b),
+        self.foot.add('body',name='ffp_'+str(along_l)+'_'+str(along_b),
                              pos=m_pos)
 
 
@@ -315,13 +322,15 @@ class Humanoid(object):
     self.torso.add('camera',name='side',pos=[0, -3, 1],xyaxes=[1, 0, 0, 0, 1, 2] ,mode='trackcom')
     #   <freejoint name="root"/>
     self.torso.add('freejoint',name='root')
-    y1 = -.07
-    y2 =  .07
-    alpha = (torso_b_scale - 1) * (y2 - y1) * 0.5
+
 
     link_name = 'torso'
     link_radius = torso_h_scale*.07
-    link_length = y2+alpha - (y1 - alpha)
+
+    y1 = -.07
+    y2 =  .07
+    alpha = (torso_b_scale - 1) * (y2 - y1) * 0.5 - link_radius
+    link_length = y2+alpha - (y1 - alpha) 
     #   <geom name="torso" fromto="0 -.07 0 0 .07 0" size=".07"/>
     self.torso.add('geom', name='torso', type='capsule',
                        fromto=[0, y1 - alpha, 0, 0, y2+alpha, 0], size=[link_radius])  
@@ -349,11 +358,12 @@ class Humanoid(object):
     #   <site name="CLAV" type="sphere" rgba="1. 0. 0. 1." pos=".07 0 0" size="0.01"/>
 
     #   <geom name="upper_waist" fromto="-.01 -.06 -.12 -.01 .06 -.12" size=".06"/>
+    link_radius = torso_h_scale*.06
     y1 = -.06
     y2 =  .06
-    alpha = (torso_b_scale - 1) * (y2 - y1) * 0.5
+    alpha = (torso_b_scale - 1) * (y2 - y1) * 0.5 - link_radius
     self.torso.add('geom', name='upper_waist', type='capsule',
-                       fromto=[-.01, y1 - alpha, torso_h_scale*-.12, -.01, y2 + alpha, torso_h_scale*-.12], size=[torso_h_scale*.06])  
+                       fromto=[-.01, y1 - alpha, torso_h_scale*-.12, -.01, y2 + alpha, torso_h_scale*-.12], size=[link_radius])  
     #   <!-- <site name="torso" class="touch" type="box" pos="0 0 -.05" size=".075 .14 .13"/> -->
     #   <body name="head" pos="0 0 .19">
     self.head = self.torso.add('body', name='head',pos=[0, 0, torso_h_scale*.19])
@@ -366,10 +376,11 @@ class Humanoid(object):
     #   <body name="lower_waist" pos="-.01 0 -.260" quat="1.000 0 -.002 0">
     self.lower_waist = self.torso.add('body', name='lower_waist',pos=[-.01, 0, torso_h_scale*-.260],quat=[1.000, 0, -.002, 0])
     #     <geom name="lower_waist" fromto="0 -.06 0 0 .06 0" size=".06"/>
+    link_radius = torso_h_scale*.06
     y1 = -.06
     y2 =  .06
-    alpha = (torso_b_scale - 1) * (y2 - y1) * 0.5
-    self.lower_waist.add('geom', name='lower_waist', type='capsule',fromto=[0, y1-alpha, 0, 0, y2 + alpha, 0], size=[torso_h_scale*.06])
+    alpha = (torso_b_scale - 1) * (y2 - y1) * 0.5 - link_radius
+    self.lower_waist.add('geom', name='lower_waist', type='capsule',fromto=[0, y1-alpha, 0, 0, y2 + alpha, 0], size=[link_radius])
     #     <!-- <site name="lower_waist" class="touch" size=".061 .06" zaxis="0 1 0"/> -->
     #     <joint name="abdomen_z" pos="0 0 .065" axis="0 0 1" range="-45 45" class="big_stiff_joint"/>
     self.abdomen_z = self.lower_waist.add('joint', name='abdomen_z',pos=[0, 0, torso_h_scale*.065], type='hinge',damping=5,stiffness=20, axis=[0, 0, 1], range=[-45, 45], armature=.01, limited=True, solimplimit=[0, .99 ,.01])
@@ -386,15 +397,18 @@ class Humanoid(object):
     #       <site name="LPSI" type="sphere" rgba="1. 0. 0. 1." pos="-.10 0.03 0.15" size="0.01"/>
 
     #       <geom name="butt" fromto="-.02 -.07 0 -.02 .07 0" size=".09"/>
-    y1 = -.07
-    y2 =  .07
-    alpha = (torso_b_scale - 1) * (y2 - y1) * 0.5    
+
 
     link_name = 'pelvis'
     link_radius = torso_h_scale*.09
-    link_length = y2+alpha - (y1-alpha)
+    y1 = -.07
+    y2 =  .07
+    alpha = (torso_b_scale - 1) * (y2 - y1) * 0.5 - link_radius
 
-    self.pelvis.add('geom', name='butt', type='capsule',fromto=[-.02, y1-alpha, 0, -.02, y2+alpha, 0], size=[link_radius])
+    link_length = y2+alpha - (y1-alpha) 
+
+    self.pelvis.add('geom', name='butt', type='capsule',
+                    fromto=[-.02, y1-alpha, 0, -.02, y2+alpha, 0], size=[link_radius])
     
     for t_m in marker_pos_params[link_name]:
       
@@ -411,11 +425,6 @@ class Humanoid(object):
               ]
               )
 
-    #add n markers
-    # NOTE: TBC, n marers
-    for i in range(40):
-      self.marker = self.mjcf_model.worldbody.add('body', name='m'+str(i),mocap=True,pos=[0,0,0])
-      self.marker.add('geom',name='m'+str(i),type='sphere', size=[0.01],rgba=[0.,1.,0.,1.0])
 
     # <motor name="abdomen_y"       gear="40"  joint="abdomen_y"/>
     # <motor name="abdomen_z"       gear="40"  joint="abdomen_z"/>
@@ -427,9 +436,28 @@ class Humanoid(object):
 
 
     left_leg_site = self.pelvis.add(
-        'site', name='left_leg_site',size=[1e-6]*3, pos=[0, torso_b_scale*.1 ,torso_h_scale*-.04])
+        'site', name='left_leg_site',size=[1e-6]*3, 
+        # pos=[0, 
+        # torso_b_scale*.1 ,
+        # torso_h_scale*-.04]
+
+        pos=[0, 
+        0.1+alpha,
+        torso_h_scale*-.04]
+
+        )
     right_leg_site = self.pelvis.add(
-        'site', name='right_leg_site',size=[1e-6]*3, pos=[0, torso_b_scale*-.1 ,torso_h_scale*-.04])
+        'site', name='right_leg_site',size=[1e-6]*3, 
+        # pos=[0, 
+        # torso_b_scale*-.1 ,
+        # torso_h_scale*-.04]
+
+        pos=[0, 
+        -0.1-alpha ,
+        torso_h_scale*-.04]
+
+
+        )
     
     self.left_leg = Leg(name='left_leg',
                         symetric_transform = -1.,
@@ -446,6 +474,12 @@ class Humanoid(object):
                         **leg_scales['right_leg']
                         )
     right_leg_site.attach(self.right_leg.mjcf_model)
+
+    #add n markers
+    # NOTE: TBC, n marers
+    for i in range(40):
+      self.marker = self.mjcf_model.worldbody.add('body', name='m'+str(i),mocap=True,pos=[0,0,0])
+      self.marker.add('geom',name='m'+str(i),type='sphere', size=[0.01],rgba=[0.,1.,0.,1.0])
 
     # <equality>
     #   <weld name='world_root' active="false" body1='floor' body2='torso' relpose="0. 0. 2. 1. 0 0 0"/>

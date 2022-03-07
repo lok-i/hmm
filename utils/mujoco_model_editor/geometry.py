@@ -83,8 +83,11 @@ class Sphere:
     def __init__(self, pos, size, node=None):
         self.symm_geom = None
         self.pos = pos.copy()
+        self.pos_w = None
         self.size = size
         self.type = 'sphere'
+        self.is_site = False
+        self.body_w_pos = np.zeros(3)
         self.bone = None
         if node is None:
             self.node = Element('geom')
@@ -112,12 +115,20 @@ class Sphere:
 
         # renderer.render_point(local_origin+np.zeros(3,), 1)
         # glPopMatrix()
-        renderer.render_point(local_origin+self.pos,  self.size)
+        if not isinstance(self.pos_w,np.ndarray):
+            renderer.render_point(local_origin+self.pos,  self.size)
+        else:
+            renderer.render_point(self.pos_w,  self.size)
 
 
 
     def pick(self, ray,local_origin=np.zeros(3)):
-        return ray.dist2point(local_origin+self.pos) <= self.size
+
+        # print(ray.dist2point(local_origin+self.pos), self.size)
+        if not isinstance(self.pos_w,np.ndarray):
+            return ray.dist2point(local_origin+self.pos) <= self.size
+        else:
+            return ray.dist2point(self.pos_w) <= self.size
 
     def lengthen(self, delta):
         self.size += delta
@@ -131,7 +142,11 @@ class Sphere:
         return
 
     def sync_node(self, local_coord):
-        pos = self.pos - self.bone.sp if local_coord else self.pos
+        if not isinstance(self.pos_w,np.ndarray):
+            pos = self.pos - self.bone.sp if local_coord else self.pos
+        else:
+            pos = self.pos - self.bone.sp if local_coord else (self.pos_w - self.body_w_pos)
+
         self.node.attrib['pos'] = '{:.4f} {:.4f} {:.4f}'.format(*pos)
         self.node.attrib['size'] = '{:.4f}'.format(self.size)
         self.node.attrib['type'] = self.type

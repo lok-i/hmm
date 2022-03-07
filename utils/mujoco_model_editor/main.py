@@ -15,9 +15,13 @@ parser.add_argument('--static_input', default="data/humanoid_out.xml", metavar='
 parser.add_argument('--local', action='store_true', default=False)
 args = parser.parse_args()
 
+ 
 # -----------
 # VARIABLES
 # -----------
+
+prev_body_marker = None
+
 
 g_fViewDistance = 9.
 g_Width = 800
@@ -128,6 +132,15 @@ def keyboard(key, x, y):
         skeleton.save_to_xml(output_file, args.local)
         print('model saved to {}'.format(output_file))
 
+    elif key == 't':
+        for static_marker_geom in skeleton.static_markers:
+            if static_marker_geom is not None:
+                static_marker_geom.move(np.array([0, 0, trans_dist]))           
+
+    elif key == 'g':
+        for static_marker_geom in skeleton.static_markers:
+            if static_marker_geom is not None:
+                static_marker_geom.move(np.array([0, 0,-trans_dist]))   
 
     # movments camera
     # global theta, zoom
@@ -138,6 +151,15 @@ def keyboard(key, x, y):
     elif key == '<':
         theta -= 90
         update_cam()
+
+    elif key == '}':
+        global phi
+        phi += 90
+        update_cam()
+    elif key == '{':
+        phi -= 90
+        update_cam()
+
 
     elif key == '-':
         global zoom
@@ -318,7 +340,7 @@ def special(key, x, y):
 
 
 def mouse(button, state, x, y):
-    global g_button, x_start, y_start
+    global g_button, x_start, y_start, prev_body_marker
     if state == GLUT_DOWN:
         g_button = button
         x_start = x
@@ -327,8 +349,24 @@ def mouse(button, state, x, y):
         if button == GLUT_RIGHT_BUTTON:
             mouse_ray = get_ray_from_screen(x, y)
             skeleton.pick_geom(mouse_ray)
-            if skeleton.picked_bone is not None:
-                print(skeleton.picked_bone)
+            
+            if skeleton.picked_geom.type == 'sphere' and skeleton.picked_geom.is_site:
+                prev_body_marker =  skeleton.picked_geom
+            # if skeleton.picked_bone is not None:
+            #     print(skeleton.picked_bone)
+            glutPostRedisplay()
+
+        if button == GLUT_LEFT_BUTTON:
+            mouse_ray = get_ray_from_screen(x, y)
+            skeleton.pick_target_marker(mouse_ray)
+            
+            if skeleton.picked_static_marker is not None:
+                                
+                if not prev_body_marker == None:
+                    prev_body_marker.pos_w = skeleton.picked_static_marker.pos.copy()
+                    
+
+
             glutPostRedisplay()
 
 

@@ -5,7 +5,7 @@ import math
 from gym import utils
 from gym import spaces
 from mujoco_py.generated import const
-from gym_hmm_ec.envs.utils import misc_functions
+from utils import misc_functions
 import gym_hmm_ec.envs.mujoco_env as mujoco_env
 
 class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):

@@ -87,7 +87,6 @@ def generate_npz_file(
     config_file = open(confFile_path,'r+')
     marker_conf = yaml.load(config_file, Loader=yaml.FullLoader)
     forces_name2id = marker_conf['forces_name2id']
-
     for key in forces_name2id.keys():
         if 'Moment' in key:
             moment_id = forces_name2id[key]
@@ -106,6 +105,7 @@ def generate_npz_file(
         np.savez_compressed(npzFile_path,marker_positions=marker_positions,grfs=grf_data)
 
 
+# def generate_scaling_terms():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -138,7 +138,7 @@ if __name__ == '__main__':
     generate_npz_file(
                         dataFile_path=c3d_filepath,
                         npzFile_path=npz_filepath,
-                         matFile_path=mat_filepath,
+                        matFile_path=mat_filepath,
                         confFile_path=conf_filepath,
                         roi_start=args.roi_start,
                         roi_stop =args.roi_stop,

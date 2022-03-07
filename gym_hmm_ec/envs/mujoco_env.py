@@ -1,14 +1,9 @@
 import os
-import glfw
-import copy
-from mujoco_py.utils import rec_copy, rec_assign
-
 from gym import error, spaces
 from gym.utils import seeding
 import numpy as np
 from os import path
 import gym
-import six
 
 try:
     import mujoco_py

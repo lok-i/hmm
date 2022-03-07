@@ -2,14 +2,14 @@
 import numpy as np
 import os
 import yaml
-from gym_hmm_ec.envs.utils.make_humanoid_mjcf import Humanoid 
+from utils.make_humanoid_mjcf import Humanoid 
 from dm_control import mjcf
 
 assets_path = './gym_hmm_ec/envs/assets/'
-marker_conf_file_name = 'marker_config.yaml'
+marker_conf_file_name = 'AB1_Session1_Static.yaml'
 
 
-config_file = open(assets_path+"our_data/"+ marker_conf_file_name,'r+')
+config_file = open(assets_path+"our_data/marker_data/confs/"+ marker_conf_file_name,'r+')
 marker_conf = yaml.load(config_file, Loader=yaml.FullLoader)
 config_file.close()
 marker_name2id = marker_conf['marker_name2id']
@@ -37,8 +37,8 @@ to_compute = {
                     },
                 'torso_all':
                 {
-                'breadth':{'from':['RSHO'],'to':['LSHO'],'operation':'measure'},
-                'length':{'from':['RSHO'],'to':['RGT'],'operation':'measure'},
+                'breadth':{'from':['RGT'],'to':['LGT'],'operation':'measure'},
+                'length':{'operation':'ignore'},
 
 
                 }
@@ -47,8 +47,7 @@ to_compute = {
             
             }
 
-from_mark = 'RKNL'
-to_mark = ['RKNL', 'RKNM']
+
 
 marker_geometry_avg = {}
 for link in to_compute:
@@ -56,33 +55,33 @@ for link in to_compute:
 
 print(marker_geometry_avg)
 
-n_samples = 19
-for n_frame in range(n_samples):
-    print("Frame:",n_frame)
-    frame = np.load(assets_path+"our_data/mocap_data/frame_rand"+str(n_frame)+".npy")
+static_marker_file = 'gym_hmm_ec/envs/assets/our_data/marker_data/processed_data/AB1_Session1_Static_from_0_to_None.npz'
+static_marker_pos = np.load(static_marker_file)['marker_positions']
 
+n_samples = static_marker_pos.shape[0]
+for n_frame, frame in enumerate(static_marker_pos):
+    
     for link in to_compute:
         for metric in to_compute[link].keys():
-            
-                
-            k = 0
-            sum_sub_samples = 0.
-            for from_marker in to_compute[link][metric]['from']:
-                for to_marker in to_compute[link][metric]['to']:
-                    from_id = marker_name2id[from_marker]
-                    to_id = marker_name2id[to_marker]
-                    
-                    sum_sub_samples += np.linalg.norm( frame[from_id] - frame[to_id])
 
-                    k+=1
+            if to_compute[link][metric]['operation'] != 'ignore':          
+                k = 0
+                sum_sub_samples = 0.
+                for from_marker in to_compute[link][metric]['from']:
+                    for to_marker in to_compute[link][metric]['to']:
+                        from_id = marker_name2id[from_marker]
+                        to_id = marker_name2id[to_marker]
+                        
+                        sum_sub_samples += np.linalg.norm( frame[from_id] - frame[to_id])
 
-            if to_compute[link][metric]['operation'] == 'measure':
-                marker_geometry_avg[link][metric]['value'] += float(sum_sub_samples/ (k*n_samples) )
-            if to_compute[link][metric]['operation'] == 'measure+by2':
-                marker_geometry_avg[link][metric]['value'] += float(sum_sub_samples/ (2.0*k*n_samples) )
-            if to_compute[link][metric]['operation'] == 'measure+by4':
-                marker_geometry_avg[link][metric]['value'] += float(sum_sub_samples/ (4.0*k*n_samples) )
-                # print(marker_geometry_avg[link][metric])
+                        k+=1
+
+                if to_compute[link][metric]['operation'] == 'measure':
+                    marker_geometry_avg[link][metric]['value'] += float(sum_sub_samples/ (k*n_samples) )
+                elif to_compute[link][metric]['operation'] == 'measure+by2':
+                    marker_geometry_avg[link][metric]['value'] += float(sum_sub_samples/ (2.0*k*n_samples) )
+                elif to_compute[link][metric]['operation'] == 'measure+by4':
+                    marker_geometry_avg[link][metric]['value'] += float(sum_sub_samples/ (4.0*k*n_samples) )
 
 base_file_name = 'base_model_link_geometry.yaml'
 subject_file_name = 'heuristic_link_geometry_file.yaml'
@@ -97,13 +96,13 @@ for link in marker_geometry_avg.keys():
         base_measure = base_geom_conf[link][metric]
         subj_measure = marker_geometry_avg[link][metric]['value']
 
-        scale = subj_measure / base_measure
-        marker_geometry_avg[link][metric]['scale'] = scale
-        print(link,metric,'base:',base_measure,'subj:',subj_measure,'scale:',scale)
+        marker_geometry_avg[link][metric]['scale'] = subj_measure / base_measure if to_compute[link][metric]['operation'] != 'ignore' else 1
+        print(link,metric,'base:',base_measure,'subj:',subj_measure,'scale:',marker_geometry_avg[link][metric]['scale'])
 
 subj_geom_conf = {'humanoid':marker_geometry_avg}
 config_file = open(assets_path+"models/model_confs/"+ subject_file_name,'w')
 yaml.dump(subj_geom_conf,config_file)
+
 
 scaled_humanoid_conf ={     'torso_h_scale': marker_geometry_avg['torso_all']['length']['scale'],
                             'torso_b_scale': marker_geometry_avg['torso_all']['breadth']['scale'],
@@ -143,18 +142,19 @@ scaled_humanoid_conf ={     'torso_h_scale': marker_geometry_avg['torso_all']['l
 
 
 model_file = 'rand_1'
-if os.path.exists(assets_path+"models/model_confs/"+ model_file+'.yaml'):
-    print( 'Warning: the file '+model_file+' already exists, wanna rewrite ?[y/n]',end=' ')
-    key = input()    
-if key == 'y':
-    print("Model Conf. File Updated")
-    config_file = open(assets_path+"models/model_confs/"+ model_file+'.yaml','w')
-    marker_conf = yaml.dump(scaled_humanoid_conf, config_file)
+# if os.path.exists(assets_path+"models/model_confs/"+ model_file+'.yaml'):
+#     print( 'Warning: the file '+model_file+' already exists, wanna rewrite ?[y/n]',end=' ')
+#     key = input()    
+# if key == 'y':
+#     print("Model Conf. File Updated")
+#     config_file = open(assets_path+"models/model_confs/"+ model_file+'.yaml','w')
+#     marker_conf = yaml.dump(scaled_humanoid_conf, config_file)
 
 body = Humanoid(name='humanoid',
                 **scaled_humanoid_conf
                 )
 physics = mjcf.Physics.from_mjcf_model(body.mjcf_model)
 
-mjcf.export_with_assets(body.mjcf_model,"./gym_hmm_ec/envs/assets/models",model_file+'.xml')
+mjcf.export_with_assets(body.mjcf_model,"./gym_hmm_ec/envs/assets/models/",model_file+'.xml')
 print("Model File Updated")
+print("written to ","./gym_hmm_ec/envs/assets/models/"+model_file+'.xml')

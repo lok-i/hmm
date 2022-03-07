@@ -30,6 +30,7 @@ class Body:
         if self.name == 'torso':
             ground_clearence = 0.25
             self.body_w_pos[2] -= ground_clearence
+        
         # dummy, to be removed
         self.ep = np.array([0,0,0])
         self.sp = np.array([0,0,0])
@@ -38,30 +39,35 @@ class Body:
         # dummy, to be removed
 
 
-        print('\nbody:',self.name)
-        print('\tsites:')
-        # add sites aswell as geoms
-        for site_node in node.findall('site'):
-            if 'type' in site_node.attrib.keys():
-                print('\t\t',site_node.attrib['name'])
-                site_type = site_node.attrib['type']
-                if site_type == 'sphere':
-                    self.geoms.append(Sphere.from_node(site_node))  
-
-        print('\tgeoms:')
-        # add geometries
-        for geom_node in node.findall('geom'):
-            print('\t\t',geom_node.attrib['name'])
-            geom_type = geom_node.attrib['type']
-            if geom_type == 'capsule':
-                self.geoms.append(Capsule.from_node(geom_node))
-            elif geom_type == 'sphere':
-                self.geoms.append(Sphere.from_node(geom_node))
-            elif geom_type == 'box':
-                self.geoms.append(Box.from_node(geom_node))
-            # print(self.geoms)
-            if len(self.geoms)!=0:
-                self.geoms[-1].bone = self
+        if 'ffp' not in self.name:
+            print('\nbody:',self.name)
+            print('\tsites:')
+            # add sites aswell as geoms
+            for site_node in node.findall('site'):
+                if 'type' in site_node.attrib.keys():
+                    print('\t\t',site_node.attrib['name'])
+                    site_type = site_node.attrib['type']
+                    if site_type == 'sphere':
+                        body_marker = Sphere.from_node(site_node)
+                        body_marker.is_site = True
+                        body_marker.body_w_pos = self.body_w_pos
+                        self.geoms.append(body_marker)                        
+                        # self.geoms[-1].is_site = True
+            
+            print('\tgeoms:')
+            # add geometries
+            for geom_node in node.findall('geom'):
+                print('\t\t',geom_node.attrib['name'])
+                geom_type = geom_node.attrib['type']
+                if geom_type == 'capsule':
+                    self.geoms.append(Capsule.from_node(geom_node))
+                elif geom_type == 'sphere':
+                    self.geoms.append(Sphere.from_node(geom_node))
+                elif geom_type == 'box':
+                    self.geoms.append(Box.from_node(geom_node))
+                # print(self.geoms)
+                if len(self.geoms)!=0:
+                    self.geoms[-1].bone = self
         
     def __str__(self):
         return self.name
@@ -77,20 +83,22 @@ class Body:
         if render_options['render_geom']:
             for geom in self.geoms:
                 if geom.type != 'sphere':
-                    color = [0.0, 1.0, 0.0] if geom == self.picked_geom else [1.0, 0.65, 0.0]
-                    glColor3d(*color)
+                    color = [0.0, 1.0, 0.0,0.5] if geom == self.picked_geom else [1.0, 0.65, 0.0,0.5]
+                    # glColor3d(*color)
+                    glColor4d(*color)
+
                 else:
                     color = [0.0, 1.0, 0.0] if geom == self.picked_geom else [0., 0., 1.0]
                     glColor3d(*color)
+
                 # print(self.name,geom.type)
                 geom.render(local_origin=self.body_w_pos)
 
     def pick(self, ray):
         for geom in self.geoms:
-            print(self.name,geom.type)
+            # print(self.name,geom.type)
             res = geom.pick(ray,self.body_w_pos)
             if res:
-                
                 self.picked_geom = geom
                 self.is_picked = True
                 return geom
@@ -189,6 +197,7 @@ class Skeleton:
         self.tree = None
         self.picked_geom = None
         self.picked_bone = None
+        self.picked_static_marker = None
         self.load_from_xml(xml_file)
         self.load_static_markers(static_marker_file)
 
@@ -206,10 +215,10 @@ class Skeleton:
 
         y_mean = np.mean(static_marker_pos[:,1])
         static_marker_pos[:,1] = static_marker_pos[:,1] - y_mean 
-        
+
         for marker_pos in static_marker_pos:
             self.static_markers.append(Sphere( pos=marker_pos, size=0.01))
-
+        
     def load_from_xml(self, xml_file):
         parser = XMLParser(remove_blank_text=True)
         self.tree = parse(xml_file, parser=parser)
@@ -266,8 +275,12 @@ class Skeleton:
 
     def render(self, render_options):
         for static_marker in self.static_markers:
+
+            color = [0.0, 1.0, 0.0,1.0] if static_marker == self.picked_static_marker else [1.0, 0.0, 0.0,1.0]
+            # glColor3d(*color)
+            glColor4d(*color)
+
             static_marker.render()
-        
         for bone in self.bones:
             bone.render(render_options)
 
@@ -287,5 +300,17 @@ class Skeleton:
                 return True
         return False
 
+    def pick_target_marker(self, ray):
+        self.picked_static_marker = None
+        # for s_m in self.static_markers:
+        #     s_m.is_picked = False
+
+        for s_m in self.static_markers:
+            res = s_m.pick(ray)
+
+            if res:
+                self.picked_static_marker = s_m
+                return True
+        return False
 
 

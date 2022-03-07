@@ -15,49 +15,49 @@
       <camera name="back" class="/" mode="trackcom" pos="-3 0 1" xyaxes="0 -1 0 1 0 2"/>
       <camera name="side" class="/" mode="trackcom" pos="0 -3 1" xyaxes="1 0 0 0 1 2"/>
       <freejoint name="root"/>
-      <geom name="torso" class="/" type="capsule" size="0.070000000000000007" fromto="0 -0.11025007379547949 0 0 0.11025007379547949 0"/>
+      <geom name="torso" class="/" type="capsule" size="0.070000000000000007" fromto="0 -0.045062518448869875 0 0 0.045062518448869875 0"/>
       <site name="C7" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="-0.044999999999999978 0 0.077942286340599479"/>
-      <site name="RSHO" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="4.2862637970157367e-18 -0.16537511069321925 0.070000000000000007"/>
-      <site name="LSHO" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="4.2862637970157367e-18 0.16537511069321925 0.070000000000000007"/>
+      <site name="RSHO" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="4.2862637970157367e-18 -0.067593777673304808 0.070000000000000007"/>
+      <site name="LSHO" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="4.2862637970157367e-18 0.067593777673304808 0.070000000000000007"/>
       <site name="CLAV" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.065778483455013595 0 0.023941410032796814"/>
-      <geom name="upper_waist" class="/" type="capsule" size="0.059999999999999998" fromto="-0.01 -0.094500063253268124 -0.12 -0.01 0.094500063253268124 -0.12"/>
+      <geom name="upper_waist" class="/" type="capsule" size="0.059999999999999998" fromto="-0.01 -0.03862501581331703 -0.12 -0.01 0.03862501581331703 -0.12"/>
       <body name="head" pos="0 0 0.19">
         <geom name="head" class="/" type="sphere" size="0.089999999999999997" pos="0 0 0"/>
       </body>
       <camera name="egocentric" class="/" fovy="80.0" pos="0.089999999999999997 0 0" xyaxes="0 -1 0 0.10000000000000001 1 2"/>
       <body name="lower_waist" pos="-0.01 0 -0.26000000000000001" quat="1 0 -0.002 0">
-        <geom name="lower_waist" class="/" type="capsule" size="0.059999999999999998" fromto="0 -0.094500063253268124 0 0 0.094500063253268124 0"/>
+        <geom name="lower_waist" class="/" type="capsule" size="0.059999999999999998" fromto="0 -0.03862501581331703 0 0 0.03862501581331703 0"/>
         <joint name="abdomen_z" class="/" type="hinge" pos="0 0 0.065000000000000002" axis="0 0 1" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="20.0" range="-45 45" armature="0.01" damping="5.0"/>
         <joint name="abdomen_y" class="/" type="hinge" pos="0 0 0.065000000000000002" axis="0 1 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="10.0" range="-75 30" armature="0.01" damping="5.0"/>
         <body name="pelvis" pos="0 0 -0.16500000000000001" quat="1 0 -0.002 0">
           <joint name="abdomen_x" class="/" type="hinge" pos="0 0 0.10000000000000001" axis="1 0 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="10.0" range="-35 35" armature="0.01" damping="5.0"/>
-          <geom name="butt" class="/" type="capsule" size="0.089999999999999997" fromto="-0.02 -0.090250073795479502 0 -0.02 0.090250073795479502 0"/>
-          <site name="RASI" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.048943999880708008 -0.13537511069321925 0.057850884871788529"/>
-          <site name="LASI" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.048943999880708008 0.13537511069321925 0.057850884871788529"/>
-          <site name="RPSI" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="-0.066488008791476927 -0.027075022138643851 0.0996938565740315"/>
-          <site name="LPSI" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="-0.066488008791476927 0.027075022138643851 0.0996938565740315"/>
-          <site name="left_leg_site" class="/" size="9.9999999999999995e-07 9.9999999999999995e-07 9.9999999999999995e-07" pos="0 0.1202500737954795 -0.040000000000000001"/>
-          <body pos="0 0.1202500737954795 -0.040000000000000001" name="left_leg/">
+          <geom name="butt" class="/" type="capsule" size="0.089999999999999997" fromto="-0.02 -0.045062518448869875 0 -0.02 0.045062518448869875 0"/>
+          <site name="RASI" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.048943999880708008 -0.067593777673304808 0.057850884871788529"/>
+          <site name="LASI" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.048943999880708008 0.067593777673304808 0.057850884871788529"/>
+          <site name="RPSI" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="-0.066488008791476927 -0.013518755534660962 0.0996938565740315"/>
+          <site name="LPSI" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="-0.066488008791476927 0.013518755534660962 0.0996938565740315"/>
+          <site name="left_leg_site" class="/" size="9.9999999999999995e-07 9.9999999999999995e-07 9.9999999999999995e-07" pos="0 0.064375026355528386 -0.040000000000000001"/>
+          <body pos="0 0.064375026355528386 -0.040000000000000001" name="left_leg/">
             <body name="left_leg/thigh">
               <joint name="left_leg/hip_x" class="left_leg/" type="hinge" axis="1 0 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="10.0" range="-25 5" armature="0.01" damping="5.0"/>
               <joint name="left_leg/hip_z" class="left_leg/" type="hinge" axis="0 0 1" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="10.0" range="-60 35" armature="0.01" damping="5.0"/>
               <joint name="left_leg/hip_y" class="left_leg/" type="hinge" axis="0 1 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="20.0" range="-110 20" armature="0.01" damping="5.0"/>
-              <geom name="left_leg/thigh" class="left_leg/" type="capsule" size="0.060276328793644196" fromto="0 0 0 0 -0.01 -0.39427130870307431"/>
+              <geom name="left_leg/thigh" class="left_leg/" type="capsule" size="0.060276328793644196" fromto="0 0 0 0 -0.01 -0.4545476374967185"/>
               <site name="left_leg/LGT" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.03874487730594648 0.046174346723983586 0"/>
-              <site name="left_leg/LT1" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.060276328793644196 0 -0.13799495804607601"/>
-              <site name="left_leg/LT2" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.052200831982159301 0.030138164396822095 -0.19713565435153715"/>
-              <site name="left_leg/LT3" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.060276328793644196 0 -0.25627635065699828"/>
-              <site name="left_leg/LT4" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.052200831982159301 -0.030138164396822095 -0.19713565435153715"/>
-              <body name="left_leg/shin" pos="0 -0.01 -0.47849631212158394">
+              <site name="left_leg/LT1" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.060276328793644196 0 -0.15909167312385147"/>
+              <site name="left_leg/LT2" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.052200831982159301 0.030138164396822095 -0.22727381874835925"/>
+              <site name="left_leg/LT3" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.060276328793644196 0 -0.29545596437286703"/>
+              <site name="left_leg/LT4" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.052200831982159301 -0.030138164396822095 -0.22727381874835925"/>
+              <body name="left_leg/shin" pos="0 -0.01 -0.53877264091522814">
                 <joint name="left_leg/knee" class="left_leg/" type="hinge" pos="0 0 0.02" axis="0 -1 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="1.0" range="-160 2" armature="0.01" damping="0.2"/>
-                <geom name="left_leg/shin" class="left_leg/" type="capsule" size="0.037015781509054567" fromto="0 0 0 0 0 -0.29254822313653617"/>
+                <geom name="left_leg/shin" class="left_leg/" type="capsule" size="0.037015781509054567" fromto="0 0 0 0 0 -0.36657978615464532"/>
                 <site name="left_leg/LKNL" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="2.2665629171500728e-18 0.037015781509054567 0"/>
                 <site name="left_leg/LKNM" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="-6.7996887514502181e-18 -0.037015781509054567 0"/>
-                <site name="left_leg/LS1" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.037015781509054567 0 -0.10239187809778766"/>
-                <site name="left_leg/LS2" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.032056607127775541 0.01850789075452728 -0.14627411156826808"/>
-                <site name="left_leg/LS3" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.037015781509054567 0 -0.19015634503874851"/>
-                <site name="left_leg/LS4" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.032056607127775541 -0.01850789075452728 -0.14627411156826808"/>
-                <body name="left_leg/foot" pos="0 0 -0.38196595982816534">
+                <site name="left_leg/LS1" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.037015781509054567 0 -0.12830292515412586"/>
+                <site name="left_leg/LS2" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.032056607127775541 0.01850789075452728 -0.18328989307732266"/>
+                <site name="left_leg/LS3" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.037015781509054567 0 -0.23827686100051945"/>
+                <site name="left_leg/LS4" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.032056607127775541 -0.01850789075452728 -0.18328989307732266"/>
+                <body name="left_leg/foot" pos="0 0 -0.45599752284627448">
                   <joint name="left_leg/ankle_y" class="left_leg/" type="hinge" pos="0 0 0.080000000000000002" axis="0 1 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="6.0" range="-50 50" armature="0.01" damping="0.2"/>
                   <joint name="left_leg/ankle_x" class="left_leg/" type="hinge" pos="0 0 0.040000000000000001" axis="1 0 0.5" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="3.0" range="-50 50" armature="0.01" damping="0.2"/>
                   <geom name="left_leg/right_foot" class="left_leg/" type="capsule" size="0.02641773669162915" fromto="-0.067735642689668932 0.02 0 0.13773564268966892 0.02 0"/>
@@ -116,28 +116,28 @@
               </body>
             </body>
           </body>
-          <site name="right_leg_site" class="/" size="9.9999999999999995e-07 9.9999999999999995e-07 9.9999999999999995e-07" pos="0 -0.1202500737954795 -0.040000000000000001"/>
-          <body pos="0 -0.1202500737954795 -0.040000000000000001" name="right_leg/">
+          <site name="right_leg_site" class="/" size="9.9999999999999995e-07 9.9999999999999995e-07 9.9999999999999995e-07" pos="0 -0.064375026355528386 -0.040000000000000001"/>
+          <body pos="0 -0.064375026355528386 -0.040000000000000001" name="right_leg/">
             <body name="right_leg/thigh">
               <joint name="right_leg/hip_x" class="right_leg/" type="hinge" axis="1 0 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="10.0" range="-25 5" armature="0.01" damping="5.0"/>
               <joint name="right_leg/hip_z" class="right_leg/" type="hinge" axis="0 0 1" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="10.0" range="-60 35" armature="0.01" damping="5.0"/>
               <joint name="right_leg/hip_y" class="right_leg/" type="hinge" axis="0 1 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="20.0" range="-110 20" armature="0.01" damping="5.0"/>
-              <geom name="right_leg/thigh" class="right_leg/" type="capsule" size="0.060276328793644196" fromto="0 0 0 0 0.01 -0.39427130870307431"/>
+              <geom name="right_leg/thigh" class="right_leg/" type="capsule" size="0.060276328793644196" fromto="0 0 0 0 0.01 -0.4545476374967185"/>
               <site name="right_leg/RGT" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.038744877305946474 -0.046174346723983593 0"/>
-              <site name="right_leg/RT1" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.060276328793644196 0 -0.13799495804607601"/>
-              <site name="right_leg/RT2" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.052200831982159301 0.030138164396822095 -0.19713565435153715"/>
-              <site name="right_leg/RT3" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.060276328793644196 0 -0.25627635065699828"/>
-              <site name="right_leg/RT4" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.052200831982159301 -0.030138164396822095 -0.19713565435153715"/>
-              <body name="right_leg/shin" pos="0 0.01 -0.47849631212158394">
+              <site name="right_leg/RT1" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.060276328793644196 0 -0.15909167312385147"/>
+              <site name="right_leg/RT2" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.052200831982159301 0.030138164396822095 -0.22727381874835925"/>
+              <site name="right_leg/RT3" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.060276328793644196 0 -0.29545596437286703"/>
+              <site name="right_leg/RT4" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.052200831982159301 -0.030138164396822095 -0.22727381874835925"/>
+              <body name="right_leg/shin" pos="0 0.01 -0.53877264091522814">
                 <joint name="right_leg/knee" class="right_leg/" type="hinge" pos="0 0 0.02" axis="0 -1 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="1.0" range="-160 2" armature="0.01" damping="0.2"/>
-                <geom name="right_leg/shin" class="right_leg/" type="capsule" size="0.037015781509054567" fromto="0 0 0 0 0 -0.29254822313653617"/>
+                <geom name="right_leg/shin" class="right_leg/" type="capsule" size="0.037015781509054567" fromto="0 0 0 0 0 -0.36657978615464532"/>
                 <site name="right_leg/RKNL" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="-6.7996887514502181e-18 -0.037015781509054567 0"/>
                 <site name="right_leg/RKNM" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="2.2665629171500728e-18 0.037015781509054567 0"/>
-                <site name="right_leg/RS1" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.037015781509054567 0 -0.10239187809778766"/>
-                <site name="right_leg/RS2" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.032056607127775541 0.01850789075452728 -0.14627411156826808"/>
-                <site name="right_leg/RS3" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.037015781509054567 0 -0.19015634503874851"/>
-                <site name="right_leg/RS4" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.032056607127775541 -0.01850789075452728 -0.14627411156826808"/>
-                <body name="right_leg/foot" pos="0 0 -0.38196595982816534">
+                <site name="right_leg/RS1" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.037015781509054567 0 -0.12830292515412586"/>
+                <site name="right_leg/RS2" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.032056607127775541 0.01850789075452728 -0.18328989307732266"/>
+                <site name="right_leg/RS3" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.037015781509054567 0 -0.23827686100051945"/>
+                <site name="right_leg/RS4" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.032056607127775541 -0.01850789075452728 -0.18328989307732266"/>
+                <body name="right_leg/foot" pos="0 0 -0.45599752284627448">
                   <joint name="right_leg/ankle_y" class="right_leg/" type="hinge" pos="0 0 0.080000000000000002" axis="0 1 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="6.0" range="-50 50" armature="0.01" damping="0.2"/>
                   <joint name="right_leg/ankle_x" class="right_leg/" type="hinge" pos="0 0 0.040000000000000001" axis="1 0 0.5" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="3.0" range="-50 50" armature="0.01" damping="0.2"/>
                   <geom name="right_leg/right_foot" class="right_leg/" type="capsule" size="0.02641773669162915" fromto="-0.067735642689668932 -0.02 0 0.13773564268966892 -0.02 0"/>

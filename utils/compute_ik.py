@@ -5,7 +5,7 @@ from tqdm import tqdm
 import yaml
 import argparse
 from dm_control import mujoco
-from gym_hmm_ec.envs.utils.ik_solver import qpos_from_site_pose
+from utils.ik_solver import qpos_from_site_pose
 
 
 if __name__ == '__main__':
