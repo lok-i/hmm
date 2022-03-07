@@ -12,6 +12,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('--mocap_npz_filename',help='name of the preprocessed npz file',default='AB1_Session1_Right6_Left6',type=str)
+    parser.add_argument('--model_filename',help='name of the model file',default='default_humanoid_mocap_generated',type=str)
+
     parser.add_argument('--export_solns',help='whether to export the ik solns',default=False, action='store_true')
     parser.add_argument('--render',help='whether to render while solving for ik',default=False, action='store_true')
 
@@ -27,7 +29,7 @@ if __name__ == '__main__':
     env_conf = {
                 'set_on_rack': False,
                 'render': args.render,
-                'model_name': 'default_humanoid_mocap_generated_updated',
+                'model_name': args.model_filename,
                 'mocap':False
                 }
     # marker config

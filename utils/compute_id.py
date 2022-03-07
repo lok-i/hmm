@@ -20,6 +20,8 @@ if __name__ == '__main__':
                         default=False, action='store_true')
     parser.add_argument('--plot_solns', help='whether to plot the id solns',
                         default=False, action='store_true')
+    parser.add_argument('--model_filename',help='name of the model file',
+    default='default_humanoid_mocap_generated',type=str)
 
     parser.add_argument('--render', help='whether to render while solving for id',
                         default=False, action='store_true')
@@ -32,7 +34,7 @@ if __name__ == '__main__':
     env_conf = {
         'set_on_rack': False,
         'render': args.render,
-        'model_name': 'default_humanoid_mocap_generated',
+        'model_name': args.model_filename,
         'mocap': False
     }
     # marker config
