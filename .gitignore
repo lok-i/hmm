@@ -6,3 +6,4 @@ gym_hmm_ec/envs/assets/our_data/marker_data/
 gym_hmm_ec/envs/assets/our_data/ik_solns/
 gym_hmm_ec/envs/assets/our_data/pose_esti/
 evaluation_plots/
+data/

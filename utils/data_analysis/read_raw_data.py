@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 assets_path = './gym_hmm_ec/envs/assets/'
 
-npz_filepath = assets_path + 'our_data/marker_data/processed_data/AB1_Session1_Right6_Left6_from_1200_to_1500.npz'
+npz_filepath = assets_path + 'our_data/marker_data/processed_data/AB1_Session1_Right6_Left6_from_0_to_None.npz'
 mocap_data = np.load(npz_filepath)
 
 cop_data = mocap_data['cops']

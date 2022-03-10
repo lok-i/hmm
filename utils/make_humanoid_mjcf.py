@@ -329,7 +329,8 @@ class Humanoid(object):
 
     y1 = -.07
     y2 =  .07
-    alpha = (torso_b_scale - 1) * (y2 - y1) * 0.5 - link_radius
+    alpha = (torso_b_scale - 1) * (y2 - y1) * 0.5 - link_radius if torso_b_scale!= 1 else 0
+    
     link_length = y2+alpha - (y1 - alpha) 
     #   <geom name="torso" fromto="0 -.07 0 0 .07 0" size=".07"/>
     self.torso.add('geom', name='torso', type='capsule',
@@ -361,7 +362,7 @@ class Humanoid(object):
     link_radius = torso_h_scale*.06
     y1 = -.06
     y2 =  .06
-    alpha = (torso_b_scale - 1) * (y2 - y1) * 0.5 - link_radius
+    alpha = (torso_b_scale - 1) * (y2 - y1) * 0.5 - link_radius if torso_b_scale!= 1 else 0
     self.torso.add('geom', name='upper_waist', type='capsule',
                        fromto=[-.01, y1 - alpha, torso_h_scale*-.12, -.01, y2 + alpha, torso_h_scale*-.12], size=[link_radius])  
     #   <!-- <site name="torso" class="touch" type="box" pos="0 0 -.05" size=".075 .14 .13"/> -->
@@ -379,7 +380,7 @@ class Humanoid(object):
     link_radius = torso_h_scale*.06
     y1 = -.06
     y2 =  .06
-    alpha = (torso_b_scale - 1) * (y2 - y1) * 0.5 - link_radius
+    alpha = (torso_b_scale - 1) * (y2 - y1) * 0.5 - link_radius if torso_b_scale!= 1 else 0
     self.lower_waist.add('geom', name='lower_waist', type='capsule',fromto=[0, y1-alpha, 0, 0, y2 + alpha, 0], size=[link_radius])
     #     <!-- <site name="lower_waist" class="touch" size=".061 .06" zaxis="0 1 0"/> -->
     #     <joint name="abdomen_z" pos="0 0 .065" axis="0 0 1" range="-45 45" class="big_stiff_joint"/>
@@ -403,7 +404,7 @@ class Humanoid(object):
     link_radius = torso_h_scale*.09
     y1 = -.07
     y2 =  .07
-    alpha = (torso_b_scale - 1) * (y2 - y1) * 0.5 - link_radius
+    alpha = (torso_b_scale - 1) * (y2 - y1) * 0.5 - link_radius if torso_b_scale!= 1 else 0
 
     link_length = y2+alpha - (y1-alpha) 
 
@@ -442,7 +443,7 @@ class Humanoid(object):
         # torso_h_scale*-.04]
 
         pos=[0, 
-        0.1+alpha,
+        0.1+ (alpha if torso_b_scale!= 1 else 0),
         torso_h_scale*-.04]
 
         )
@@ -453,7 +454,7 @@ class Humanoid(object):
         # torso_h_scale*-.04]
 
         pos=[0, 
-        -0.1-alpha ,
+        -0.1 - (alpha if torso_b_scale!= 1 else 0) ,
         torso_h_scale*-.04]
 
 

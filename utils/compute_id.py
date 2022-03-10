@@ -14,21 +14,21 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('--mocap_npz_filename', help='name of the preprocessed npz file',
-                        default='AB1_Session1_Right6_Left6', type=str)
+
+    parser.add_argument('--processed_filepath',help='name of the preprocessed mocap file',default='AB1_Session1_Right6_Left6',type=str)
     parser.add_argument('--export_solns', help='whether to export the id solns',
                         default=False, action='store_true')
     parser.add_argument('--plot_solns', help='whether to plot the id solns',
                         default=False, action='store_true')
     parser.add_argument('--model_filename',help='name of the model file',
-    default='default_humanoid_mocap_generated',type=str)
+    default='default_humanoid_mocap',type=str)
 
     parser.add_argument('--render', help='whether to render while solving for id',
                         default=False, action='store_true')
     args = parser.parse_args()
 
     assets_path = './gym_hmm_ec/envs/assets/'
-    c3d_file_name = 'mocap_data/c3ds/Trial_1'
+    c3d_file_name = 'mocap_marker_data/c3ds/Trial_1'
 
     # environment config and setup
     env_conf = {
@@ -38,8 +38,10 @@ if __name__ == '__main__':
         'mocap': False
     }
     # marker config
-    marker_config_file = open(assets_path+"our_data/marker_data/confs/" +
-                              args.mocap_npz_filename.partition('_from_')[0]+'.yaml', 'r+')
+    marker_confpath = args.processed_filepath.split('processed_data/')[0]+'confs/' \
+                        + args.processed_filepath.split('processed_data/')[-1].split('_from')[0]+'.yaml' 
+
+    marker_config_file = open(marker_confpath, 'r+')
     marker_conf = yaml.load(marker_config_file, Loader=yaml.FullLoader)
 
     env = BipedEnv(**env_conf)
@@ -59,11 +61,11 @@ if __name__ == '__main__':
         env.viewer.cam.elevation = -15
         env.viewer.cam.azimuth = 180
 
-    npz_filepath = assets_path + \
-        'our_data/marker_data/processed_data/'+args.mocap_npz_filename
-    mocap_data = np.load(npz_filepath+'.npz')
 
-    ik_soln_filpath = assets_path+"our_data/ik_solns/"+args.mocap_npz_filename+'.npz'
+    mocap_marker_data = np.load(args.processed_filepath)
+
+    ik_soln_filpath =  args.processed_filepath.split('marker_data/processed_data/')[0]+'ik_solns/' \
+                        + args.processed_filepath.split('marker_data/processed_data/')[-1] 
 
     if os.path.isfile(ik_soln_filpath):
         ik_solns = np.load(ik_soln_filpath)['ik_solns']
@@ -92,10 +94,10 @@ if __name__ == '__main__':
 
             
             env.sim.data.set_mocap_pos(
-                marker_name, mocap_data['cops'][step, 3*i:3*i+3] 
+                marker_name, mocap_marker_data['cops'][step, 3*i:3*i+3] 
                 # - fp_origin[i]
                 )
-            # print(i,mocap_data['cops'][step,3*i:3*i+3])
+            # print(i,mocap_marker_data['cops'][step,3*i:3*i+3])
         
 
         
@@ -117,17 +119,17 @@ if __name__ == '__main__':
         body_name = 'right_leg/foot'
         body_id = env.sim.model.body_name2id(body_name)
         wrench_prtb = -1.*np.array([
-            mocap_data['grfs'][step,
+            mocap_marker_data['grfs'][step,
                                marker_conf['forces_name2id']['Force.Fx1']],
-            mocap_data['grfs'][step,
+            mocap_marker_data['grfs'][step,
                                marker_conf['forces_name2id']['Force.Fy1']],
-            mocap_data['grfs'][step,
+            mocap_marker_data['grfs'][step,
                                marker_conf['forces_name2id']['Force.Fz1']],
-            mocap_data['grfs'][step,
+            mocap_marker_data['grfs'][step,
                                marker_conf['forces_name2id']['Moment.Mx1']],
-            mocap_data['grfs'][step,
+            mocap_marker_data['grfs'][step,
                                marker_conf['forces_name2id']['Moment.My1']],
-            mocap_data['grfs'][step,
+            mocap_marker_data['grfs'][step,
                                marker_conf['forces_name2id']['Moment.Mz1']],
 
         ])  # in world frame
@@ -143,17 +145,17 @@ if __name__ == '__main__':
         body_name = 'left_leg/foot'
         body_id = env.sim.model.body_name2id(body_name)
         wrench_prtb = -1.*np.array([
-            mocap_data['grfs'][step,
+            mocap_marker_data['grfs'][step,
                                marker_conf['forces_name2id']['Force.Fx2']],
-            mocap_data['grfs'][step,
+            mocap_marker_data['grfs'][step,
                                marker_conf['forces_name2id']['Force.Fy2']],
-            mocap_data['grfs'][step,
+            mocap_marker_data['grfs'][step,
                                marker_conf['forces_name2id']['Force.Fz2']],
-            mocap_data['grfs'][step,
+            mocap_marker_data['grfs'][step,
                                marker_conf['forces_name2id']['Moment.Mx2']],
-            mocap_data['grfs'][step,
+            mocap_marker_data['grfs'][step,
                                marker_conf['forces_name2id']['Moment.My2']],
-            mocap_data['grfs'][step,
+            mocap_marker_data['grfs'][step,
                                marker_conf['forces_name2id']['Moment.Mz2']],
 
         ])  # in world frame
@@ -177,9 +179,11 @@ if __name__ == '__main__':
     if args.export_solns:
         id_solns = np.array(id_solns)
         print('ID Soln Shape', id_solns.shape)
-        np.savez_compressed(assets_path+"our_data/id_solns/" +
-                            args.mocap_npz_filename, id_solns=id_solns)
 
+        output_filepath =  args.processed_filepath.split('marker_data/processed_data/')[0]+'id_solns/' \
+                        + args.processed_filepath.split('marker_data/processed_data/')[-1] 
+        np.savez_compressed(output_filepath, id_solns=id_solns)
+        print("ID Solution written to:", output_filepath)
     if args.plot_solns:
         id_solns = np.array(id_solns)
         time_scale = timestep*np.arange(step)
@@ -229,7 +233,7 @@ if __name__ == '__main__':
                 axs_twin = axs[row, col].twinx()
                 axs_twin.plot(
                     time_scale,
-                    mocap_data['grfs'][:,
+                    mocap_marker_data['grfs'][:,
                                        marker_conf['forces_name2id']['Force.Fz2']],
                     alpha=0.6,
                     color='red',
@@ -241,7 +245,7 @@ if __name__ == '__main__':
                 axs_twin = axs[row, col].twinx()
                 axs_twin.plot(
                     time_scale,
-                    mocap_data['grfs'][:,
+                    mocap_marker_data['grfs'][:,
                                        marker_conf['forces_name2id']['Force.Fz1']],
                     alpha=0.6,
                     color='red',

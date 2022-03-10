@@ -11,7 +11,7 @@ from utils.ik_solver import qpos_from_site_pose
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('--mocap_npz_filename',help='name of the preprocessed npz file',default='AB1_Session1_Right6_Left6',type=str)
+    parser.add_argument('--processed_filepath',help='name of the preprocessed mocap file',default='AB1_Session1_Right6_Left6',type=str)
     parser.add_argument('--model_filename',help='name of the model file',default='default_humanoid_mocap_generated',type=str)
 
     parser.add_argument('--export_solns',help='whether to export the ik solns',default=False, action='store_true')
@@ -21,8 +21,7 @@ if __name__ == '__main__':
 
     assets_path = './gym_hmm_ec/envs/assets/'
 
-    npz_filepath = assets_path+'our_data/marker_data/processed_data/'+args.mocap_npz_filename
-    mocap_data = np.load(npz_filepath+'.npz')
+    mocap_data = np.load(args.processed_filepath)
 
     # all configs
     # environment config and setup
@@ -33,7 +32,11 @@ if __name__ == '__main__':
                 'mocap':False
                 }
     # marker config
-    marker_config_file = open(assets_path+"our_data/marker_data/confs/"+ args.mocap_npz_filename.partition('_from_')[0]+'.yaml','r+')
+    marker_confpath = args.processed_filepath.split('processed_data/')[0]+'confs/' \
+                        + args.processed_filepath.split('processed_data/')[-1].split('_from')[0]+'.yaml' #.('_from_')[0]+'.yaml'
+
+
+    marker_config_file = open(marker_confpath,'r+')
     marker_conf = yaml.load(marker_config_file, Loader=yaml.FullLoader)
     # exit()
 
@@ -69,6 +72,10 @@ if __name__ == '__main__':
 
     if args.export_solns:
         ik_solns = []
+        rfoot_xpos = []
+        lfoot_xpos = []
+        pelvis_xpos = []
+
     for frame in tqdm(mocap_data['marker_positions']):
 
         target_qpos = np.zeros(len(env.sim.data.qpos))
@@ -111,11 +118,37 @@ if __name__ == '__main__':
             obs,reward,done,info = env.step(action = np.zeros(shape=env.n_act_joints))
         if args.export_solns:
             ik_solns.append(target_qpos.tolist())
-        
+            body_name = 'right_leg/foot'
+            body_id = env.sim.model.body_name2id(body_name)
+            rf_xp = env.sim.data.get_body_xpos(body_name)
+            rfoot_xpos.append(rf_xp.tolist())
+
+            body_name = 'left_leg/foot'
+            body_id = env.sim.model.body_name2id(body_name)
+            lf_xp = env.sim.data.get_body_xpos(body_name)
+            lfoot_xpos.append(lf_xp.tolist())
+
+            body_name = 'pelvis'
+            body_id = env.sim.model.body_name2id(body_name)
+            p_xp = env.sim.data.get_body_xpos(body_name)
+            pelvis_xpos.append(p_xp.tolist())
+
         # to rotate camera 360 around the model
         # env.viewer.cam.azimuth += 0.25#180 
 
     if args.export_solns:
         ik_solns = np.array(ik_solns)
+        rfoot_xpos = np.array(rfoot_xpos)
+        lfoot_xpos = np.array(lfoot_xpos)
+        pelvis_xpos = np.array(pelvis_xpos)
+
         print('IK Soln Shape',ik_solns.shape)
-        np.savez_compressed(assets_path+"our_data/ik_solns/"+args.mocap_npz_filename, ik_solns=ik_solns)
+        output_filepath = args.processed_filepath.split('marker_data/processed_data/')[0]+'ik_solns/' \
+                        + args.processed_filepath.split('marker_data/processed_data/')[-1] 
+        np.savez_compressed(output_filepath,
+                                ik_solns=ik_solns,
+                                rfoot_xpos=rfoot_xpos,
+                                lfoot_xpos=lfoot_xpos,
+                                pelvis_xpos = pelvis_xpos,
+                            )
+        print("IK Solution written to:", output_filepath)

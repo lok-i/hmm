@@ -1,4 +1,5 @@
 from OpenGL.GLUT import *
+import numpy as np
 from skeleton import Skeleton
 from renderer import Renderer
 from utils import *
@@ -6,13 +7,14 @@ import math
 import argparse
 
 parser = argparse.ArgumentParser(description='Mujoco Modeler')
-parser.add_argument('--input', default="data/humanoid_out.xml", metavar='G',
+parser.add_argument('--input_modelpath', default="data/humanoid_out.xml", metavar='G',
                     help='input path of the model')
 
-parser.add_argument('--static_input', default="data/humanoid_out.xml", metavar='G',
+parser.add_argument('--static_filepath', default="data/humanoid_out.xml", metavar='G',
                     help='input path of the static marker pose file')
 
 parser.add_argument('--local', action='store_true', default=False)
+
 args = parser.parse_args()
 
  
@@ -128,7 +130,7 @@ def keyboard(key, x, y):
     if key == '`':
         exit(0)
     elif key == 'v':
-        output_file = args.input.partition('.xml')[0]+'_updated.xml'
+        output_file = args.input_modelpath.partition('.xml')[0]+'_updated.xml'
         skeleton.save_to_xml(output_file, args.local)
         print('model saved to {}'.format(output_file))
 
@@ -397,7 +399,7 @@ def motion(x, y):
 def init_skeleton():
     global center_x, center_y, center_z
     global skeleton
-    skeleton = Skeleton( xml_file = args.input,static_marker_file=args.static_input)
+    skeleton = Skeleton( xml_file = args.input_modelpath,static_marker_file=args.static_filepath)
     # center_z = skeleton.bones[0].body_w_pos[2] / 2.0
     pass
 

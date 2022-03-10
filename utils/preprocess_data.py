@@ -110,7 +110,8 @@ def generate_npz_file(
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('--c3d_filename',help='name of the c3d file',default='AB1_Session1_Right6_Left6',type=str)
+    parser.add_argument('--c3d_filepath',help='name of the c3d file',default='AB1_Session1_Right6_Left6',type=str)
+
     parser.add_argument('--roi_start',help='start index of the region of intrest',default=0,type=int)
     parser.add_argument('--roi_stop',help='stop index of the region of intrest',default=None,type=int)
     parser.add_argument('--static',help='whether given file is a static file',default=False, action='store_true')
@@ -119,24 +120,26 @@ if __name__ == '__main__':
 
     assets_path = './gym_hmm_ec/envs/assets/'
     
+
+    c3d_removed_path = args.c3d_filepath.replace('.c3d','')
+    print(c3d_removed_path)
+
     # input files
-    c3d_filepath = assets_path+ 'our_data/marker_data/c3ds/'+args.c3d_filename+'.c3d'
-    mat_filepath =  assets_path+'our_data/marker_data/mats/'+args.c3d_filename+'.mat'
+    mat_filepath =  c3d_removed_path.replace('c3ds','mats')+'.mat'
 
     # output files
-    conf_filepath = assets_path+'our_data/marker_data/confs/'+args.c3d_filename+'.yaml'
-    
-    npz_filepath = assets_path+'our_data/marker_data/processed_data/'+args.c3d_filename\
-                   +'_from_'+str(args.roi_start)+'_to_'+str(args.roi_stop)
+    conf_filepath = c3d_removed_path.replace('c3ds','confs')+'.yaml'
+    npz_filepath = c3d_removed_path.replace('c3ds','processed_data')\
+                   +'_from_'+str(args.roi_start)+'_to_'+str(args.roi_stop)+'.npz'
 
 
     generate_conf_file(
-                        dataFile_path=c3d_filepath,
+                        dataFile_path=args.c3d_filepath,
                         confFile_path=conf_filepath
                     )
     
     generate_npz_file(
-                        dataFile_path=c3d_filepath,
+                        dataFile_path=args.c3d_filepath,
                         npzFile_path=npz_filepath,
                         matFile_path=mat_filepath,
                         confFile_path=conf_filepath,

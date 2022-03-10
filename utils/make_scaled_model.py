@@ -11,15 +11,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('--model_filename',help='name of the model file',default='default_humanoid_mocap_generated',type=str)
-    parser.add_argument('--static_marker_conf',help='name of the preprocessed npz file',default='AB1_Session1_Static',type=str)
+    parser.add_argument('--static_confpath',help='path of the conf file',default='AB1_Session1_Static',type=str)
+    parser.add_argument('--processed_filepath',help='path of the processed marker data file',default='AB1_Session1_Static',type=str)
 
     args = parser.parse_args()
 
-    assets_path = './gym_hmm_ec/envs/assets/'
-    marker_conf_file_name = args.static_marker_conf+'.yaml'
-
-
-    config_file = open(assets_path+"our_data/marker_data/confs/"+ marker_conf_file_name,'r+')
+    config_file = open(args.static_confpath,'r+')
     marker_conf = yaml.load(config_file, Loader=yaml.FullLoader)
     config_file.close()
     marker_name2id = marker_conf['marker_name2id']
@@ -63,10 +60,9 @@ if __name__ == '__main__':
     for link in to_compute:
         marker_geometry_avg[link] = {key: {'value':0.0,'scale':1.0} for key in to_compute[link].keys()}
 
-    print(marker_geometry_avg)
+    # print(marker_geometry_avg)
 
-    static_marker_file = 'gym_hmm_ec/envs/assets/our_data/marker_data/processed_data/AB1_Session1_Static_from_0_to_None.npz'
-    static_marker_pos = np.load(static_marker_file)['marker_positions']
+    static_marker_pos = np.load(args.processed_filepath)['marker_positions']
 
     n_samples = static_marker_pos.shape[0]
     for n_frame, frame in enumerate(static_marker_pos):
@@ -94,20 +90,28 @@ if __name__ == '__main__':
                         marker_geometry_avg[link][metric]['value'] += float(sum_sub_samples/ (4.0*k*n_samples) )
 
     base_file_name = 'base_model_link_geometry.yaml'
-    subject_file_name = args.static_marker_conf+'.yaml'
 
+    subject_file_name = args.static_confpath.split('/')[-1]
+    
+    assets_path = './gym_hmm_ec/envs/assets/'
     base_file = open(assets_path+"models/model_confs/"+ base_file_name,'r')
+    
     base_geom_conf = yaml.load(base_file, Loader=yaml.FullLoader)
     base_geom_conf = base_geom_conf['humanoid']
 
-
+    print(" Measured values :")
     for link in marker_geometry_avg.keys():
         for metric in marker_geometry_avg[link].keys():
             base_measure = base_geom_conf[link][metric]
             subj_measure = marker_geometry_avg[link][metric]['value']
 
             marker_geometry_avg[link][metric]['scale'] = subj_measure / base_measure if to_compute[link][metric]['operation'] != 'ignore' else 1
-            print(link,metric,'base:',base_measure,'subj:',subj_measure,'scale:',marker_geometry_avg[link][metric]['scale'])
+            
+            if subj_measure != 0:
+                print('\n',link,metric,'nominal:',base_measure,'subj:',subj_measure,'scale:',marker_geometry_avg[link][metric]['scale'])
+            else:
+                print('\n',link,metric,'nominal:',base_measure,'subj:','= nominal','scale:',marker_geometry_avg[link][metric]['scale'])
+
 
     subj_geom_conf = {'humanoid':marker_geometry_avg}
     config_file = open(assets_path+"models/model_confs/"+ subject_file_name,'w')
