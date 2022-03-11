@@ -10,7 +10,7 @@ from mujoco_py.generated import const
 env_conf = {
             'set_on_rack': False,
             'render': True,
-            'model_name': 'default_humanoid_mocap',
+            'model_name': 'rand_1_updated',
             'mocap':False # problem when true
             }
 
@@ -23,6 +23,15 @@ env.reset()
 if env.env_params['render']:
     env.viewer._paused = True
 
+
+print(env.model.actuator_names,'\n',
+env.model.joint_names)
+
+for j_n in env.model.joint_names:
+    print(j_n,env.model.joint_name2id(j_n))
+
+for a_n in env.model.actuator_names:
+    print(a_n,env.model.actuator_name2id(a_n))
 
 while True:
 

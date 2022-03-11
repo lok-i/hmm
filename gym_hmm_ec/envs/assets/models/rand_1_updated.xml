@@ -327,8 +327,8 @@
     <joint name="abdomen_x" class="/" active="true" joint1="abdomen_x"/>
   </equality>
   <actuator>
-    <motor name="abdomen_y" class="/" gear="40" joint="abdomen_y"/>
     <motor name="abdomen_z" class="/" gear="40" joint="abdomen_z"/>
+    <motor name="abdomen_y" class="/" gear="40" joint="abdomen_y"/>
     <motor name="abdomen_x" class="/" gear="40" joint="abdomen_x"/>
     <motor name="left_leg/hip_x" class="left_leg/" gear="40" joint="left_leg/hip_x"/>
     <motor name="left_leg/hip_z" class="left_leg/" gear="40" joint="left_leg/hip_z"/>

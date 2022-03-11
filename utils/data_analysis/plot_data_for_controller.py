@@ -1,9 +1,7 @@
 from ntpath import join
 import numpy as np
 import matplotlib.pyplot as plt
-from tqdm import tqdm
 import os
-import yaml
 import argparse
 from utils import misc_functions
 
@@ -39,7 +37,7 @@ if __name__ == '__main__':
         qposs = []
         
         
-        for step,qpos in tqdm(enumerate(kinematic_solns['ik_solns'])):
+        for step,qpos in enumerate(kinematic_solns['ik_solns']):
 
 
             if step == 0:
@@ -122,7 +120,7 @@ if __name__ == '__main__':
         start_qpos = None
         qpos_residues = []
 
-        for step,qpos in tqdm(enumerate(kinematic_solns['ik_solns'])):
+        for step,qpos in enumerate(kinematic_solns['ik_solns']):
 
             if step == 0:
                 prev_qpos = qpos.copy()
@@ -181,6 +179,8 @@ if __name__ == '__main__':
 
         q_diff = np.empty_like(qposs)
         dq_diff = np.empty_like(qvels)
+
+        
         for joint_id in joint_ids:
             for step in range(steps_per_cycle):
                 for cycle in range(n_cycles):
@@ -251,8 +251,6 @@ if __name__ == '__main__':
         np.save("data/q_mean_cycle.npy",q_mean_cycle)
         np.save("data/dq_mean_cycle.npy",dq_mean_cycle)
 
-
-
     # Mean Torque Cycle 
     elif args.plot_id == 2:
             
@@ -282,15 +280,18 @@ if __name__ == '__main__':
 
         tau_mean_cycle = np.array(tau_mean_cycle)
 
-        tau_diff = np.empty_like(id_solns)
+
+
+        tau_diff = np.zeros_like(id_solns)
+        print('spc:',steps_per_cycle,'nc:', n_cycles )
         for joint_id in joint_ids:
             for step in range(steps_per_cycle):
                 for cycle in range(n_cycles):
                     tau_diff[cycle*steps_per_cycle + step,joint_id] = id_solns[cycle*steps_per_cycle + step,joint_id] - tau_mean_cycle[joint_id - joint_ids[0], step]
 
+ 
         # print(qposs.shape, qvels.shape)        
         # print(q_diff.shape, dq_diff.shape)
-
         np.save('data/tau_diff.npy',tau_diff)
 
         
@@ -335,8 +336,6 @@ if __name__ == '__main__':
 
         plt.grid()
         np.save("data/tau_mean_cycle.npy",tau_mean_cycle)
-
-        # plt.show()
         
     # phase variable
     elif args.plot_id == 3:
@@ -374,6 +373,81 @@ if __name__ == '__main__':
         plt.grid()
         plt.legend()
         plt.title("Phase Variable")
+
+    # R**2 Test
+    elif args.plot_id == 4:
+        q_diff = np.load('./data/q_diff.npy')
         
+        # convert quat to rpy in qpos
+        q_diff = np.array([ base_pos.tolist() + misc_functions.quat2euler(base_quat).tolist() + joint_pos.tolist() \
+                    for base_pos, base_quat, joint_pos in 
+                    zip( q_diff[:,0:3], q_diff[:,3:7], q_diff[:,7:] ) ] )        
+
+        dq_diff = np.load('./data/dq_diff.npy')
+        tau_diff = np.load('./data/tau_diff.npy')
+        
+        
+        tau_and_state_diff = [ q.tolist() + dq.tolist() + tau.tolist() for q,dq,tau in zip(q_diff,dq_diff,tau_diff)] 
+        tau_and_state_diff = np.array(tau_and_state_diff)
+        torque_rows = [q_diff.shape[1] + dq_diff.shape[1], q_diff.shape[1]+ dq_diff.shape[1] + tau_diff.shape[1] ]
+        state_cols = [0,q_diff.shape[1] + dq_diff.shape[1]]
+
+        R = np.corrcoef(x=tau_and_state_diff,rowvar=False)[torque_rows[0]:torque_rows[1],state_cols[0]:state_cols[1] ]
+        print( "Corr. Coef matrix's shape:", R.shape )
+        nan_chk = np.isnan(R) 
+        for i in range(nan_chk.shape[0]):
+            for j in range(nan_chk.shape[1]):
+                if nan_chk[i,j]:
+                    R[i,j] = 0.
+                    # print(i,j)
+
+
+        fig,ax = plt.subplots(1,1)
+
+        # print(R[25,25])
+        
+        im = ax.imshow(R**2)
+        fig.colorbar(im, ax=ax)
+
+        tau_labels = [
+                        'base_x','base_y','base_z',
+                        'base_ro','base_pi','base_yw',
+
+                        'abdmn_x','abdmn_y','abdmn_z',
+                        'lhip_x','lhip_z','lhip_y', 'lknee','lankle_y','lankle_x',
+                        'rhip_x','rhip_z','rhip_y', 'rknee','rankle_y','rankle_x',
+                        ''
+        ]
+        
+        
+        
+        ax.set_yticks(np.arange(-0.5, R.shape[0]))
+        ax.set_yticklabels(tau_labels,verticalalignment="top")
+        ax.set_ylabel("Generalised Forces")
+
+        state_labels = [
+                        
+                        'base_x','base_y','base_z',
+                        'base_ro','base_pi','base_yw',
+                        'abdmn_x','abdmn_y','abdmn_z',
+                        'lhip_x','lhip_z','lhip_y', 'lknee','lankle_y','lankle_x',
+                        'rhip_x','rhip_z','rhip_y', 'rknee','rankle_y','rankle_x',
+
+                        'v_base_x','v_base_y','v_base_z',
+                        'v_base_ro','v_base_pi','v_base_yw',
+                        'v_abdmn_x','v_abdmn_y','v_abdmn_z',
+                        'v_lhip_x','v_lhip_z','v_lhip_y', 'v_lknee','v_lankle_y','v_lankle_x',
+                        'v_rhip_x','v_rhip_z','v_rhip_y', 'v_rknee','v_rankle_y','v_rankle_x',
+                        
+                        ''
+        ]
+
+        ax.set_xticks(np.arange(-0.5, R.shape[1]))
+        ax.set_xticklabels(state_labels,horizontalalignment="left",rotation=90)
+        ax.set_xlabel("Generalised States")
+        ax.set_title('R^2 test over a single trial, current action vs state')
+        ax.grid()        
+        plt.show()        
+        pass        
     # plt.savefig('./evaluation_plots/ip_type2_'+taskname+'.jpg')
     plt.show()

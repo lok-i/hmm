@@ -17,7 +17,7 @@
 ## scaled model from static file
     python3 utils/make_scaled_model.py --model_filename rand_1 --static_confpath `file path` --processed_filepath `file path`
 
-# update mujoco model form factor and marker placments
+# update mujoco model form factor and marker placements
 
     python3 utils/mujoco_model_editor/main.py --input gym_hmm_ec/envs/assets/models/rand_1.xml --static_input data/our_data/marker_data/processed_data/AB1_Session1_Static_from_0_to_None.npz
 
@@ -27,4 +27,4 @@
 
 # compute inverse dynamics
 
-    python3 utils/compute_id.py --mocap_npz_filename AB1_Session1_Right6_Left6_from_1200_to_1500 --render --export_solns --plot_solns --model_filename rand_1_updated
+    python3 utils/compute_id.py --processed_filepath `file path` --model_filename rand_1_updated --export_solns  --render  --plot_solns 

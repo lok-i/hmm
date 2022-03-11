@@ -178,12 +178,22 @@ if __name__ == '__main__':
 
     if args.export_solns:
         id_solns = np.array(id_solns)
+
+        # nan check
+        nan_chk = np.isnan(id_solns) 
+        for i in range(nan_chk.shape[0]):
+            for j in range(nan_chk.shape[1]):
+                if nan_chk[i,j]:
+                    print('nan value in ID soln @ ',i,j)
+
+
         print('ID Soln Shape', id_solns.shape)
 
         output_filepath =  args.processed_filepath.split('marker_data/processed_data/')[0]+'id_solns/' \
                         + args.processed_filepath.split('marker_data/processed_data/')[-1] 
         np.savez_compressed(output_filepath, id_solns=id_solns)
         print("ID Solution written to:", output_filepath)
+    
     if args.plot_solns:
         id_solns = np.array(id_solns)
         time_scale = timestep*np.arange(step)

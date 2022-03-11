@@ -431,8 +431,8 @@ class Humanoid(object):
     # <motor name="abdomen_z"       gear="40"  joint="abdomen_z"/>
     # <motor name="abdomen_x"       gear="40"  joint="abdomen_x"/>
 
-    self.mjcf_model.actuator.add("motor",name='abdomen_y',gear=[40],joint='abdomen_y')
     self.mjcf_model.actuator.add("motor",name='abdomen_z',gear=[40],joint='abdomen_z')
+    self.mjcf_model.actuator.add("motor",name='abdomen_y',gear=[40],joint='abdomen_y')
     self.mjcf_model.actuator.add("motor",name='abdomen_x',gear=[40],joint='abdomen_x')
 
 
