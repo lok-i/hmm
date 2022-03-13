@@ -374,7 +374,7 @@ if __name__ == '__main__':
         plt.legend()
         plt.title("Phase Variable")
 
-    # R**2 Test
+    # R**2 Test, only current state
     elif args.plot_id == 4:
         q_diff = np.load('./data/q_diff.npy')
         
@@ -394,6 +394,7 @@ if __name__ == '__main__':
 
         R = np.corrcoef(x=tau_and_state_diff,rowvar=False)[torque_rows[0]:torque_rows[1],state_cols[0]:state_cols[1] ]
         print( "Corr. Coef matrix's shape:", R.shape )
+        
         nan_chk = np.isnan(R) 
         for i in range(nan_chk.shape[0]):
             for j in range(nan_chk.shape[1]):
@@ -440,7 +441,7 @@ if __name__ == '__main__':
                         'v_rhip_x','v_rhip_z','v_rhip_y', 'v_rknee','v_rankle_y','v_rankle_x',
                         
                         ''
-        ]
+                        ]
 
         ax.set_xticks(np.arange(-0.5, R.shape[1]))
         ax.set_xticklabels(state_labels,horizontalalignment="left",rotation=90)
@@ -450,4 +451,121 @@ if __name__ == '__main__':
         plt.show()        
         pass        
     # plt.savefig('./evaluation_plots/ip_type2_'+taskname+'.jpg')
+
+    # R**2 Test for m-length state window
+    elif args.plot_id == 5:
+        
+        def resize_to_m_window(data,m_in_past):
+            
+            n_data = []
+            print("old",m_in_past,data.shape)
+
+            stop =   data.shape[0] - m_in_past            
+            for i in range(0,stop):
+                n_data.append( data[i:i+m_in_past,:].flatten())
+            
+            n_data = np.array(n_data)
+            print("new",n_data.shape) 
+            return n_data
+
+        def sample_once_m(data,m):
+            print("old",data.shape)            
+            n_data = []
+            for i in range(m,data.shape[0]):
+                n_data.append( data[i-1,:])
+            n_data = np.array(n_data)
+            print("new",n_data.shape) 
+            return n_data
+        
+        q_diff = np.load('./data/q_diff.npy')
+        dq_diff = np.load('./data/dq_diff.npy')
+        tau_diff = np.load('./data/tau_diff.npy')
+       
+        # convert quat to rpy in qpos
+        q_diff = np.array([ base_pos.tolist() + misc_functions.quat2euler(base_quat).tolist() + joint_pos.tolist() \
+                    for base_pos, base_quat, joint_pos in 
+                    zip( q_diff[:,0:3], q_diff[:,3:7], q_diff[:,7:] ) ] )        
+
+        m_in_past = 2
+        q_diff = resize_to_m_window(q_diff,m_in_past)
+        dq_diff = resize_to_m_window(dq_diff,m_in_past)
+        tau_diff = sample_once_m(tau_diff,m_in_past)
+
+    
+        print(q_diff.shape,dq_diff.shape,tau_diff.shape)
+
+        tau_and_state_diff = [ np.concatenate([q,dq,tau]) for q,dq,tau in zip(q_diff,dq_diff,tau_diff)] 
+        
+
+        tau_and_state_diff = np.array(tau_and_state_diff)
+
+        
+        
+        torque_rows = [q_diff.shape[1] + dq_diff.shape[1], q_diff.shape[1]+ dq_diff.shape[1] + tau_diff.shape[1] ]
+        state_cols = [0,q_diff.shape[1] + dq_diff.shape[1]]
+
+        R = np.corrcoef(x=tau_and_state_diff,rowvar=False)[torque_rows[0]:torque_rows[1],state_cols[0]:state_cols[1] ]
+        print( "Corr. Coef matrix's shape:", R.shape )
+        
+        nan_chk = np.isnan(R) 
+        for i in range(nan_chk.shape[0]):
+            for j in range(nan_chk.shape[1]):
+                if nan_chk[i,j]:
+                    R[i,j] = 0.
+                    # print(i,j)
+
+
+        fig,ax = plt.subplots(1,1)
+
+        # print(R[25,25])
+        
+        im = ax.imshow(R**2,aspect='auto')
+        fig.colorbar(im, ax=ax)
+
+        tau_labels = [
+                        'base_x','base_y','base_z',
+                        'base_ro','base_pi','base_yw',
+
+                        'abdmn_x','abdmn_y','abdmn_z',
+                        'lhip_x','lhip_z','lhip_y', 'lknee','lankle_y','lankle_x',
+                        'rhip_x','rhip_z','rhip_y', 'rknee','rankle_y','rankle_x',
+                        ''
+        ]
+        
+        
+        
+        # ax.set_yticks(np.arange(-0.5, R.shape[0]))
+        # ax.set_yticklabels(tau_labels,verticalalignment="top")
+        # ax.set_ylabel("Generalised Forces")
+
+        # state_labels = [
+                        
+        #                 'base_x','base_y','base_z',
+        #                 'base_ro','base_pi','base_yw',
+        #                 'abdmn_x','abdmn_y','abdmn_z',
+        #                 'lhip_x','lhip_z','lhip_y', 'lknee','lankle_y','lankle_x',
+        #                 'rhip_x','rhip_z','rhip_y', 'rknee','rankle_y','rankle_x',
+
+        #                 'v_base_x','v_base_y','v_base_z',
+        #                 'v_base_ro','v_base_pi','v_base_yw',
+        #                 'v_abdmn_x','v_abdmn_y','v_abdmn_z',
+        #                 'v_lhip_x','v_lhip_z','v_lhip_y', 'v_lknee','v_lankle_y','v_lankle_x',
+        #                 'v_rhip_x','v_rhip_z','v_rhip_y', 'v_rknee','v_rankle_y','v_rankle_x',
+                        
+        #                 ''
+        #                 ]
+
+
+        # ax.set_xticks(np.arange(-0.5, R.shape[1]))
+        # ax.set_xticklabels(state_labels,horizontalalignment="left",rotation=90)
+        
+        ax.set_xlabel("Generalised States")
+        ax.set_title('R^2 test over a single trial, current action vs state')
+        ax.grid()        
+        plt.show()        
+        pass        
+    
+    
+    # plt.savefig('./evaluation_plots/ip_type2_'+taskname+'.jpg')
     plt.show()
+

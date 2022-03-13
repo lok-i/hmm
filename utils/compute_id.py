@@ -173,7 +173,7 @@ if __name__ == '__main__':
         prev_qpos = qpos.copy()
 
         # to rotate camera 360 around the model
-        # env.viewer.cam.azimuth += 0.25 #180
+        env.viewer.cam.azimuth += 0.25 #180
         step += 1
 
     if args.export_solns:

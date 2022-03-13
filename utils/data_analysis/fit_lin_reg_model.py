@@ -1,9 +1,7 @@
-from math import tau
-from tkinter import Y
+
 import numpy as np
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 from utils import misc_functions
 
 q_diff = np.load('./data/q_diff.npy')
@@ -88,8 +86,6 @@ ax[1].set_title("B")
 intercept_as_2d = np.atleast_2d( reg.intercept_ ).T
 print( 'B\'s shape:',intercept_as_2d.shape)
 im2 = ax[1].imshow( intercept_as_2d ,cmap='seismic')
-
-
         
 ax[1].set_yticks(np.arange(-0.5, intercept_as_2d.shape[0]))
 ax[1].set_yticklabels(tau_labels ,verticalalignment="top")
