@@ -1,9 +1,44 @@
 from ntpath import join
+import statistics
 import numpy as np
 import matplotlib.pyplot as plt
 import os
 import argparse
 from utils import misc_functions
+
+def resize_to_m_window(data,m_in_past):
+    
+    n_data = []
+    print("old",m_in_past,data.shape)
+
+    stop =   data.shape[0] - m_in_past            
+    
+    if data.ndim != 1:
+        for i in range(0,stop):
+            
+            n_data.append( data[i:i+m_in_past,:].flatten())
+    else:
+        for i in range(0,stop):
+            n_data.append( data[i:i+m_in_past].flatten())        
+    
+    n_data = np.array(n_data)
+    print("new",n_data.shape) 
+    return n_data
+
+def sample_once_m(data,m):
+    print("old",data.shape)            
+    n_data = []
+    if data.ndim != 1:
+        for i in range(m,data.shape[0]):
+            n_data.append( data[i-1,:])
+    else:
+        for i in range(m,data.shape[0]):
+            n_data.append( data[i-1])        
+    n_data = np.array(n_data)
+    if n_data.ndim ==1:
+        n_data = np.atleast_2d(n_data).T
+    print("new",n_data.shape) 
+    return n_data
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -11,7 +46,7 @@ if __name__ == '__main__':
     parser.add_argument('--ik_soln',help='path to ik soln file',default='AB1_Session1_Right6_Left6',type=str)
     parser.add_argument('--id_soln',help='path to id soln file',default='AB1_Session1_Right6_Left6',type=str)
     parser.add_argument('--plot_id',help='id selecting the req. plot',default=0,type=int)
-
+    parser.add_argument('--subplot_id',help='id selecting the req. sub plot',default=0,type=int)
     parser.add_argument('--export_solns',help='whether to export the ik solns',default=False, action='store_true')
     parser.add_argument('--render',help='whether to render while solving for ik',default=False, action='store_true')
     args = parser.parse_args()
@@ -454,29 +489,7 @@ if __name__ == '__main__':
 
     # R**2 Test for m-length state window
     elif args.plot_id == 5:
-        
-        def resize_to_m_window(data,m_in_past):
-            
-            n_data = []
-            print("old",m_in_past,data.shape)
 
-            stop =   data.shape[0] - m_in_past            
-            for i in range(0,stop):
-                n_data.append( data[i:i+m_in_past,:].flatten())
-            
-            n_data = np.array(n_data)
-            print("new",n_data.shape) 
-            return n_data
-
-        def sample_once_m(data,m):
-            print("old",data.shape)            
-            n_data = []
-            for i in range(m,data.shape[0]):
-                n_data.append( data[i-1,:])
-            n_data = np.array(n_data)
-            print("new",n_data.shape) 
-            return n_data
-        
         q_diff = np.load('./data/q_diff.npy')
         dq_diff = np.load('./data/dq_diff.npy')
         tau_diff = np.load('./data/tau_diff.npy')
@@ -486,13 +499,59 @@ if __name__ == '__main__':
                     for base_pos, base_quat, joint_pos in 
                     zip( q_diff[:,0:3], q_diff[:,3:7], q_diff[:,7:] ) ] )        
 
-        m_in_past = 2
+
+        m_in_past = 20
+        torque_start = 9 # from front side
+        torque_stop = 2 # from back side
+        dt = round(1./100,2)
+
+
+        state_labels = [
+                        
+                        'base_x','base_y','base_z',
+                        'base_ro','base_pi','base_yw',
+                        'abdmn_x','abdmn_y','abdmn_z',
+                        'lhip_x','lhip_z','lhip_y', 'lknee','lankle_y','lankle_x',
+                        'rhip_x','rhip_z','rhip_y', 'rknee','rankle_y','rankle_x',
+
+                        'v_base_x','v_base_y','v_base_z',
+                        'v_base_ro','v_base_pi','v_base_yw',
+                        'v_abdmn_x','v_abdmn_y','v_abdmn_z',
+                        'v_lhip_x','v_lhip_z','v_lhip_y', 'v_lknee','v_lankle_y','v_lankle_x',
+                        'v_rhip_x','v_rhip_z','v_rhip_y', 'v_rknee','v_rankle_y','v_rankle_x',
+                        
+                        ]
+
+        states_to_ignore = [
+                        'base_x','base_y','base_z',
+                        'base_ro','base_pi','base_yw',
+                        # 'abdmn_x','abdmn_y','abdmn_z',
+                        # 'lhip_x','lhip_z','lhip_y', 'lknee','lankle_y','lankle_x',
+                        # 'rhip_x','rhip_z','rhip_y', 'rknee','rankle_y','rankle_x',
+
+                        'v_base_x','v_base_y','v_base_z',
+                        'v_base_ro','v_base_pi','v_base_yw',
+                        'v_abdmn_x','v_abdmn_y','v_abdmn_z',
+                        # 'v_lhip_x','v_lhip_z','v_lhip_y', 'v_lknee','v_lankle_y','v_lankle_x',
+                        # 'v_rhip_x','v_rhip_z','v_rhip_y', 'v_rknee','v_rankle_y','v_rankle_x',
+
+                            ]
+        
+        states_id_to_keep = [state_labels.index(state) for state in state_labels if state not in states_to_ignore ]
+
+        states_q_id = [q_id for q_id in states_id_to_keep if q_id < q_diff.shape[1]]
+        states_dq_id = [dq_id -  q_diff.shape[1] for dq_id in states_id_to_keep if dq_id < q_diff.shape[1]+dq_diff.shape[1] and dq_id >= q_diff.shape[1]]
+
+        q_diff = q_diff[:,states_q_id]
+        dq_diff = dq_diff[:,states_dq_id]
+        
+        
         q_diff = resize_to_m_window(q_diff,m_in_past)
         dq_diff = resize_to_m_window(dq_diff,m_in_past)
         tau_diff = sample_once_m(tau_diff,m_in_past)
 
     
-        print(q_diff.shape,dq_diff.shape,tau_diff.shape)
+        # print(q_diff.shape,dq_diff.shape,tau_diff.shape)
 
         tau_and_state_diff = [ np.concatenate([q,dq,tau]) for q,dq,tau in zip(q_diff,dq_diff,tau_diff)] 
         
@@ -500,11 +559,17 @@ if __name__ == '__main__':
         tau_and_state_diff = np.array(tau_and_state_diff)
 
         
+
+
+        torque_rows = [
+                        q_diff.shape[1] + dq_diff.shape[1] + torque_start, 
+                        q_diff.shape[1]+ dq_diff.shape[1] + tau_diff.shape[1] - torque_stop 
+                        ]
         
-        torque_rows = [q_diff.shape[1] + dq_diff.shape[1], q_diff.shape[1]+ dq_diff.shape[1] + tau_diff.shape[1] ]
         state_cols = [0,q_diff.shape[1] + dq_diff.shape[1]]
 
         R = np.corrcoef(x=tau_and_state_diff,rowvar=False)[torque_rows[0]:torque_rows[1],state_cols[0]:state_cols[1] ]
+        
         print( "Corr. Coef matrix's shape:", R.shape )
         
         nan_chk = np.isnan(R) 
@@ -516,10 +581,12 @@ if __name__ == '__main__':
 
 
         fig,ax = plt.subplots(1,1)
-
-        # print(R[25,25])
         
-        im = ax.imshow(R**2,aspect='auto')
+        im = ax.imshow(R**2,
+                        aspect='auto',
+                        vmin=0, vmax=1,
+                        # cmap='seismic'
+                        )
         fig.colorbar(im, ax=ax)
 
         tau_labels = [
@@ -529,43 +596,139 @@ if __name__ == '__main__':
                         'abdmn_x','abdmn_y','abdmn_z',
                         'lhip_x','lhip_z','lhip_y', 'lknee','lankle_y','lankle_x',
                         'rhip_x','rhip_z','rhip_y', 'rknee','rankle_y','rankle_x',
-                        ''
-        ]
-        
-        
-        
-        # ax.set_yticks(np.arange(-0.5, R.shape[0]))
-        # ax.set_yticklabels(tau_labels,verticalalignment="top")
-        # ax.set_ylabel("Generalised Forces")
-
-        # state_labels = [
                         
-        #                 'base_x','base_y','base_z',
-        #                 'base_ro','base_pi','base_yw',
-        #                 'abdmn_x','abdmn_y','abdmn_z',
-        #                 'lhip_x','lhip_z','lhip_y', 'lknee','lankle_y','lankle_x',
-        #                 'rhip_x','rhip_z','rhip_y', 'rknee','rankle_y','rankle_x',
+                        ]
+        
+        ax.set_yticks(np.arange(-0.5, R.shape[0]))
+        ax.set_yticklabels(tau_labels[torque_start:tau_diff.shape[1] - torque_stop] +[''],verticalalignment="top")
+        ax.set_ylabel("Generalised Forces")
+        state_vec_len = int((q_diff.shape[1] +dq_diff.shape[1])/m_in_past )        
+        
+        k = 0
+        for i in np.arange(0, R.shape[1]):
+            if i % state_vec_len == 0:
+                ax.axvline(x=i,color='red',linestyle='--',linewidth=0.5)
+                ax.annotate(
+                            text='t:'+str( (k - R.shape[1]/state_vec_len)*dt ),
+                            xy=(i,-0.5),
+                            # color='white',
+                            rotation=45,
+                            # fontsize= 5
+                            
+                            
+                        )
+                k+=1
+        
+        if R.shape[1] <= 100:
+            state_lables_to_keep = [state_labels[state_id] for state_id in states_id_to_keep ]
 
-        #                 'v_base_x','v_base_y','v_base_z',
-        #                 'v_base_ro','v_base_pi','v_base_yw',
-        #                 'v_abdmn_x','v_abdmn_y','v_abdmn_z',
-        #                 'v_lhip_x','v_lhip_z','v_lhip_y', 'v_lknee','v_lankle_y','v_lankle_x',
-        #                 'v_rhip_x','v_rhip_z','v_rhip_y', 'v_rknee','v_rankle_y','v_rankle_x',
-                        
-        #                 ''
-        #                 ]
+            state_labels_to_keep = state_lables_to_keep*m_in_past + ['']
 
-
-        # ax.set_xticks(np.arange(-0.5, R.shape[1]))
-        # ax.set_xticklabels(state_labels,horizontalalignment="left",rotation=90)
+            ax.set_xticks(np.arange(-0.5, R.shape[1]))
+            ax.set_xticklabels(state_labels_to_keep,horizontalalignment="left",rotation=90)
         
         ax.set_xlabel("Generalised States")
-        ax.set_title('R^2 test over a single trial, current action vs state')
+        # ax.set_title('R^2 test', fontsize=5)
         ax.grid()        
-        plt.show()        
-        pass        
-    
-    
+
+    # R**2 Test for m-length state window, pair wise
+    elif args.plot_id == 6:
+
+        q_diff = np.load('./data/q_diff.npy')
+        dq_diff = np.load('./data/dq_diff.npy')
+        tau_diff = np.load('./data/tau_diff.npy')
+       
+        # convert quat to rpy in qpos
+        q_diff = np.array([ base_pos.tolist() + misc_functions.quat2euler(base_quat).tolist() + joint_pos.tolist() \
+                    for base_pos, base_quat, joint_pos in 
+                    zip( q_diff[:,0:3], q_diff[:,3:7], q_diff[:,7:] ) ] )        
+
+
+        m_in_past = 240
+        dt = round(1./100,2)
+
+        tau_labels = [
+                        'base_x','base_y','base_z',
+                        'base_ro','base_pi','base_yw',
+
+                        'abdmn_x','abdmn_y','abdmn_z',
+                        'lhip_x','lhip_z','lhip_y', 'lknee','lankle_y','lankle_x',
+                        'rhip_x','rhip_z','rhip_y', 'rknee','rankle_y','rankle_x',
+                        
+                        ]
+
+        state_labels = [
+                        
+                        'base_x','base_y','base_z',
+                        'base_ro','base_pi','base_yw',
+                        'abdmn_x','abdmn_y','abdmn_z',
+                        'lhip_x','lhip_z','lhip_y', 'lknee','lankle_y','lankle_x',
+                        'rhip_x','rhip_z','rhip_y', 'rknee','rankle_y','rankle_x',
+
+                        'v_base_x','v_base_y','v_base_z',
+                        'v_base_ro','v_base_pi','v_base_yw',
+                        'v_abdmn_x','v_abdmn_y','v_abdmn_z',
+                        'v_lhip_x','v_lhip_z','v_lhip_y', 'v_lknee','v_lankle_y','v_lankle_x',
+                        'v_rhip_x','v_rhip_z','v_rhip_y', 'v_rknee','v_rankle_y','v_rankle_x',
+                        
+                        ]
+        state_action_pair = ['lknee','lknee']
+        
+
+
+        if state_labels.index(state_action_pair[0]) < q_diff.shape[1]:
+            state = q_diff[:, state_labels.index(state_action_pair[0]) ]
+        else:
+            state = dq_diff[:, state_labels.index(state_action_pair[0])- q_diff.shape[1] ]
+        
+        tau_diff = tau_diff[:, tau_labels.index(state_action_pair[1])  ]
+        
+        state = resize_to_m_window(state,m_in_past)
+        # q_diff = resize_to_m_window(q_diff,m_in_past)
+        # dq_diff = resize_to_m_window(dq_diff,m_in_past)
+        tau_diff = sample_once_m(tau_diff,m_in_past)
+
+
+        print(state.shape,tau_diff.shape)
+
+        tau_and_state_diff = [ np.concatenate([x,tau]) for x,tau in zip(state,tau_diff)] 
+        
+
+        tau_and_state_diff = np.array(tau_and_state_diff)
+
+
+        R = np.corrcoef(x=tau_and_state_diff,rowvar=False) #[torque_rows[0]:torque_rows[1],state_cols[0]:state_cols[1] ]
+        
+        print( "Corr. Coef matrix's shape:", R.shape )
+        nan_chk = np.isnan(R) 
+        for i in range(nan_chk.shape[0]):
+            for j in range(nan_chk.shape[1]):
+                if nan_chk[i,j]:
+                    R[i,j] = 0.
+                    # print(i,j)
+
+        xs = dt*np.arange(-m_in_past,0)
+        ys = R[-1,:R.shape[1]-1]**2 # R^2
+        
+        # print( R[-1,-1]**2 )
+        
+        fig,ax = plt.subplots(1,1)
+        
+        ax.plot(
+                        xs,
+                        ys,
+                    )
+
+
+        
+        # ax.set_xticks(xs)
+        # ax.set_xticklabels(xs)
+        ax.set_ylabel('R^2 with torque at '+state_action_pair[1])
+        ax.set_xlabel(state_action_pair[0]+' (along time, right most is current time)')
+        # ax.set_title('R^2 test', fontsize=5)
+        ax.grid()        
+
+
     # plt.savefig('./evaluation_plots/ip_type2_'+taskname+'.jpg')
     plt.show()
 

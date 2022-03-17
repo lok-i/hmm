@@ -10,6 +10,17 @@ from utils import misc_functions
 import matplotlib.pyplot as plt
 
 
+def interpolate_data(data,old_dt,new_dt):
+    data_new = []
+    new_step = new_dt / old_dt
+    for i in range(data.shape[1]):
+        x_orig = np.arange(0,data.shape[0])
+        # print(x_orig.shape)
+        x_interp = np.arange(0,data.shape[0],new_step)
+        data_new.append( np.interp(x_interp, x_orig, data[:,i]  ) )
+    data_new = np.array(data_new).T    
+    return data_new
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -74,7 +85,6 @@ if __name__ == '__main__':
         exit()
     id_solns = []
     frame_rate = 100.
-    timestep = 1. / frame_rate
     prev_qpos = np.zeros(env.sim.data.qpos.shape)
 
     # FORCE_PLATFORM.ORIGIN[0] = [-280.  -935.     2.5]
@@ -85,25 +95,32 @@ if __name__ == '__main__':
                                     )
     step = 0
 
-    for qpos in tqdm(ik_solns):
+    print("env timestep:",env.model.opt.timestep)
 
+    timestep = env.model.opt.timestep 
+    # decrease dt    
+    ik_solns = interpolate_data(data=ik_solns,old_dt= 1./frame_rate,new_dt=timestep)
+    grf_data = interpolate_data(data=mocap_marker_data['grfs'],old_dt= 1./frame_rate,new_dt=timestep)
+    
+    print("After:",ik_solns.shape, grf_data.shape)
+    for qpos,grf in tqdm(zip(ik_solns,grf_data),total=ik_solns.shape[0]):
 
-        for i in range(2):
+        # # COP points
+        # for i in range(2):
 
-            marker_name = 'm'+str(i)
+        #     marker_name = 'm'+str(i)
 
             
-            env.sim.data.set_mocap_pos(
-                marker_name, mocap_marker_data['cops'][step, 3*i:3*i+3] 
-                # - fp_origin[i]
-                )
-            # print(i,mocap_marker_data['cops'][step,3*i:3*i+3])
+        #     env.sim.data.set_mocap_pos(
+        #         marker_name, mocap_marker_data['cops'][step, 3*i:3*i+3] 
+        #         # - fp_origin[i]
+        #         )
         
-
-        
+        # print("base pos w",qpos[0:3])
         env.sim.data.qpos[:] = qpos
         if step == 0:
             prev_qpos = qpos.copy()
+            prev_qvel = np.zeros(env.model.nv)
 
         env.sim.data.qvel[:] = np.concatenate([
             (qpos[:3]-prev_qpos[:3]) / timestep,
@@ -113,26 +130,24 @@ if __name__ == '__main__':
         ]
         ).ravel()
 
-        obs, reward, done, info = env.step(
-            action=np.zeros(shape=env.n_act_joints))
-
         body_name = 'right_leg/foot'
         body_id = env.sim.model.body_name2id(body_name)
-        wrench_prtb = -1.*np.array([
-            mocap_marker_data['grfs'][step,
-                               marker_conf['forces_name2id']['Force.Fx1']],
-            mocap_marker_data['grfs'][step,
-                               marker_conf['forces_name2id']['Force.Fy1']],
-            mocap_marker_data['grfs'][step,
-                               marker_conf['forces_name2id']['Force.Fz1']],
-            mocap_marker_data['grfs'][step,
-                               marker_conf['forces_name2id']['Moment.Mx1']],
-            mocap_marker_data['grfs'][step,
-                               marker_conf['forces_name2id']['Moment.My1']],
-            mocap_marker_data['grfs'][step,
-                               marker_conf['forces_name2id']['Moment.Mz1']],
+        wrench_prtb = -1. * grf[0:6]
+        # wrench_prtb = -1.*np.array([
+        #     mocap_marker_data['grfs'][step,
+        #                        marker_conf['forces_name2id']['Force.Fx1']],
+        #     mocap_marker_data['grfs'][step,
+        #                        marker_conf['forces_name2id']['Force.Fy1']],
+        #     mocap_marker_data['grfs'][step,
+        #                        marker_conf['forces_name2id']['Force.Fz1']],
+        #     mocap_marker_data['grfs'][step,
+        #                        marker_conf['forces_name2id']['Moment.Mx1']],
+        #     mocap_marker_data['grfs'][step,
+        #                        marker_conf['forces_name2id']['Moment.My1']],
+        #     mocap_marker_data['grfs'][step,
+        #                        marker_conf['forces_name2id']['Moment.Mz1']],
 
-        ])  # in world frame
+        # ])  # in world frame
 
         frc_pos = env.sim.data.get_body_xpos(body_name)
         env.view_vector_arrows(
@@ -144,22 +159,7 @@ if __name__ == '__main__':
 
         body_name = 'left_leg/foot'
         body_id = env.sim.model.body_name2id(body_name)
-        wrench_prtb = -1.*np.array([
-            mocap_marker_data['grfs'][step,
-                               marker_conf['forces_name2id']['Force.Fx2']],
-            mocap_marker_data['grfs'][step,
-                               marker_conf['forces_name2id']['Force.Fy2']],
-            mocap_marker_data['grfs'][step,
-                               marker_conf['forces_name2id']['Force.Fz2']],
-            mocap_marker_data['grfs'][step,
-                               marker_conf['forces_name2id']['Moment.Mx2']],
-            mocap_marker_data['grfs'][step,
-                               marker_conf['forces_name2id']['Moment.My2']],
-            mocap_marker_data['grfs'][step,
-                               marker_conf['forces_name2id']['Moment.Mz2']],
-
-        ])  # in world frame
-
+        wrench_prtb = -1. * grf[6:12]
         frc_pos = env.sim.data.get_body_xpos(body_name)
         env.view_vector_arrows(
             vec=wrench_prtb[0:3],
@@ -168,12 +168,17 @@ if __name__ == '__main__':
         )
         env.sim.data.xfrc_applied[body_id][:] = wrench_prtb
 
+        # with FD to obtain qacc
+        obs, reward, done, info = env.step(action=np.zeros(shape=env.n_act_joints))
+        
         functions.mj_inverse(env.model, env.sim.data)
         id_solns.append(env.sim.data.qfrc_inverse.tolist())
         prev_qpos = qpos.copy()
+        prev_qvel = env.sim.data.qvel.copy()
 
         # to rotate camera 360 around the model
-        env.viewer.cam.azimuth += 0.25 #180
+        # env.viewer.cam.azimuth += 0.25 #180
+        
         step += 1
 
     if args.export_solns:
@@ -196,7 +201,7 @@ if __name__ == '__main__':
     
     if args.plot_solns:
         id_solns = np.array(id_solns)
-        time_scale = timestep*np.arange(step)
+        time_scale = timestep*np.arange(id_solns.shape[0])
 
         nrows = 6
         ncols = 2
@@ -227,9 +232,11 @@ if __name__ == '__main__':
 
         for joint_id in joints_of_intrest:
 
+            # row major
             # row = plot_id // ncols
             # col = plot_id % ncols
 
+            # col major
             row = plot_id % nrows
             col = plot_id // nrows
 
@@ -238,12 +245,13 @@ if __name__ == '__main__':
                 id_solns[:, joint_id],
             )
             axs[row, col].set_title(joint_id2name[joint_id])
+            
             if col == 0:
                 # left grf
                 axs_twin = axs[row, col].twinx()
                 axs_twin.plot(
                     time_scale,
-                    mocap_marker_data['grfs'][:,
+                    grf_data[:,
                                        marker_conf['forces_name2id']['Force.Fz2']],
                     alpha=0.6,
                     color='red',
@@ -255,14 +263,14 @@ if __name__ == '__main__':
                 axs_twin = axs[row, col].twinx()
                 axs_twin.plot(
                     time_scale,
-                    mocap_marker_data['grfs'][:,
+                    grf_data[:,
                                        marker_conf['forces_name2id']['Force.Fz1']],
                     alpha=0.6,
                     color='red',
                     linestyle='-.'
                 )
                 axs_twin.set_ylabel('right_leg/Fz')
-
+            
             # axs[row,col].plot(timesteps, torques_of_joints_contact[:,plot_id],label=joint_name)
 
             axs[row, col].set_ylabel("torques (Nm)")
