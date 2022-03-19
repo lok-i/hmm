@@ -4,6 +4,7 @@ import numpy as np
 from tqdm import tqdm
 import yaml
 import argparse
+import matplotlib.pyplot as plt
 from dm_control import mujoco
 from utils.ik_solver import qpos_from_site_pose
 
@@ -16,7 +17,8 @@ if __name__ == '__main__':
 
     parser.add_argument('--export_solns',help='whether to export the ik solns',default=False, action='store_true')
     parser.add_argument('--render',help='whether to render while solving for ik',default=False, action='store_true')
-
+    parser.add_argument('--plot_solns', help='whether to plot the ik solns',
+                        default=False, action='store_true')
     args = parser.parse_args()
 
     assets_path = './gym_hmm_ec/envs/assets/'
@@ -164,3 +166,75 @@ if __name__ == '__main__':
                                 pelvis_xpos = pelvis_xpos,
                             )
         print("IK Solution written to:", output_filepath)
+    
+    if args.plot_solns:
+        timestep = 1. / 100.
+        ik_solns = np.array(ik_solns)
+        time_scale = timestep*np.arange(ik_solns.shape[0])
+
+        nrows = 6
+        ncols = 2
+        fig, axs = plt.subplots(nrows, ncols)
+        fig.set_size_inches(18.5, 10.5)
+        # plottinf should be reordered
+        # joints_of_intrest = [
+        #     # 0,1,2,3,4,5,6, # root 6D
+        #     # 7,8,9, # abdomen joints
+
+        #     10, 11, 12, 13, 14,15,  # left_leg
+
+        #     16, 17, 18, 19, 20, 21  # right_leg
+
+        # ]
+        joints_of_intrest = [
+            # 0,1,2,3,4,5, # root 6D
+            # 6,7,8, # abdomen joints
+
+            9, 10, 11, 12, 13, 14,  # left_leg
+            15, 16, 17, 18, 19, 20,  # left_leg
+
+        ]
+        joint_id2name = {}
+        joint_id = 0
+        root_dof = ['x','y','z','roll','pitch','yaw']
+        for joint_name in env.model.joint_names:
+            if joint_name == 'root':
+                for i in range(6):
+                    joint_id2name[joint_id] = 'unactuated root_'+str(root_dof[i])
+                    joint_id += 1
+            else:
+                joint_id2name[joint_id] = joint_name
+                joint_id += 1
+
+        plot_id = 0
+
+        for joint_id in joints_of_intrest:
+
+            # row major
+            # row = plot_id // ncols
+            # col = plot_id % ncols
+
+            # col major
+            row = plot_id % nrows
+            col = plot_id // nrows
+
+            axs[row, col].plot(
+                time_scale,
+                ik_solns[:, joint_id],
+            )
+
+
+            axs[row, col].set_title(joint_id2name[joint_id])
+                        
+            # axs[row,col].plot(timesteps, torques_of_joints_contact[:,plot_id],label=joint_name)
+
+            axs[row, col].set_ylabel("joint angles (rads)")
+            axs[row, col].set_xlabel("time (s)")
+            # axs[row,col].legend(loc='upper right')
+            axs[row, col].grid()
+            plot_id += 1
+
+        fig.suptitle('IK Output: ')
+        fig.tight_layout()
+        # plt.savefig('./evaluation_plots/ip_type2_'+taskname+'.jpg')
+        plt.show()
