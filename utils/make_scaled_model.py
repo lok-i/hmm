@@ -5,6 +5,7 @@ import yaml
 from utils.make_humanoid_mjcf import Humanoid 
 from dm_control import mjcf
 import argparse
+import matplotlib.pyplot as plt 
 
 
 if __name__ == '__main__':
@@ -48,8 +49,11 @@ if __name__ == '__main__':
                     'length':{'operation':'ignore'},
 
 
+                    },
+                    'ankle':
+                    {
+                        'yaw_offset':{'from':['RHEE'],'to':['RM1','RM5'],'operation':'cos_wj'}
                     }
-                
                 
                 
                 }
@@ -65,8 +69,10 @@ if __name__ == '__main__':
     static_marker_pos = np.load(args.processed_filepath)['marker_positions']
 
     n_samples = static_marker_pos.shape[0]
+    
     for n_frame, frame in enumerate(static_marker_pos):
         
+
         for link in to_compute:
             for metric in to_compute[link].keys():
 
@@ -75,10 +81,21 @@ if __name__ == '__main__':
                     sum_sub_samples = 0.
                     for from_marker in to_compute[link][metric]['from']:
                         for to_marker in to_compute[link][metric]['to']:
+
                             from_id = marker_name2id[from_marker]
-                            to_id = marker_name2id[to_marker]
+                            to_id = marker_name2id[to_marker]                            
                             
-                            sum_sub_samples += np.linalg.norm( frame[from_id] - frame[to_id])
+                            if to_compute[link][metric]['operation'] == 'cos_wj':
+                                
+                                foot_vector =  frame[to_id] - frame[from_id]
+                                foot_vector[2] = 0
+
+                                dot_prod_by_mag = np.dot(foot_vector,np.array([0,1,0])) / np.linalg.norm(foot_vector)
+                                sum_sub_samples += np.degrees( np.arccos(dot_prod_by_mag) )
+                                
+                                # print(foot_vector,np.degrees(np.arccos(dot_prod_by_mag))) 
+                            else:
+                                sum_sub_samples += np.linalg.norm( frame[from_id] - frame[to_id])
 
                             k+=1
 
@@ -88,7 +105,41 @@ if __name__ == '__main__':
                         marker_geometry_avg[link][metric]['value'] += float(sum_sub_samples/ (2.0*k*n_samples) )
                     elif to_compute[link][metric]['operation'] == 'measure+by4':
                         marker_geometry_avg[link][metric]['value'] += float(sum_sub_samples/ (4.0*k*n_samples) )
+                    elif to_compute[link][metric]['operation'] == 'cos_wj':
+                        marker_geometry_avg[link][metric]['value'] += float(sum_sub_samples/ (k*n_samples) )                        
+                        # pass
+    
+    # _from = np.array(_from)
+    # _to = np.array(_to)
 
+    # print(_from.shape)
+    # foot_vector =   np.array( 
+    #                         [ 
+    #                             np.mean(_to[:,0]) - np.mean(_from[:,0]) ,  
+    #                             np.mean(_to[:,1]) - np.mean(_from[:,1] ), 
+    #                             0 
+    #                         ] )
+    
+    
+    # dot_prod_by_mag = np.dot(foot_vector,np.array([0,1,0])) / np.linalg.norm(foot_vector)
+    # print(foot_vector,np.degrees(np.arccos(dot_prod_by_mag))) 
+ 
+    # plt.plot(_from[:,0],_from[:,1],label = 'from')
+    # plt.plot(_to[:,0],_to[:,1],label = 'to')
+    
+    # plt.plot( 
+    #             [ np.mean(_from[:,0]), np.mean(_to[:,0]) ], 
+
+    #             [ np.mean(_from[:,1]), np.mean(_to[:,1]) ]
+            
+    #         )
+    
+    
+    # # plt.plot([0,0],[0,1])
+    # plt.axvline(x= np.mean(_from[:,0]))
+    # plt.legend()
+    # plt.grid()
+    # plt.show()    
     base_file_name = 'base_model_link_geometry.yaml'
 
     subject_file_name = args.static_confpath.split('/')[-1]
@@ -102,9 +153,10 @@ if __name__ == '__main__':
     print(" Measured values :")
     for link in marker_geometry_avg.keys():
         for metric in marker_geometry_avg[link].keys():
+            
+            
             base_measure = base_geom_conf[link][metric]
             subj_measure = marker_geometry_avg[link][metric]['value']
-
             marker_geometry_avg[link][metric]['scale'] = subj_measure / base_measure if to_compute[link][metric]['operation'] != 'ignore' else 1
             
             if subj_measure != 0:
@@ -120,7 +172,7 @@ if __name__ == '__main__':
 
     scaled_humanoid_conf ={     'torso_h_scale': marker_geometry_avg['torso_all']['length']['scale'],
                                 'torso_b_scale': marker_geometry_avg['torso_all']['breadth']['scale'],
-
+                                'ankle_yaw_deviation': marker_geometry_avg['ankle']['yaw_offset']['value'],
                                 'leg_scales' :  {
 
 

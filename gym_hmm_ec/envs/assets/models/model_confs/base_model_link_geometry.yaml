@@ -34,4 +34,6 @@ humanoid:
     type: capsule
     length: 0.21
     radius: 0.027
+  ankle:
+    yaw_offset: 10
   

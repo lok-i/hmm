@@ -118,7 +118,16 @@ def calc_rotation_vec_a2b(frc_ptb):
 
     return rotation_mat
 
-
+def interpolate_data(data,old_dt,new_dt):
+    data_new = []
+    new_step = new_dt / old_dt
+    for i in range(data.shape[1]):
+        x_orig = np.arange(0,data.shape[0])
+        # print(x_orig.shape)
+        x_interp = np.arange(0,data.shape[0],new_step)
+        data_new.append( np.interp(x_interp, x_orig, data[:,i]  ) )
+    data_new = np.array(data_new).T    
+    return data_new
 
 def quat2mat(quat):
     """ Convert Quaternion to Euler Angles.  See rotation.py for notes """

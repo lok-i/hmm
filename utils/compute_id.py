@@ -10,21 +10,9 @@ from utils import misc_functions
 import matplotlib.pyplot as plt
 
 
-def interpolate_data(data,old_dt,new_dt):
-    data_new = []
-    new_step = new_dt / old_dt
-    for i in range(data.shape[1]):
-        x_orig = np.arange(0,data.shape[0])
-        # print(x_orig.shape)
-        x_interp = np.arange(0,data.shape[0],new_step)
-        data_new.append( np.interp(x_interp, x_orig, data[:,i]  ) )
-    data_new = np.array(data_new).T    
-    return data_new
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
 
     parser.add_argument('--processed_filepath',help='name of the preprocessed mocap file',default='AB1_Session1_Right6_Left6',type=str)
     parser.add_argument('--export_solns', help='whether to export the id solns',
@@ -90,31 +78,32 @@ if __name__ == '__main__':
     # FORCE_PLATFORM.ORIGIN[0] = [-280.  -935.     2.5]
     # FORCE_PLATFORM.ORIGIN[1] = [ 275.  -935.     2.5]
     fp_origin = 0.001*np.array(
-                                    [[-280.,  -935.,     2.5],
+                                    [
+                                    [-280.,  -935.,     2.5],
                                     [-275.,  -935.,     2.5]]
                                     )
-    step = 0
 
     print("env timestep:",env.model.opt.timestep)
 
     timestep = env.model.opt.timestep 
     # decrease dt    
-    ik_solns = interpolate_data(data=ik_solns,old_dt= 1./frame_rate,new_dt=timestep)
-    grf_data = interpolate_data(data=mocap_marker_data['grfs'],old_dt= 1./frame_rate,new_dt=timestep)
-    
+    ik_solns = misc_functions.interpolate_data(data=ik_solns,old_dt= 1./frame_rate,new_dt=timestep)
+    grf_data = misc_functions.interpolate_data(data=mocap_marker_data['grfs'],old_dt= 1./frame_rate,new_dt=timestep)
+    cop_data = misc_functions.interpolate_data(data=mocap_marker_data['cops'],old_dt= 1./frame_rate,new_dt=timestep)
     print("After:",ik_solns.shape, grf_data.shape)
-    for qpos,grf in tqdm(zip(ik_solns,grf_data),total=ik_solns.shape[0]):
+    step = 0
 
-        # # COP points
-        # for i in range(2):
+    for qpos,grf,cop in tqdm(zip(ik_solns,grf_data,cop_data),total=ik_solns.shape[0]):
 
-        #     marker_name = 'm'+str(i)
+        # COP points
+        for i in range(2):
+
+            marker_name = 'm'+str(i)
 
             
-        #     env.sim.data.set_mocap_pos(
-        #         marker_name, mocap_marker_data['cops'][step, 3*i:3*i+3] 
-        #         # - fp_origin[i]
-        #         )
+            env.sim.data.set_mocap_pos(
+                marker_name, cop[3*i:3*i+3] 
+                )
         
         # print("base pos w",qpos[0:3])
         env.sim.data.qpos[:] = qpos
@@ -172,6 +161,13 @@ if __name__ == '__main__':
         obs, reward, done, info = env.step(action=np.zeros(shape=env.n_act_joints))
         
         functions.mj_inverse(env.model, env.sim.data)
+        
+        # print("qfrc_inverse:",env.sim.data.qfrc_inverse)
+        # print("qfrc_applied:",env.sim.data.qfrc_applied.shape)
+        # print("qfrc_actuator:",env.sim.data.qfrc_actuator.shape)
+        #print("xfrc_applied:",env.sim.data.xfrc_applied)
+
+
         id_solns.append(env.sim.data.qfrc_inverse.tolist())
         prev_qpos = qpos.copy()
         prev_qvel = env.sim.data.qvel.copy()
@@ -204,12 +200,12 @@ if __name__ == '__main__':
         time_scale = timestep*np.arange(id_solns.shape[0])
 
         nrows = 6
-        ncols = 2
+        ncols = 3
         fig, axs = plt.subplots(nrows, ncols)
         fig.set_size_inches(18.5, 10.5)
         # plottinf should be reordered
         joints_of_intrest = [
-            # 0,1,2,3,4,5, # root 6D
+            0,1,2,3,4,5, # root 6D
             # 6,7,8, # abdomen joints
 
             9, 10, 11, 12, 13, 14,  # left_leg
@@ -219,10 +215,11 @@ if __name__ == '__main__':
 
         joint_id2name = {}
         joint_id = 0
+        root_dof = ['x','y','z','roll','pitch','yaw']
         for joint_name in env.model.joint_names:
             if joint_name == 'root':
                 for i in range(6):
-                    joint_id2name[joint_id] = 'root'
+                    joint_id2name[joint_id] = 'unactuated root_'+str(root_dof[i])
                     joint_id += 1
             else:
                 joint_id2name[joint_id] = joint_name
@@ -244,9 +241,11 @@ if __name__ == '__main__':
                 time_scale,
                 id_solns[:, joint_id],
             )
+
+
             axs[row, col].set_title(joint_id2name[joint_id])
             
-            if col == 0:
+            if col == 1:
                 # left grf
                 axs_twin = axs[row, col].twinx()
                 axs_twin.plot(
@@ -258,7 +257,7 @@ if __name__ == '__main__':
                     linestyle='-.'
                 )
                 axs_twin.set_ylabel('left_leg/Fz')
-            else:
+            elif col == 2:
                 # right grf
                 axs_twin = axs[row, col].twinx()
                 axs_twin.plot(
@@ -273,7 +272,10 @@ if __name__ == '__main__':
             
             # axs[row,col].plot(timesteps, torques_of_joints_contact[:,plot_id],label=joint_name)
 
-            axs[row, col].set_ylabel("torques (Nm)")
+            if col < 1 and row <3:
+                axs[row, col].set_ylabel("forces (N)")
+            else:
+                axs[row, col].set_ylabel("torques (Nm)")
             axs[row, col].set_xlabel("time (s)")
             # axs[row,col].legend(loc='upper right')
             axs[row, col].grid()

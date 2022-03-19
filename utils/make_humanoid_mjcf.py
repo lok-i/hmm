@@ -12,6 +12,7 @@ import numpy as np
 import argparse 
 import yaml
 import os
+from utils import misc_functions
 
 
 # TODO: Add colours and material, if required
@@ -28,7 +29,9 @@ class Leg(object):
               shin_r_scale = 1.,
               foot_l_scale = 1.,
               foot_r_scale = 1.,
-             force_points_per_m_in_foot = 48              
+              force_points_per_m_in_foot = 48,
+              ankle_yaw_deviation = 0,
+              
               ):
 
     self.mjcf_model = mjcf.RootElement(model=name)
@@ -98,7 +101,13 @@ class Leg(object):
 
     ankle_clearence =  0.063
     foot_radius = foot_r_scale*.027
-    self.foot = self.shin.add('body',name='foot',pos=[0, 0, (shin_h_scale*-.3) - (foot_radius+ ankle_clearence) + 2*shin_radius ])
+
+    self.foot = self.shin.add('body',name='foot',
+    pos=[0, 0, (shin_h_scale*-.3) - (foot_radius+ ankle_clearence) + 2*shin_radius ],
+    # quat=[0, 0, 0,1],
+    # quat = misc_functions.euler2quat(0,0,-1*symetric_transform*ankle_yaw_deviation),
+    )
+
     # <joint name="right_ankle_y" pos="0 0 .08" axis="0 1 0"   range="-50 50" stiffness="6"/>
     self.ankle_y = self.foot.add('joint', name='ankle_y', pos=[0, 0, .08], type='hinge',damping=0.2,stiffness=6, axis=[0, 1, 0], range=[-50, 50], armature=.01, limited=True, solimplimit=[0, .99 ,.01])
     # <joint name="right_ankle_x" pos="0 0 .04" axis="1 0 .5" range="-50 50" stiffness="3"/>
@@ -111,13 +120,31 @@ class Leg(object):
     # <geom name="right_right_foot" fromto="-.07 -.02 0 .14 -.04 0" size=".027"/>    
     
       
-    self.foot.add('geom', name='right_foot',type='capsule',fromto=[x1 - alpha, symetric_transform*-.02, 0, x2+alpha, symetric_transform*-.02, 0],size=[foot_r_scale*.027])
-    # <geom name="left_right_foot" fromto="-.07 0 0 .14  .02 0" size=".027"/>
-    self.foot.add('geom', name='left_foot',type='capsule',fromto=[x1 - alpha, symetric_transform*.02, 0, x2+alpha,  symetric_transform*.02, 0],size=[foot_r_scale*.027])
     # aproximated as a single capsule for simplicity in marker positon
     link_name = 'foot'
     link_radius = foot_radius #+ ankle_clearence  #shin_h_scale*.39 - shin_h_scale*.3 # foot centre - sin lengths, to get the radius
     link_length = x2+alpha - (x1 - alpha)
+    ankle_yaw_deviation = -1*symetric_transform*np.radians(ankle_yaw_deviation)
+    self.foot.add('geom', name='right_foot',type='capsule',
+                  fromto=[
+                          x1 - alpha, 
+                          symetric_transform*-.02 , 
+                          0, 
+                          x2 + alpha - link_length*( 1 - np.cos(ankle_yaw_deviation)),  
+                          symetric_transform*-.02 + link_length*np.tan(ankle_yaw_deviation), 
+                          0],size=[foot_r_scale*.027])
+    # <geom name="left_right_foot" fromto="-.07 0 0 .14  .02 0" size=".027"/>
+    self.foot.add('geom', name='left_foot',type='capsule',
+                  fromto=[
+                          x1 - alpha, 
+                          symetric_transform*.02, 
+                          0, 
+                          x2+alpha - link_length*( 1 - np.cos(ankle_yaw_deviation)),  
+                          symetric_transform*.02 + link_length*np.tan(ankle_yaw_deviation), 
+                          0],size=[foot_r_scale*.027])
+
+    
+    
     for t_m in marker_pos_params[link_name]:
       
       r = foot_r_scale*marker_pos_params[link_name][t_m]['r_nominal'] if 'r_nominal' in marker_pos_params[link_name][t_m].keys() else link_radius
@@ -127,8 +154,8 @@ class Leg(object):
       self.foot.add(
           'site', name=t_m,type="sphere", rgba="1. 0. 0. 1.",size=[0.01], 
           pos=[
-              k*0.5*link_length,
-              r*np.cos(theta), 
+              k*0.5*link_length - link_length*( 1 - np.cos(ankle_yaw_deviation)) ,
+              r*np.cos(theta) + link_length*np.tan(ankle_yaw_deviation), 
               r*np.sin(theta), 
               ]
               ) 
@@ -171,6 +198,7 @@ class Humanoid(object):
                torso_b_scale = 1.0,
                head_r_scale = 1.0,
                force_points_per_m_in_foot = 48,
+               ankle_yaw_deviation = 0,
                leg_scales =  
                             {
                                 'left_leg':                           
@@ -447,6 +475,7 @@ class Humanoid(object):
         torso_h_scale*-.04]
 
         )
+    
     right_leg_site = self.pelvis.add(
         'site', name='right_leg_site',size=[1e-6]*3, 
         # pos=[0, 
@@ -464,6 +493,7 @@ class Humanoid(object):
                         symetric_transform = -1.,
                         marker_pos_params = marker_pos_params['left_leg'],
                        force_points_per_m_in_foot =  force_points_per_m_in_foot,
+                        ankle_yaw_deviation = ankle_yaw_deviation,
                         **leg_scales['left_leg']
                         )
     left_leg_site.attach(self.left_leg.mjcf_model)
@@ -472,6 +502,7 @@ class Humanoid(object):
                         symetric_transform = 1.,
                        force_points_per_m_in_foot =  force_points_per_m_in_foot,
                         marker_pos_params = marker_pos_params['right_leg'],
+                        ankle_yaw_deviation = ankle_yaw_deviation,
                         **leg_scales['right_leg']
                         )
     right_leg_site.attach(self.right_leg.mjcf_model)

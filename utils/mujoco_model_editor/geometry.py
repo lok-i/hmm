@@ -85,6 +85,7 @@ class Sphere:
         self.pos = pos.copy()
         self.pos_w = None
         self.size = size
+        self.name = ''
         self.type = 'sphere'
         self.is_site = False
         self.body_w_pos = np.zeros(3)

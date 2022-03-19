@@ -1,4 +1,8 @@
 humanoid:
+  ankle:
+    yaw_offset:
+      scale: 1.5053085298276145
+      value: 15.053085298276144
   foot:
     length:
       scale: 0.9784346922825612

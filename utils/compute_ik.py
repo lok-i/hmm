@@ -76,7 +76,9 @@ if __name__ == '__main__':
         lfoot_xpos = []
         pelvis_xpos = []
 
-    for frame in tqdm(mocap_data['marker_positions']):
+    for frame,cop in tqdm(zip(mocap_data['marker_positions'],mocap_data['cops']),total=mocap_data['cops'].shape[0]):
+
+
 
         target_qpos = np.zeros(len(env.sim.data.qpos))
 
@@ -93,6 +95,15 @@ if __name__ == '__main__':
             env.sim.data.set_mocap_pos(marker_name, frame[marker_id,:] )
             target_posses.append( frame[ marker_conf['marker_name2id'][temp_target_site]  ,:].tolist() )
         target_posses = np.array(target_posses)
+        # cop points
+        for i in range(2):
+
+            marker_name = 'm'+str(marker_id+i)
+
+            
+            env.sim.data.set_mocap_pos(
+                marker_name, cop[3*i:3*i+3] 
+                )
 
         # syncornize the mujoco_py start with ik (dm_control's) pose
         for i in range(len(env.sim.data.qpos)):
@@ -116,6 +127,7 @@ if __name__ == '__main__':
                 env.sim.data.qpos[i] = target_qpos[i]#physics.data.qpos[i]
 
             obs,reward,done,info = env.step(action = np.zeros(shape=env.n_act_joints))
+        
         if args.export_solns:
             ik_solns.append(target_qpos.tolist())
             body_name = 'right_leg/foot'

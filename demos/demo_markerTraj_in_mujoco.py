@@ -4,19 +4,18 @@ from tqdm import tqdm
 import mujoco_py
 
 VIEW_MARKER_BASED_DATA = True
-STATIC_AVG_POSE = True
+STATIC_AVG_POSE = False
 
-assets_path = './gym_hmm_ec/envs/assets/'
-model_name = 'marker_set'
+
 
 
 
 if VIEW_MARKER_BASED_DATA:
-    c3d_file_name = 'marker_data/c3ds/AB1_Session1_Static.c3d'#AB1_Session1_Right6_Left6.c3d'#Trial_1.c3d'
+    c3d_file_name = 'AB1_Session1_Static.c3d'#Trial_1.c3d'
     # load data from c3d of  mocap data of 40 marker set
     marker_positions = []
     
-    with open( assets_path+"our_data/"+c3d_file_name , 'rb') as handle:
+    with open( "data/our_data/marker_data/c3ds/"+c3d_file_name , 'rb') as handle:
         manager = c3d.Manager(handle)
         # print(manager.last_frame )
         reader = c3d.Reader(handle)
@@ -41,7 +40,8 @@ else:
 
 print("Marker Pos. Traj. Shape:", marker_positions.shape)
 
-
+assets_path = './gym_hmm_ec/envs/assets/'
+model_name = 'marker_set'
 # simulaion starts
 model = mujoco_py.load_model_from_path(assets_path+"models/"+model_name+".xml")
 sim = mujoco_py.MjSim(model)

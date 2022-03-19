@@ -3,7 +3,7 @@ from OpenGL.GL import *
 from geometry import Capsule, Sphere, Box, renderer
 from utils import *
 import numpy as np
-
+import yaml
 
 class Body:
 
@@ -51,6 +51,7 @@ class Body:
                         body_marker = Sphere.from_node(site_node)
                         body_marker.is_site = True
                         body_marker.body_w_pos = self.body_w_pos
+                        body_marker.name = site_node.attrib['name']
                         self.geoms.append(body_marker)                        
                         # self.geoms[-1].is_site = True
             
@@ -199,10 +200,21 @@ class Skeleton:
         self.picked_bone = None
         self.picked_static_marker = None
         self.load_from_xml(xml_file)
-        self.load_static_markers(static_marker_file)
+
+        marker_confpath = static_marker_file.split('processed_data/')[0]+'confs/' \
+                            + static_marker_file.split('processed_data/')[-1].split('_from')[0]+'.yaml' 
+
+        marker_config_file = open(marker_confpath,'r+')
+        marker_conf = yaml.load(marker_config_file, Loader=yaml.FullLoader)
+        self.marker_name2id = marker_conf['marker_name2id']
+
+        self.load_static_markers(static_marker_file,static_confpath=marker_confpath)
+        self.align_model_markers()
+
+    def load_static_markers(self,static_marker_file,static_confpath):
 
 
-    def load_static_markers(self,static_marker_file):
+        
         static_marker_pos = np.load(static_marker_file)['marker_positions']
         static_marker_pos = np.mean(static_marker_pos,axis=0)
         
@@ -216,8 +228,13 @@ class Skeleton:
         y_mean = np.mean(static_marker_pos[:,1])
         static_marker_pos[:,1] = static_marker_pos[:,1] - y_mean 
 
-        for marker_pos in static_marker_pos:
-            self.static_markers.append(Sphere( pos=marker_pos, size=0.01))
+        for i,marker_pos in enumerate(static_marker_pos):
+            
+            experimental_marker = Sphere( pos=marker_pos, size=0.01)
+            for name in self.marker_name2id.keys():
+                if  self.marker_name2id[name] == i:
+                    experimental_marker.name = name
+            self.static_markers.append(experimental_marker)
         
     def load_from_xml(self, xml_file):
         parser = XMLParser(remove_blank_text=True)
@@ -228,6 +245,44 @@ class Skeleton:
         self.add_bones(root, None)
         self.build_symm_by_name()
         self.make_symm()
+
+
+    def align_model_markers(self):
+        
+        # extract model markers
+        model_markers = []
+        for bone in self.bones:
+            for geom in bone.geoms:
+                if geom.type == 'sphere':
+                    if geom.is_site:
+                        # print(geom.name)
+                        model_markers.append(geom)
+        
+        max_steps = 1000
+        error_norm = np.inf
+        tolerance = 0.001
+        prev_error_norm = 2*tolerance 
+        dz = 0.002 
+        
+        # update static marker's z pos to align with the model
+        for i in range(max_steps):
+            if abs(error_norm) < tolerance or ( error_norm - prev_error_norm > 0 and i != 0) :
+                # print(i)
+                break
+            else:
+                prev_error_norm = error_norm
+                error_norm = 0.
+                for model_marker in model_markers:
+                    name = model_marker.name.split('/')[-1] 
+                    
+                    if name in self.marker_name2id.keys():
+                        error_norm += np.linalg.norm( (model_marker.body_w_pos + model_marker.pos ) - self.static_markers[self.marker_name2id[name]].pos)
+                        self.static_markers[self.marker_name2id[name]].pos[2] += dz
+            
+            
+                #print(name, error_norm,(error_norm - prev_error_norm))
+            
+
 
     def save_to_xml(self, xml_file, local_coord=False):
         for bone in self.bones:
