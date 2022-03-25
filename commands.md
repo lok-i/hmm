@@ -15,7 +15,7 @@
     python3 utils/make_humanoid_mjcf.py --conf_xml_filename default_humanoid_mocap
 
 ## scaled model from static file
-    python3 utils/make_scaled_model.py --model_filename rand_1 --static_confpath `file path` --processed_filepath `file path`
+    python3 utils/make_scaled_model.py --static_confpath `file path` --processed_filepath `file path`
 
 # update mujoco model form factor and marker placements
 

@@ -118,9 +118,18 @@ class Sphere:
         # glPopMatrix()
         if not isinstance(self.pos_w,np.ndarray):
             renderer.render_point(local_origin+self.pos,  self.size)
+            
+            # if self.name != '':
+            #     renderer.render_text(
+            #             text = self.name,
+            #             pos = (local_origin+self.pos),
+            #             scale=1,
+            #             dir = np.radians([10,10])
+            #             )        
         else:
             renderer.render_point(self.pos_w,  self.size)
-
+            # if self.name != '':
+            #     renderer.render_text(text = self.name,pos = self.pos_w)
 
 
     def pick(self, ray,local_origin=np.zeros(3)):

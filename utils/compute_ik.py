@@ -17,8 +17,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--export_solns',help='whether to export the ik solns',default=False, action='store_true')
     parser.add_argument('--render',help='whether to render while solving for ik',default=False, action='store_true')
-    parser.add_argument('--plot_solns', help='whether to plot the ik solns',
-                        default=False, action='store_true')
+    parser.add_argument('--plot_solns', help='whether to plot the ik solns',default=False, action='store_true')
     args = parser.parse_args()
 
     assets_path = './gym_hmm_ec/envs/assets/'
@@ -30,7 +29,7 @@ if __name__ == '__main__':
     env_conf = {
                 'set_on_rack': False,
                 'render': args.render,
-                'model_name': args.model_filename,
+                'model_name': args.model_filename if '.xml' not in args.model_filename else args.model_filename.replace('.xml','') ,
                 'mocap':False
                 }
     # marker config
@@ -57,8 +56,13 @@ if __name__ == '__main__':
                     "left_leg/LKNL", "left_leg/LKNM","left_leg/LANL","left_leg/LANM","left_leg/LHEE","left_leg/LM1","left_leg/LM5"
                     ]
     relavent_doFs = ['root',
-                    'right_leg/hip_x','right_leg/hip_y','right_leg/hip_z','right_leg/knee','right_leg/ankle_y','right_leg/ankle_x',
-                     'left_leg/hip_x','left_leg/hip_y','left_leg/hip_z','left_leg/knee','left_leg/ankle_y','left_leg/ankle_x',
+                    'right_leg/hip_x','right_leg/hip_y','right_leg/hip_z',
+                    'right_leg/knee',
+                    # 'right_leg/ankle_y','right_leg/ankle_x',
+
+                     'left_leg/hip_x','left_leg/hip_y','left_leg/hip_z',
+                     'left_leg/knee',
+                    #  'left_leg/ankle_y','left_leg/ankle_x',
                     ]
 
     # keep the similation in pause until activated manually
@@ -97,15 +101,16 @@ if __name__ == '__main__':
             env.sim.data.set_mocap_pos(marker_name, frame[marker_id,:] )
             target_posses.append( frame[ marker_conf['marker_name2id'][temp_target_site]  ,:].tolist() )
         target_posses = np.array(target_posses)
+        
         # cop points
-        for i in range(2):
+        # for i in range(2):
 
-            marker_name = 'm'+str(marker_id+i)
+        #     marker_name = 'm'+str(marker_id+i)
 
             
-            env.sim.data.set_mocap_pos(
-                marker_name, cop[3*i:3*i+3] 
-                )
+        #     env.sim.data.set_mocap_pos(
+        #         marker_name, cop[3*i:3*i+3] 
+        #         )
 
         # syncornize the mujoco_py start with ik (dm_control's) pose
         for i in range(len(env.sim.data.qpos)):
@@ -159,6 +164,8 @@ if __name__ == '__main__':
         print('IK Soln Shape',ik_solns.shape)
         output_filepath = args.processed_filepath.split('marker_data/processed_data/')[0]+'ik_solns/' \
                         + args.processed_filepath.split('marker_data/processed_data/')[-1] 
+        
+
         np.savez_compressed(output_filepath,
                                 ik_solns=ik_solns,
                                 rfoot_xpos=rfoot_xpos,
@@ -176,30 +183,21 @@ if __name__ == '__main__':
         ncols = 2
         fig, axs = plt.subplots(nrows, ncols)
         fig.set_size_inches(18.5, 10.5)
-        # plottinf should be reordered
-        # joints_of_intrest = [
-        #     # 0,1,2,3,4,5,6, # root 6D
-        #     # 7,8,9, # abdomen joints
 
-        #     10, 11, 12, 13, 14,15,  # left_leg
-
-        #     16, 17, 18, 19, 20, 21  # right_leg
-
-        # ]
         joints_of_intrest = [
-            # 0,1,2,3,4,5, # root 6D
-            # 6,7,8, # abdomen joints
+            # 0,1,2,3,4,5,6, # root 3D pos + 4D quat
+            # 7,8,9, # abdomen joints
 
-            9, 10, 11, 12, 13, 14,  # left_leg
-            15, 16, 17, 18, 19, 20,  # left_leg
+            10, 11, 12, 13, 14, 15,  # left_leg
+            16, 17, 18, 19, 20, 21,  # right_leg
 
         ]
         joint_id2name = {}
         joint_id = 0
-        root_dof = ['x','y','z','roll','pitch','yaw']
+        root_dof = ['x','y','z','qw','qx','qy','qz']
         for joint_name in env.model.joint_names:
             if joint_name == 'root':
-                for i in range(6):
+                for i in range(len(root_dof)):
                     joint_id2name[joint_id] = 'unactuated root_'+str(root_dof[i])
                     joint_id += 1
             else:

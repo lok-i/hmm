@@ -130,7 +130,7 @@ def keyboard(key, x, y):
     if key == '`':
         exit(0)
     elif key == 'v':
-        output_file = args.input_modelpath.partition('.xml')[0]+'_updated.xml'
+        output_file = args.input_modelpath.partition('.xml')[0]+'_upd.xml'
         skeleton.save_to_xml(output_file, args.local)
         print('model saved to {}'.format(output_file))
 

@@ -336,6 +336,7 @@ class Skeleton:
             glColor4d(*color)
 
             static_marker.render()
+
         for bone in self.bones:
             bone.render(render_options)
 

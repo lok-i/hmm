@@ -1,0 +1,33 @@
+humanoid:
+  ankle:
+    yaw_offset:
+      scale: 1.581054915802073
+      value: 15.81054915802073
+  foot:
+    length:
+      scale: 0.8714853211111084
+      value: 0.18301191743333275
+    radius:
+      scale: 0.9160079504504184
+      value: 0.024732214662161297
+  shin:
+    length:
+      scale: 1.2659885759665492
+      value: 0.37979657278996476
+    radius:
+      scale: 0.7167317620401581
+      value: 0.035119856339967746
+  thigh:
+    length:
+      scale: 1.289662329700079
+      value: 0.43848519209802694
+    radius:
+      scale: 1.0800097986391857
+      value: 0.06480058791835114
+  torso_all:
+    breadth:
+      scale: 2.61944673782505
+      value: 0.366722543295507
+    length:
+      scale: 1
+      value: 0.0

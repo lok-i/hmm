@@ -11,7 +11,7 @@ from utils import misc_functions
 env_conf = {
             'set_on_rack': False,
             'render': True,
-            'model_name': 'ankle_yaw_updated',#'rand_1_updated',
+            'model_name': 'AB1_Session1_upd',#'rand_1_updated',
             'mocap':False # problem when true
             }
 
@@ -33,15 +33,16 @@ if env.env_params['render']:
 # for a_n in env.model.actuator_names:
 #     print(a_n,env.model.actuator_name2id(a_n))
 
-
-# for i in range(env.model.nbody):
+# print(env.model.opt.enableflags)
+# exit()
+for i in range(env.model.nbody):
     
-#     mass = env.model.body_mass[i]
-#     if mass != 0:
-#         print( i,env.model.body_id2name(i),mass )
+    mass = env.model.body_mass[i]
+    if mass != 0:
+        print( i,env.model.body_id2name(i),mass )
 
 # # print(functions.mj_getTotalmass(env.model) )
-# # print(sum(env.model.body_mass) )
+print(sum(env.model.body_mass) )
 
 
 while True:

@@ -1,3 +1,4 @@
+total_mass: 50
 head_r_scale: 1.0
 leg_scales:
   left_leg:
@@ -16,6 +17,7 @@ leg_scales:
     thigh_r_scale: 1.0
 
 force_points_per_m_in_foot: 48
+ankle_yaw_deviation: 30
 
 marker_pos_params:
   left_leg:

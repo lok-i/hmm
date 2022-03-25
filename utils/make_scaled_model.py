@@ -11,9 +11,8 @@ import matplotlib.pyplot as plt
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('--model_filename',help='name of the model file',default='default_humanoid_mocap_generated',type=str)
     parser.add_argument('--static_confpath',help='path of the conf file',default='AB1_Session1_Static',type=str)
-    parser.add_argument('--processed_filepath',help='path of the processed marker data file',default='AB1_Session1_Static',type=str)
+    parser.add_argument('--static_processed_filepath',help='path of the processed marker data file',default='AB1_Session1_Static',type=str)
 
     args = parser.parse_args()
 
@@ -64,9 +63,7 @@ if __name__ == '__main__':
     for link in to_compute:
         marker_geometry_avg[link] = {key: {'value':0.0,'scale':1.0} for key in to_compute[link].keys()}
 
-    # print(marker_geometry_avg)
-
-    static_marker_pos = np.load(args.processed_filepath)['marker_positions']
+    static_marker_pos = np.load(args.static_processed_filepath)['marker_positions']
 
     n_samples = static_marker_pos.shape[0]
     
@@ -93,7 +90,6 @@ if __name__ == '__main__':
                                 dot_prod_by_mag = np.dot(foot_vector,np.array([0,1,0])) / np.linalg.norm(foot_vector)
                                 sum_sub_samples += np.degrees( np.arccos(dot_prod_by_mag) )
                                 
-                                # print(foot_vector,np.degrees(np.arccos(dot_prod_by_mag))) 
                             else:
                                 sum_sub_samples += np.linalg.norm( frame[from_id] - frame[to_id])
 
@@ -107,42 +103,11 @@ if __name__ == '__main__':
                         marker_geometry_avg[link][metric]['value'] += float(sum_sub_samples/ (4.0*k*n_samples) )
                     elif to_compute[link][metric]['operation'] == 'cos_wj':
                         marker_geometry_avg[link][metric]['value'] += float(sum_sub_samples/ (k*n_samples) )                        
-                        # pass
     
-    # _from = np.array(_from)
-    # _to = np.array(_to)
-
-    # print(_from.shape)
-    # foot_vector =   np.array( 
-    #                         [ 
-    #                             np.mean(_to[:,0]) - np.mean(_from[:,0]) ,  
-    #                             np.mean(_to[:,1]) - np.mean(_from[:,1] ), 
-    #                             0 
-    #                         ] )
-    
-    
-    # dot_prod_by_mag = np.dot(foot_vector,np.array([0,1,0])) / np.linalg.norm(foot_vector)
-    # print(foot_vector,np.degrees(np.arccos(dot_prod_by_mag))) 
- 
-    # plt.plot(_from[:,0],_from[:,1],label = 'from')
-    # plt.plot(_to[:,0],_to[:,1],label = 'to')
-    
-    # plt.plot( 
-    #             [ np.mean(_from[:,0]), np.mean(_to[:,0]) ], 
-
-    #             [ np.mean(_from[:,1]), np.mean(_to[:,1]) ]
-            
-    #         )
-    
-    
-    # # plt.plot([0,0],[0,1])
-    # plt.axvline(x= np.mean(_from[:,0]))
-    # plt.legend()
-    # plt.grid()
-    # plt.show()    
+   
     base_file_name = 'base_model_link_geometry.yaml'
 
-    subject_file_name = args.static_confpath.split('/')[-1]
+    subject_file_name = args.static_confpath.split('/')[-1].replace('_Static','')
     
     assets_path = './gym_hmm_ec/envs/assets/'
     base_file = open(assets_path+"models/model_confs/"+ base_file_name,'r')
@@ -220,6 +185,8 @@ if __name__ == '__main__':
                     )
     physics = mjcf.Physics.from_mjcf_model(body.mjcf_model)
 
-    mjcf.export_with_assets(body.mjcf_model,"./gym_hmm_ec/envs/assets/models/",args.model_filename+'.xml')
+
+    model_filename = subject_file_name.replace('.yaml','.xml')
+    mjcf.export_with_assets(body.mjcf_model,"./gym_hmm_ec/envs/assets/models/",model_filename)
     print("Model File Updated")
-    print("written to ","./gym_hmm_ec/envs/assets/models/"+args.model_filename+'.xml')
+    print("written to ","./gym_hmm_ec/envs/assets/models/"+model_filename)

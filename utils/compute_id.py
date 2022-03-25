@@ -33,7 +33,7 @@ if __name__ == '__main__':
     env_conf = {
         'set_on_rack': False,
         'render': args.render,
-        'model_name': args.model_filename,
+        'model_name': args.model_filename if '.xml' not in args.model_filename else args.model_filename.replace('.xml',''),
         'mocap': False
     }
     # marker config
@@ -72,38 +72,31 @@ if __name__ == '__main__':
         print("Missing: IK solutions absent, either not computed or not saved.")
         exit()
     id_solns = []
-    frame_rate = 100.
+    frame_rate = mocap_marker_data['frame_rate']
     prev_qpos = np.zeros(env.sim.data.qpos.shape)
 
-    # FORCE_PLATFORM.ORIGIN[0] = [-280.  -935.     2.5]
-    # FORCE_PLATFORM.ORIGIN[1] = [ 275.  -935.     2.5]
-    fp_origin = 0.001*np.array(
-                                    [
-                                    [-280.,  -935.,     2.5],
-                                    [-275.,  -935.,     2.5]]
-                                    )
 
-    print("env timestep:",env.model.opt.timestep)
 
-    timestep = env.model.opt.timestep 
-    # decrease dt    
-    ik_solns = misc_functions.interpolate_data(data=ik_solns,old_dt= 1./frame_rate,new_dt=timestep)
-    grf_data = misc_functions.interpolate_data(data=mocap_marker_data['grfs'],old_dt= 1./frame_rate,new_dt=timestep)
-    cop_data = misc_functions.interpolate_data(data=mocap_marker_data['cops'],old_dt= 1./frame_rate,new_dt=timestep)
-    print("After:",ik_solns.shape, grf_data.shape)
+
+    timestep = env.model.opt.timestep if env.model.opt.timestep < (1. / frame_rate) else (1. / frame_rate)
+
+
+    grf_data = mocap_marker_data['grfs'] 
+    cop_data = mocap_marker_data['cops'] 
+    print("After:",ik_solns.shape, grf_data.shape,cop_data.shape)
+    print("env timestep:",timestep)
+
     step = 0
 
     for qpos,grf,cop in tqdm(zip(ik_solns,grf_data,cop_data),total=ik_solns.shape[0]):
 
-        # COP points
-        for i in range(2):
+        # # COP points
+        # for i in range(2):
 
-            marker_name = 'm'+str(i)
-
-            
-            env.sim.data.set_mocap_pos(
-                marker_name, cop[3*i:3*i+3] 
-                )
+        #     marker_name = 'm'+str(i)
+        #     env.sim.data.set_mocap_pos(
+        #         marker_name, cop[3*i:3*i+3] 
+        #         )
         
         # print("base pos w",qpos[0:3])
         env.sim.data.qpos[:] = qpos
@@ -121,23 +114,7 @@ if __name__ == '__main__':
 
         body_name = 'right_leg/foot'
         body_id = env.sim.model.body_name2id(body_name)
-        wrench_prtb = -1. * grf[0:6]
-        # wrench_prtb = -1.*np.array([
-        #     mocap_marker_data['grfs'][step,
-        #                        marker_conf['forces_name2id']['Force.Fx1']],
-        #     mocap_marker_data['grfs'][step,
-        #                        marker_conf['forces_name2id']['Force.Fy1']],
-        #     mocap_marker_data['grfs'][step,
-        #                        marker_conf['forces_name2id']['Force.Fz1']],
-        #     mocap_marker_data['grfs'][step,
-        #                        marker_conf['forces_name2id']['Moment.Mx1']],
-        #     mocap_marker_data['grfs'][step,
-        #                        marker_conf['forces_name2id']['Moment.My1']],
-        #     mocap_marker_data['grfs'][step,
-        #                        marker_conf['forces_name2id']['Moment.Mz1']],
-
-        # ])  # in world frame
-
+        wrench_prtb = grf[0:6]
         frc_pos = env.sim.data.get_body_xpos(body_name)
         env.view_vector_arrows(
             vec=wrench_prtb[0:3],
@@ -148,18 +125,21 @@ if __name__ == '__main__':
 
         body_name = 'left_leg/foot'
         body_id = env.sim.model.body_name2id(body_name)
-        wrench_prtb = -1. * grf[6:12]
+        wrench_prtb = grf[6:12]
         frc_pos = env.sim.data.get_body_xpos(body_name)
         env.view_vector_arrows(
             vec=wrench_prtb[0:3],
             vec_point=frc_pos,
-            vec_mag_max=500,
-        )
+            vec_mag_max=500)
         env.sim.data.xfrc_applied[body_id][:] = wrench_prtb
 
         # with FD to obtain qacc
-        obs, reward, done, info = env.step(action=np.zeros(shape=env.n_act_joints))
-        
+        # obs, reward, done, info = env.step(action=np.zeros(shape=env.n_act_joints))
+
+        # without FD to obtain qacc, finite differences
+        env.sim.data.qacc[:] = env.sim.data.qvel - prev_qvel
+        env.render()
+
         functions.mj_inverse(env.model, env.sim.data)
         
         # print("qfrc_inverse:",env.sim.data.qfrc_inverse)
@@ -209,7 +189,7 @@ if __name__ == '__main__':
             # 6,7,8, # abdomen joints
 
             9, 10, 11, 12, 13, 14,  # left_leg
-            15, 16, 17, 18, 19, 20,  # left_leg
+            15, 16, 17, 18, 19, 20,  # right_leg
 
         ]
 
@@ -257,6 +237,7 @@ if __name__ == '__main__':
                     linestyle='-.'
                 )
                 axs_twin.set_ylabel('left_leg/Fz')
+            
             elif col == 2:
                 # right grf
                 axs_twin = axs[row, col].twinx()
@@ -283,5 +264,4 @@ if __name__ == '__main__':
 
         fig.suptitle('ID Output: ')
         fig.tight_layout()
-        # plt.savefig('./evaluation_plots/ip_type2_'+taskname+'.jpg')
         plt.show()

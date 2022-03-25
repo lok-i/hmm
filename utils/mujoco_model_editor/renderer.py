@@ -4,11 +4,12 @@ from OpenGL.GLUT import *
 import math
 import numpy as np
 from common import *
-
+import glm
 
 class Renderer(object):
     def __init__(self, ):
         self.quad = gluNewQuadric()
+        self.vao = glGenVertexArrays(1)
 
     def render_cylinder(self, bottom, top, radius):
         glPushMatrix()
@@ -73,3 +74,28 @@ class Renderer(object):
         self.render_cylinder(bottom, top, radius)
         self.render_point(bottom, radius)
         self.render_point(top, radius)
+
+    def render_text(self, text, pos, scale, dir):
+        glActiveTexture(GL_TEXTURE0)
+        # glBindVertexArray(self.vao)
+        angle_rad    = math.atan2(dir[1], dir[0])
+        rotateM      = glm.rotate(glm.mat4(1), angle_rad, glm.vec3(0, 0, 1))
+        transOriginM = glm.translate(glm.mat4(1), glm.vec3(pos[0],pos[1], 0))
+
+        char_x = 0
+        for c in text:
+            c = ord(c)
+            ch          = self.characters[c]
+            w, h        = ch[1][0] * scale, ch[1][1] * scale
+            xrel, yrel  = char_x + ch[2][0] * scale, (ch[1][1] - ch[2][1]) * scale
+            char_x     += (ch[3] >> 6) * scale 
+            scaleM      = glm.scale(glm.mat4(1), glm.vec3(w, h, 1))
+            transRelM   = glm.translate(glm.mat4(1), glm.vec3(xrel, yrel, 0))
+            modelM      = transOriginM * rotateM * transRelM * scaleM
+            
+            glUniformMatrix4fv(0, 1, GL_FALSE, glm.value_ptr(modelM))
+            glBindTexture(GL_TEXTURE_2D, ch[0])
+            glDrawArrays(GL_TRIANGLES, 0, 6)
+
+        glBindVertexArray(0)
+        glBindTexture(GL_TEXTURE_2D, 0)

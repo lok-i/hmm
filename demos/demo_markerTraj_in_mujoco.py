@@ -6,10 +6,6 @@ import mujoco_py
 VIEW_MARKER_BASED_DATA = True
 STATIC_AVG_POSE = False
 
-
-
-
-
 if VIEW_MARKER_BASED_DATA:
     c3d_file_name = 'AB1_Session1_Static.c3d'#Trial_1.c3d'
     # load data from c3d of  mocap data of 40 marker set

@@ -62,6 +62,7 @@ def generate_npz_file(
                         roi_start = 0.,
                         roi_stop = None,
                         plot_results = False,
+                        static = False,
                         ):
 
 
@@ -69,13 +70,13 @@ def generate_npz_file(
     config_file = open(confFile_path,'r+')
     marker_conf = yaml.load(config_file, Loader=yaml.FullLoader)
     forces_name2id = marker_conf['forces_name2id']
-    marker_name2id = marker_conf['marker_name2id']
 
     with open( dataFile_path , 'rb') as handle:
         reader = c3d.Reader(handle)
         
         # force plate parameters
         force_plate_origins = reader.get('FORCE_PLATFORM.ORIGIN').float_array
+        
         print("Force plate origin:\n", force_plate_origins)
         rot_w_fp = np.array(
 
@@ -117,8 +118,7 @@ def generate_npz_file(
 
                 marker_positions.append(data[1][:,0:3].tolist())
                 
-                # just the first analog reading in the frame
-                grf_data.append(data[2][:,0].tolist())
+
                 
                     
                 rFz = data[2][ forces_name2id['Force.Fz'+str(right_plate_analog_id+1)] , 0]
@@ -139,14 +139,28 @@ def generate_npz_file(
                 y_cop_l = lMx / lFz if abs(lFz) >= stance_fz_mag_threshold else -force_plate_origins[left_plate_origin_id][1]
 
                 # rotate and translate to world frame
-                # print(rot_w_fp,np.array([x_cop_r,y_cop_r,0]) )
                 pr = rot_w_fp@np.array([x_cop_r,y_cop_r,0]) 
-                # print(pr)
-                # exit()
                 pr = pr + force_plate_origins[right_plate_origin_id]
                 
                 pl = rot_w_fp@np.array([x_cop_l,y_cop_l,0]) 
                 pl = pl + force_plate_origins[left_plate_origin_id] 
+
+
+                # just the first analog reading in the frame
+                grf_1 = rot_w_fp@data[2][0:3,0] 
+                grm_1 = rot_w_fp@data[2][3:6,0] 
+                grf_2 = rot_w_fp@data[2][6:9,0] 
+                grm_2 = rot_w_fp@data[2][9:12,0] 
+                grf_3 = rot_w_fp@data[2][12:15,0] 
+                grm_3 = rot_w_fp@data[2][15:18,0] 
+
+                grf_data.append( np.concatenate(
+                                    [
+                                        grf_1,grm_1,
+                                        grf_2,grm_2,
+                                        grf_3,grm_3
+                                    ]).flatten().tolist() )
+
 
                 if right_plate_origin_id > left_plate_origin_id: 
                     cop_data.append(np.concatenate([pl, pr]))
@@ -175,12 +189,32 @@ def generate_npz_file(
     # cop data from mm to m
     cop_data = 0.001*np.array(cop_data)
         
+
+    if not static:
+        exp_dt = 1. / reader.point_rate
+        mujoco_default_dt = 0.002 #mujoco FD is stable and accurate at this dt, hence data is to be interpolated
+
+        if exp_dt > mujoco_default_dt:
+            
+            x_all = np.atleast_3d( misc_functions.interpolate_data(data=marker_positions[:,:,0],old_dt= exp_dt ,new_dt=mujoco_default_dt) )
+            y_all = np.atleast_3d(misc_functions.interpolate_data(data=marker_positions[:,:,1],old_dt= exp_dt ,new_dt=mujoco_default_dt) )
+            z_all = np.atleast_3d(misc_functions.interpolate_data(data=marker_positions[:,:,2],old_dt= exp_dt ,new_dt=mujoco_default_dt) )
+            marker_positions =  np.append(x_all,y_all,axis=2)            
+            marker_positions =  np.append(marker_positions,z_all,axis=2)
+            
+            grf_data = misc_functions.interpolate_data(data=grf_data,old_dt= exp_dt ,new_dt=mujoco_default_dt)
+            cop_data = misc_functions.interpolate_data(data=cop_data,old_dt= exp_dt,new_dt=mujoco_default_dt)    
+
+
     print("Marker Pos. Traj. Shape:", marker_positions.shape)
     print("GRF Traj. Shape:", grf_data.shape)
     print("COP Traj. Shape:", cop_data.shape)
-
     # save the npz file
-    np.savez_compressed(npzFile_path,marker_positions=marker_positions,grfs=grf_data,cops=cop_data)
+    np.savez_compressed(npzFile_path,
+                        marker_positions=marker_positions,
+                        grfs=grf_data,
+                        cops=cop_data,
+                        frame_rate=reader.point_rate)
 
     if plot_results:
         # plts for visualising
@@ -272,14 +306,15 @@ if __name__ == '__main__':
 
     args = parser.parse_args()  
 
+    if args.static:
+        args.roi_stop = None
+        args.roi_start = 0
+
     assets_path = './gym_hmm_ec/envs/assets/'
     
 
     c3d_removed_path = args.c3d_filepath.replace('.c3d','')
-    print(c3d_removed_path)
 
-    # input files
-    mat_filepath =  c3d_removed_path.replace('c3ds','mats')+'.mat'
 
     # output files
     conf_filepath = c3d_removed_path.replace('c3ds','confs')+'.yaml'
@@ -298,5 +333,6 @@ if __name__ == '__main__':
                         confFile_path=conf_filepath,
                         roi_start=args.roi_start,
                         roi_stop =args.roi_stop,
-                        plot_results = args.plot
+                        plot_results = args.plot,
+                        static = args.static
                     )    

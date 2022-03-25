@@ -198,7 +198,8 @@ class Humanoid(object):
                torso_b_scale = 1.0,
                head_r_scale = 1.0,
                force_points_per_m_in_foot = 48,
-               ankle_yaw_deviation = 0,
+               ankle_yaw_deviation = 0.,
+               total_mass = 50.,
                leg_scales =  
                             {
                                 'left_leg':                           
@@ -312,6 +313,8 @@ class Humanoid(object):
     
     # self.floor= self.mjcf_model.worldbody.add('body', name='floor',pos=[0,0,0])
     # <texture builtin='checker' height='512' name='texplane' rgb1='0.2 0.2 0.2' rgb2='0.3 0.3 0.3' type='2d' width='512'/>
+
+    self.mjcf_model.compiler.settotalmass=total_mass
     self.mjcf_model.asset.add('texture', builtin='checker', height=512, name='texplane', rgb1=[0.2, 0.2, 0.2], rgb2=[0.3, 0.3, 0.3], type='2d', width=512)
     # <material name='grid' reflectance='0.000000' texrepeat='1 1' texture='texplane' texuniform='true'/>
     self.mjcf_model.asset.add('material', name='grid', reflectance=0.0, texrepeat=[1, 1], texture='texplane', texuniform=True)
@@ -508,10 +511,10 @@ class Humanoid(object):
     right_leg_site.attach(self.right_leg.mjcf_model)
 
     #add n markers
-    # NOTE: TBC, n marers
+    # NOTE: TBC, n markers
     for i in range(40):
       self.marker = self.mjcf_model.worldbody.add('body', name='m'+str(i),mocap=True,pos=[0,0,0])
-      self.marker.add('geom',name='m'+str(i),type='sphere', size=[0.01],rgba=[0.,1.,0.,1.0])
+      self.marker.add('geom',name='m'+str(i),type='sphere', size=[0.01],rgba=[0.,1.,0.,1.0],mass=0.)
 
     # <equality>
     #   <weld name='world_root' active="false" body1='floor' body2='torso' relpose="0. 0. 2. 1. 0 0 0"/>
@@ -529,7 +532,7 @@ if __name__ == '__main__':
 
   parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-  parser.add_argument('--conf_xml_filename',help='common filename of xml and conf',default='default_humanoid_mjcf_conf',type=str)
+  parser.add_argument('--conf_xml_filename',help='common filename of xml and conf',default='default_humanoid_mocap',type=str)
   parser.add_argument('--update_humanoid_conf',help='whether to rewrtie the defaul humanoid model config',default=False, action='store_true')
 
   args = parser.parse_args()  
