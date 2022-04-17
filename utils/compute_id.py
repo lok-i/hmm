@@ -10,6 +10,14 @@ from utils import misc_functions
 import matplotlib.pyplot as plt
 
 
+def qpos_quat2rpy(qpos):
+    return np.concatenate([
+            qpos[:3],
+            misc_functions.quat2euler(qpos[3:7]),
+            qpos[7:]    
+                    ]).ravel()
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -27,7 +35,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     assets_path = './gym_hmm_ec/envs/assets/'
-    c3d_file_name = 'mocap_marker_data/c3ds/Trial_1'
+    c3d_file_name = 'mocap_data/c3ds/Trial_1'
 
     # environment config and setup
     env_conf = {
@@ -61,7 +69,7 @@ if __name__ == '__main__':
         env.viewer.cam.azimuth = 180
 
 
-    mocap_marker_data = np.load(args.processed_filepath)
+    mocap_data = np.load(args.processed_filepath)
 
     ik_soln_filpath =  args.processed_filepath.split('marker_data/processed_data/')[0]+'ik_solns/' \
                         + args.processed_filepath.split('marker_data/processed_data/')[-1] 
@@ -72,22 +80,19 @@ if __name__ == '__main__':
         print("Missing: IK solutions absent, either not computed or not saved.")
         exit()
     id_solns = []
-    frame_rate = mocap_marker_data['frame_rate']
+    frame_rate = mocap_data['frame_rate']
     prev_qpos = np.zeros(env.sim.data.qpos.shape)
-
-
-
 
     timestep = env.model.opt.timestep if env.model.opt.timestep < (1. / frame_rate) else (1. / frame_rate)
 
-
-    grf_data = mocap_marker_data['grfs'] 
-    cop_data = mocap_marker_data['cops'] 
+    grf_data = mocap_data['grfs'] 
+    cop_data = mocap_data['cops'] 
     print("After:",ik_solns.shape, grf_data.shape,cop_data.shape)
     print("env timestep:",timestep)
 
     step = 0
-
+    qvels = []
+    qaccs = []
     for qpos,grf,cop in tqdm(zip(ik_solns,grf_data,cop_data),total=ik_solns.shape[0]):
 
         # # COP points
@@ -104,13 +109,6 @@ if __name__ == '__main__':
             prev_qpos = qpos.copy()
             prev_qvel = np.zeros(env.model.nv)
 
-        env.sim.data.qvel[:] = np.concatenate([
-            (qpos[:3]-prev_qpos[:3]) / timestep,
-            misc_functions.mj_quat2vel(
-                misc_functions.mj_quatdiff(prev_qpos[3:7], qpos[3:7]), timestep),
-            (qpos[7:]-prev_qpos[7:]) / timestep
-        ]
-        ).ravel()
 
         body_name = 'right_leg/foot'
         body_id = env.sim.model.body_name2id(body_name)
@@ -133,11 +131,36 @@ if __name__ == '__main__':
             vec_mag_max=500)
         env.sim.data.xfrc_applied[body_id][:] = wrench_prtb
 
-        # with FD to obtain qacc
-        # obs, reward, done, info = env.step(action=np.zeros(shape=env.n_act_joints))
+
+
+
+        # qpos_0 = qpos_quat2rpy(qpos)
+        # qpos_1 = qpos_quat2rpy(ik_solns[step-1,:])
+        # qpos_2 = qpos_quat2rpy(ik_solns[step-2,:])
+        # qpos_3 = qpos_quat2rpy(ik_solns[step-3,:])
+
+
+        # env.sim.data.qvel[:] = ( 3*qpos_0 - 4*qpos_1 + qpos_2 ) / 2*timestep 
+        # env.sim.data.qacc[:] = ( 2*qpos_0 - 5*qpos_1 + 4*qpos_2 - qpos_3 ) / (timestep**2) 
 
         # without FD to obtain qacc, finite differences
-        env.sim.data.qacc[:] = env.sim.data.qvel - prev_qvel
+        env.sim.data.qvel[:] = np.concatenate([
+            (qpos[:3]-prev_qpos[:3]) / timestep,
+            misc_functions.mj_quat2vel(
+                misc_functions.mj_quatdiff(prev_qpos[3:7], qpos[3:7]), timestep),
+            (qpos[7:]-prev_qpos[7:]) / timestep
+        ]
+        ).ravel()
+
+        # with FD to obtain qacc
+        # obs, reward, done, info = env.step(action=np.zeros(shape=env.n_act_joints))
+        # env.sim.step()
+        functions.mj_forward(env.model, env.sim.data)
+        
+        qvels.append( env.sim.data.qvel.tolist())
+        qaccs.append( env.sim.data.qacc.tolist())
+
+
         if env.env_params['render']:
             env.render()
 
@@ -148,8 +171,10 @@ if __name__ == '__main__':
         # print("qfrc_actuator:",env.sim.data.qfrc_actuator.shape)
         #print("xfrc_applied:",env.sim.data.xfrc_applied)
 
-
+        
+        # print(env.sim.data.qvel)
         id_solns.append(env.sim.data.qfrc_inverse.tolist())
+        
         prev_qpos = qpos.copy()
         prev_qvel = env.sim.data.qvel.copy()
 
@@ -157,6 +182,7 @@ if __name__ == '__main__':
         # env.viewer.cam.azimuth += 0.25 #180
         
         step += 1
+
 
     if args.export_solns:
         id_solns = np.array(id_solns)
@@ -177,7 +203,11 @@ if __name__ == '__main__':
         print("ID Solution written to:", output_filepath)
     
     if args.plot_solns:
+        
         id_solns = np.array(id_solns)
+        qaccs =np.array(qaccs)
+        qvels =np.array(qvels)
+
         time_scale = timestep*np.arange(id_solns.shape[0])
 
         nrows = 6
@@ -221,8 +251,21 @@ if __name__ == '__main__':
             axs[row, col].plot(
                 time_scale,
                 id_solns[:, joint_id],
+                # label='id_solns'
             )
 
+            # axs[row, col].plot(
+            #     time_scale,
+            #     qaccs[:, joint_id],
+            #     label='qaccs'
+            # )
+
+            # axs[row, col].plot(
+            #     time_scale,
+            #     qvels[:, joint_id],
+            #     label='qvels'
+
+            # )
 
             axs[row, col].set_title(joint_id2name[joint_id])
             

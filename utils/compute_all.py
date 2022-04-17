@@ -8,7 +8,10 @@ if __name__ == '__main__':
     parser.add_argument('--trial_c3dfilepath',help='path of the trial file',default='AB1_Session1_Right6_Left6',type=str)
     parser.add_argument('--roi_start',help='start index of the region of intrest',default=0,type=int)
     parser.add_argument('--roi_stop',help='stop index of the region of intrest',default=None,type=int)
-    
+
+    parser.add_argument('--plot_preprocess', help='whether to plot op of pre process',default=False, action='store_true')
+
+
     parser.add_argument('--render_ik',help='whether to render while solving for ik',default=False, action='store_true')
     parser.add_argument('--plot_ik_solns', help='whether to plot the ik solns',default=False, action='store_true')
 
@@ -25,10 +28,14 @@ if __name__ == '__main__':
     os.system('python3 utils/preprocess_data.py --c3d_filepath '+ args.static_c3dfilepath +' --static')
     print("\nTrial File:\n")
     
-    if args.roi_stop == None:
-        os.system('python3 utils/preprocess_data.py --c3d_filepath '+ args.trial_c3dfilepath+' --roi_start '+str(args.roi_start))
-    else:
-        os.system('python3 utils/preprocess_data.py --c3d_filepath '+ args.trial_c3dfilepath+' --roi_start '+str(args.roi_start)+' --roi_stop '+str(args.roi_stop))
+
+    preprocess_command = 'python3 utils/preprocess_data.py --c3d_filepath '+ args.trial_c3dfilepath+' --roi_start '+str(args.roi_start)
+    if not args.roi_stop == None:
+        preprocess_command += ' --roi_stop '+str(args.roi_stop)
+    if args.plot_preprocess:
+        preprocess_command += ' --plot '
+        
+    os.system(preprocess_command)
     
     ############### MODEL GENERATION #######################
     
