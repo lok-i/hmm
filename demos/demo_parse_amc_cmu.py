@@ -1,4 +1,4 @@
-from gym_hmm_ec.envs.utils import parse_amc 
+from utils import parse_amc 
 from mujoco_py import functions
 from gym_hmm_ec.envs.bipedal_env import BipedEnv 
 from gym_hmm_ec.controllers.pd_controller import PDController 
@@ -24,7 +24,7 @@ index2joint = {
 
 traj_delta_t = 0.002
 # path to the amc file
-taskname = 'run'
+taskname = 'walk'
 filename = './gym_hmm_ec/envs/assets/cmu_mocap/'+ taskname +'.amc'
 converted = parse_amc.convert(
                                 filename,
@@ -46,6 +46,8 @@ env = BipedEnv(**env_conf)
 # keep the similation in pause until activated manually
 if env.env_params['render']:
     env.viewer._paused = True
+    env.viewer.cam.elevation = -10
+    env.viewer.cam.azimuth = 0
 
 joints_of_intrest = [ 
                       'lfemurrz','lfemurry', 'lfemurrx', 'ltibiarx', 'lfootrz', 'lfootrx', 'ltoesrx', 
@@ -86,9 +88,11 @@ env.close()
 
 
 
+exit()
 torques_of_joints = np.array(torques_of_joints)
 torques_of_joints_contact = np.array(torques_of_joints_contact)
 print(torques_of_joints.shape)
+
 nrows = 2
 ncols = 4
 fig,axs = plt.subplots(nrows,ncols)

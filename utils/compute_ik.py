@@ -82,6 +82,8 @@ if __name__ == '__main__':
         lfoot_xpos = []
         pelvis_xpos = []
 
+    frame_rate = mocap_data['frame_rate']
+    timestep = env.model.opt.timestep if env.model.opt.timestep < (1. / frame_rate) else (1. / frame_rate)
     for frame,cop in tqdm(zip(mocap_data['marker_positions'],mocap_data['cops']),total=mocap_data['cops'].shape[0]):
 
 
@@ -175,7 +177,6 @@ if __name__ == '__main__':
         print("IK Solution written to:", output_filepath)
     
     if args.plot_solns:
-        timestep = 1. / 100.
         ik_solns = np.array(ik_solns)
         time_scale = timestep*np.arange(ik_solns.shape[0])
 

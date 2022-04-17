@@ -5,7 +5,7 @@
 """Parse and convert amc motion capture data."""
 
 import collections
-from gym_hmm_ec.envs.utils.misc_functions import *
+from utils.misc_functions import *
 
 import numpy as np
 from scipy import interpolate
