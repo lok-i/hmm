@@ -103,7 +103,6 @@ if __name__ == '__main__':
         #         marker_name, cop[3*i:3*i+3] 
         #         )
         
-        # print("base pos w",qpos[0:3])
         env.sim.data.qpos[:] = qpos
         if step == 0:
             prev_qpos = qpos.copy()
