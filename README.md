@@ -48,7 +48,7 @@ To generate an end to end demo, simply run
 
 # To Do
 
-- [ ] data directory addition in read me.
-- [ ] update commands.md.
+- [x] data directory addition in read me.
+- [x] update commands.md.
 - [ ] COP point of application to be fixed.
-- [x] 
+

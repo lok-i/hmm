@@ -1,6 +1,6 @@
     
 
-For full syncronized demo and usage, checkout [./utils/compute_all.py](./utils/compute_all.py)
+For full syncronized demo and usage, checkout [./utils/compute_all.py](./compute_all.py)
 
 # Process motion trial, grf and cop data    
 
