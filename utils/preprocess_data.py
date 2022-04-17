@@ -10,11 +10,6 @@ import matplotlib.pyplot as plt
 from utils import misc_functions
 
 
-# TODO: 
-# 1. find why the COP is not generated in 
-#    c3d and fix it, remove .mat dependency once done.
-# 2. npz file naming from index to time sytems ?
-
 def clip_max_delta_filter(data,min_val,max_val,delta_threshold):
     data = np.clip(data,min_val,max_val)
     

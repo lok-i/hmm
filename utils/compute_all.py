@@ -17,7 +17,9 @@ if __name__ == '__main__':
 
 
     args = parser.parse_args()
+    
     ############### DATA PRE-PROCESSING #######################
+    
     print("Pre-processing files ...")
     print("Static File:\n")
     os.system('python3 utils/preprocess_data.py --c3d_filepath '+ args.static_c3dfilepath +' --static')

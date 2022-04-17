@@ -27,5 +27,28 @@ After testing the sucessfull isntallation of mujoco-py,to test the codebase,run
 
 # Usage Instructions
 
-Since it is a evolving code base, at present kindly follow the usage and implementations in [demos](./demos)
+Since it is a evolving code base, at present kindly follow the usage and implementations in [demos](./demos) and [utils](./utils).
 
+
+## Expected Data Directory Structure
+
+Make a directory named data and a directory for your data with the following structure,
+
+        data 
+        |- your_data
+           |- marker_data
+              |- c3ds # keep all your c3d files inside this folder
+           |- id_solns
+           |- ik_solns
+
+
+To generate an end to end demo, simply run
+
+        python3 utils/compute_all.py --static_c3dfilepath data/your_data/marker_data/c3ds/static.c3d --trial_c3dfilepath data/your_data/marker_data/c3ds/trial.c3d  --plot_id_solns --plot_ik_solns 
+
+# To Do
+
+- [ ] data directory addition in read me.
+- [ ] update commands.md.
+- [ ] COP point of application to be fixed.
+- [x] 

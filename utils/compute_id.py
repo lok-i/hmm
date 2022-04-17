@@ -138,7 +138,8 @@ if __name__ == '__main__':
 
         # without FD to obtain qacc, finite differences
         env.sim.data.qacc[:] = env.sim.data.qvel - prev_qvel
-        env.render()
+        if env.env_params['render']:
+            env.render()
 
         functions.mj_inverse(env.model, env.sim.data)
         
