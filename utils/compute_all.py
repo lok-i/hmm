@@ -93,7 +93,7 @@ if __name__ == '__main__':
     #     id_command += ' --plot_solns'
     # os.system(id_command)
 
-    id_command = 'python3 utils/lqr_humanoid.py --processed_filepath '+proceesed_filepath+' --model_filename '+upd_model_filename+' --export_solns'
+    id_command = 'python3 utils/lqr_id.py --processed_filepath '+proceesed_filepath+' --model_filename '+upd_model_filename+' --export_solns'
     
     if args.render_id:
         id_command += ' --render'

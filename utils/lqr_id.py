@@ -45,7 +45,6 @@ def f(env,qpos,qvel,u,grf):
     #functions.mj_fullM(env.model, env.sim.data)
     return np.concatenate([env.sim.data.qvel,env.sim.data.qacc])
 
-    
 
 def qpos_quat2rpy(qpos):
     return np.concatenate([
