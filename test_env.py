@@ -3,17 +3,20 @@ from gym_hmm_ec.envs.bipedal_env import BipedEnv
 from gym_hmm_ec.controllers.pd_controller import PDController 
 import matplotlib.pyplot as plt
 import numpy as np
-from mujoco_py import functions
-from utils import misc_functions
+import yaml
 
 # TODO: Fix the mocap integration of env with the generated model
 # environment config and setup
-env_conf = {
-            'set_on_rack': False,
-            'render': True,
-            'model_name': 'AB1_Session1_upd',#'rand_1_updated',
-            'mocap':False # problem when true
-            }
+# env_conf = {
+#             'set_on_rack': False,
+#             'render': True,
+#             'model_name': 'AB1_Session1_upd',#'rand_1_updated',
+#             }
+
+config_file = open("./trng_confs/test.yaml")
+traning_config = yaml.load(config_file, Loader=yaml.FullLoader)
+env_conf =  traning_config['env_kwargs'].copy()
+
 
 env = BipedEnv(**env_conf)
 
@@ -47,8 +50,16 @@ print(sum(env.model.body_mass) )
 
 while True:
 
-    control_actions = np.zeros(shape=env.n_act_joints)    
+    control_actions = np.zeros(shape=env.action_dim)    
     obs,reward,done,info = env.step(action = control_actions )
+
+    # print("act:",control_actions)
+    # print("obs:",obs)
+    # print("rew:",reward)
+    # print("done:",done)
+    
+    if done:
+        break
 
 env.close()
 

@@ -1,12 +1,16 @@
+from tracemalloc import start
 import numpy as np
-import time
-import gym
-import math
+import os
+from gym import  spaces
 from gym import utils
-from gym import spaces
 from mujoco_py.generated import const
 from utils import misc_functions
 import gym_hmm_ec.envs.mujoco_env as mujoco_env
+
+import gym_hmm_ec.envs.observations as obs
+import gym_hmm_ec.envs.actions as act
+import gym_hmm_ec.envs.rewards as rew
+import gym_hmm_ec.envs.terminations as trm
 
 class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
@@ -28,12 +32,16 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         for key in default_env_args.keys():
             if key not in self.env_params.keys():
                 self.env_params[key] = default_env_args[key]
-        
-        
-        # base env config
-        self.obs_dim = 12 
-        self.action_dim = 5
-        
+
+
+
+        self.init_observations()
+        self.init_actions()
+
+        self.init_rewards()
+        self.init_terminations()
+        self.init_mocap_data()
+
         mujoco_env.MujocoEnv.__init__(
                                       self, 
                                       model_name = self.env_params['model_name']+'.xml',
@@ -41,16 +49,78 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                                       )
         utils.EzPickle.__init__(self)
 
+        dummy_obs = self.get_observation()
+        
+        
+        # TODO: obs - action deicsion
+        self.obs_dim = dummy_obs.shape[0] 
+        self.action_dim = self.get_action(inital=True)
+
+
+        high = np.full(self.action_dim,1)
+        low =  np.full(self.action_dim,-1)
+        self.action_space = spaces.Box(low=low, high=high)
+        high = np.full(self.obs_dim,1)
+        low =  np.full(self.obs_dim,-1)
+        self.observation_space = spaces.Box(low, high)
+
+
         self.n_act_joints = len(self.sim.data.ctrl)
         print("No. of actuated joints:",self.n_act_joints)
 
+    def init_observations(self):
+        self.observation_list = []
+        self.observations = []
+        for obs_name in self.env_params['observations']:
+            self.observation_list.append(obs_name)
+            observation_params = self.env_params['observations'][obs_name]
+            observation_class = getattr(obs,obs_name)
+            self.observations.append(observation_class(observation_params))
+
+    def init_actions(self):
+        self.action_list = []
+        self.actions = []
+        for act_name in self.env_params['actions']:
+            self.action_list.append(act_name)
+            action_params = self.env_params['actions'][act_name]
+            action_class = getattr(act,act_name)
+            self.actions.append(action_class(action_params))
+
+    def init_rewards(self):
+        self.reward_list = []
+        self.rewards = []
+        for rew_name in self.env_params['rewards']:
+            self.reward_list.append(rew_name)
+            reward_params = self.env_params['rewards'][rew_name]
+            reward_class = getattr(rew,rew_name)
+            self.rewards.append(reward_class(reward_params))
+
+    def init_terminations(self):
+        self.termination_list = []
+        self.terminations = []
+        for trm_name in self.env_params['terminations']:
+            self.termination_list.append(trm_name)
+            termination_params = self.env_params['terminations'][trm_name]
+            termination_class = getattr(trm,trm_name)
+            self.terminations.append(termination_class(termination_params))
+
+    def init_mocap_data(self):
+        if 'mocap_data' in self.env_params.keys():
+            self.mocap_data = np.load(self.env_params['mocap_data']['processed_data_path'])
+
+            if os.path.isfile(self.env_params['mocap_data']['ik_solns_path']):
+                self.ik_solns = np.load(self.env_params['mocap_data']['ik_solns_path'])['ik_solns']
+            else:
+                print("IK solns missing, run ./utils/compute_ik.py for the above mocap trial to generate the ik solns")
+                exit()
+
     def step(self,action):
-        if self.env_params['mocap']:
-            applied_motor_torque = np.zeros(self.n_act_joints)
-        else:
-            applied_motor_torque = action
+
+
+        applied_actuator_torque = self.get_action(policy_output=action)
+        
         n_step_same_target = 1
-        self.do_simulation(applied_motor_torque, n_step_same_target)
+        self.do_simulation(applied_actuator_torque, n_step_same_target)
         
         obs = self.get_observation()
         reward = self.get_reward()
@@ -62,38 +132,98 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         return obs, reward, done, {}
 
     def reset_model(self):
-        # TBI
+
+        for obs_condn in self.observations:
+            obs_condn.reset()
+
+        for act_condn in self.actions:
+            act_condn.reset()
+        for rew_condn in self.rewards:
+            rew_condn.reset()
+        for trm_condn in self.terminations:
+            trm_condn.reset()
+
+
+
+        # set any cutom initialisation here
         self.sim.forward()
-        if self.env_params['mocap']:
-            self.attach_mocap_objects()
+        
+        # depreciated
+        # if self.env_params['mocap']:
+        #     self.attach_mocap_objects()
+        
         initial_obs = self.get_observation()
-        print("Initial state:",initial_obs)
+        # print("Initial state:",initial_obs)
         return initial_obs
     
     def get_observation(self):
-        qpos,qvel = self.get_state()
-        
-        # TBI
-        # base_pos = qpos[0: qpos.shape[0] - self.n_act_joints ]
-        # base_vel = qpos[0: qvel.shape[0] - self.n_act_joints ]
-        # joint_pos = qpos[qpos.shape[0] - self.n_act_joints + 1  :]
-        # joint_vel = qpos[qvel.shape[0] - self.n_act_joints : ]
-        # print(qpos.shape[0], qvel.shape[0])        
 
-        return np.concatenate((qpos,qvel)).ravel()
-
-    def get_state(self):
-        qpos = self.sim.data.qpos.copy()
-        qvel = self.sim.data.qvel.copy()
-        return qpos,qvel 
+        data_dict = {}
+        data_dict['q'] = self.sim.data.qpos[:].copy()
+        data_dict['dq'] = self.sim.data.qpos[:].copy()
         
+        obs_vector = []
+        for observation in self.observations:
+            obs_vector.append(observation.step(input_dict = data_dict) )
+
+        obs_vector = np.concatenate(obs_vector).ravel()
+            
+
+        return obs_vector
+
+    def get_action(self,inital=False,policy_output=None):
+
+        if inital:
+            act_dim = 0
+            for action in self.actions:
+                act_dim += action.params['dim']
+            return act_dim 
+        else:
+            act_vector = []
+            start_id = 0
+            for action in self.actions:
+                act_vector.append(action.step(policy_output = policy_output[start_id: start_id+action.params['dim']]) )
+                start_id += action.params['dim']
+            act_vector = np.array(act_vector)
+            
+            # sum of all torques finally
+            act_vector = np.sum(act_vector,axis=0)
+
+            return act_vector
+     
     def get_reward(self):
-        # TBI
-        return 0 
+
+        data_dict = {}
+        data_dict['q'] = self.sim.data.qpos[:].copy()
+        data_dict['dq'] = self.sim.data.qpos[:].copy() 
+        data_dict['ik_solns'] = self.ik_solns
+
+        total_reward = 0
+        self.reward_value_list = {}
+        
+        for reward,rew_name in zip(self.rewards,self.reward_list):
+            reward_val = reward.step(input_dict = data_dict)         
+            self.reward_value_list = {rew_name:reward_val}
+            total_reward += reward_val
+
+        return total_reward
 
     def check_termination(self):
-        # TBI
-        return False
+        data_dict = {}
+        if 'mocap_data' in self.env_params.keys():
+            data_dict['mocap_len'] = self.ik_solns.shape[0]
+        data_dict['q'] = self.sim.data.qpos[:].copy()
+        data_dict['dq'] = self.sim.data.qpos[:].copy() 
+        data_dict['motion_imitation'] = self.reward_value_list['motion_imitation']
+
+        dones = []
+        for termination in self.terminations:
+            dones.append(termination.step(input_dict = data_dict))
+        
+        if True in dones:
+            return True
+        else:
+            return False
     
     def attach_mocap_objects(self):
 

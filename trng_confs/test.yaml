@@ -1,0 +1,39 @@
+rl_hyperparams:
+
+env_kwargs:
+
+  set_on_rack: False
+  render: True
+  model_name: 'AB3_Session1_upd'
+
+  mocap_data:
+    processed_data_path: './data/our_data/marker_data/processed_data/AB3_Session1_Right10_Left10_from_2000_to_2500.npz'
+    ik_solns_path: './data/our_data/ik_solns/AB3_Session1_Right10_Left10_from_2000_to_2500.npz'
+
+  observations:
+    current_model_state: null
+  
+  actions:
+    joint_torques:
+      dim: 15
+      torque_max: 50
+
+  rewards:
+    motion_imitation:
+      exp_const_list: [ 
+                        1,1,1,
+
+                      ]
+      weight_list: [ 
+                        1,1,1,
+
+                      ]
+      kernel: 'norm_l2'
+
+  terminations:
+    mocap_epi_len: null
+    min_imitation_threshold:
+      threshold: 0.7
+    
+
+

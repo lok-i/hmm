@@ -51,12 +51,7 @@ class MujocoEnv(gym.Env):
         self.init_qpos = self.sim.data.qpos.ravel().copy()
         self.init_qvel = self.sim.data.qvel.ravel().copy()
 
-        high = np.full(self.action_dim,1)
-        low =  np.full(self.action_dim,-1)
-        self.action_space = spaces.Box(low=low, high=high)
-        high = np.full(self.obs_dim,1)
-        low =  np.full(self.obs_dim,-1)
-        self.observation_space = spaces.Box(low, high)
+
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
