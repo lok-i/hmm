@@ -1,6 +1,7 @@
 from tracemalloc import start
 import numpy as np
 import os
+import gym
 from gym import  spaces
 from gym import utils
 from mujoco_py.generated import const
@@ -53,12 +54,12 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         
         
         # TODO: obs - action deicsion
-        self.obs_dim = dummy_obs.shape[0] 
+        self.obs_dim = dummy_obs.shape[0]
         self.action_dim = self.get_action(inital=True)
 
 
-        high = np.full(self.action_dim,1)
-        low =  np.full(self.action_dim,-1)
+        high = np.full(self.action_dim,np.inf)
+        low =  np.full(self.action_dim,-np.inf)
         self.action_space = spaces.Box(low=low, high=high)
         high = np.full(self.obs_dim,1)
         low =  np.full(self.obs_dim,-1)
@@ -66,7 +67,7 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
 
         self.n_act_joints = len(self.sim.data.ctrl)
-        print("No. of actuated joints:",self.n_act_joints)
+        # print("No. of actuated joints:",self.n_act_joints)
 
     def init_observations(self):
         self.observation_list = []
@@ -128,14 +129,24 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         
         if self.env_params['render']:
             self.render()
+        
+        # print('ctrl:', applied_actuator_torque)#, reward, done)
+        # print('obs :', obs)#, reward, done)
+        # if self.env_n_step == 0:
+        #     print('rew :', reward)#, reward, done)
+        # print('done:', done)#, reward, done)
+        self.env_n_step += 1
+        self.mocap_n_step += 1
 
         return obs, reward, done, {}
 
     def reset_model(self):
 
+        self.env_n_step = 0
+        self.mocap_n_step = 0
+
         for obs_condn in self.observations:
             obs_condn.reset()
-
         for act_condn in self.actions:
             act_condn.reset()
         for rew_condn in self.rewards:
@@ -144,8 +155,27 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
             trm_condn.reset()
 
 
-
         # set any cutom initialisation here
+        if 'initalisation' in self.env_params.keys():
+            if self.env_params['initalisation'] == 'random_on_mocap_trajectory':
+                mocap_len = self.ik_solns.shape[0]
+                self.mocap_n_step = np.random.randint(low=0,high=mocap_len)
+
+                frame_rate = self.mocap_data['frame_rate']
+                timestep = self.model.opt.timestep if self.model.opt.timestep < (1. / frame_rate) else (1. / frame_rate)
+
+                qpos = self.ik_solns[self.mocap_n_step]
+                prev_qpos =self.ik_solns [self.mocap_n_step-1]
+                
+                self.sim.data.qpos[:] = qpos
+                self.sim.data.qvel[:] = np.concatenate([
+                    (qpos[:3]-prev_qpos[:3]) / timestep,
+                    misc_functions.mj_quat2vel(
+                        misc_functions.mj_quatdiff(prev_qpos[3:7], qpos[3:7]), timestep),
+                    (qpos[7:]-prev_qpos[7:]) / timestep
+                ]
+                ).ravel()
+                
         self.sim.forward()
         
         # depreciated
@@ -153,7 +183,8 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         #     self.attach_mocap_objects()
         
         initial_obs = self.get_observation()
-        # print("Initial state:",initial_obs)
+        
+        # print("Initial state:",initial_obs.shape)
         return initial_obs
     
     def get_observation(self):
@@ -212,6 +243,8 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         data_dict = {}
         if 'mocap_data' in self.env_params.keys():
             data_dict['mocap_len'] = self.ik_solns.shape[0]
+            data_dict['mocap_n_step'] = self.mocap_n_step
+
         data_dict['q'] = self.sim.data.qpos[:].copy()
         data_dict['dq'] = self.sim.data.qpos[:].copy() 
         data_dict['motion_imitation'] = self.reward_value_list['motion_imitation']

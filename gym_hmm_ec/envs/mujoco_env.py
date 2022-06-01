@@ -17,7 +17,8 @@ equality_constraint_id2type = {
                                 'tendon':3,
                                 'distance':4
                                 }
-
+def str_mj_arr(arr):
+    return ' '.join(['%0.3f' % arr[i] for i in range(arr.shape[0])])
 class MujocoEnv(gym.Env):
     """Superclass for all MuJoCo environments.
     """
@@ -139,7 +140,6 @@ class MujocoEnv(gym.Env):
         # print("ctrl:",self.sim.data.ctrl)
         for _ in range(n_frames):
             self.sim.step()
-    
 
     def render(self, mode='human'):
         if mode == 'rgb_array':
@@ -174,3 +174,18 @@ class MujocoEnv(gym.Env):
             self.sim.data.qpos.flat,
             self.sim.data.qvel.flat
         ])
+
+    def print_all_contacts(self):
+        for coni in range(self.sim.data.ncon):
+            print('  Contact %d:' % (coni,))
+            con = self.sim.data.contact[coni]
+            print('    dist     = %0.3f' % (con.dist,))
+            print('    pos      = %s' % (str_mj_arr(con.pos),))
+            print('    frame    = %s' % (str_mj_arr(con.frame),))
+            print('    friction = %s' % (str_mj_arr(con.friction),))
+            print('    dim      = %d' % (con.dim,))
+            print('    geom1    = %d' % (con.geom1,))
+            print('    g1_name  = %s' % ( self.model.geom_id2name(con.geom1),))
+            
+            print('    geom2    = %d' % (con.geom2,))
+            print('    g2_name  = %s' % ( self.model.geom_id2name(con.geom2),))

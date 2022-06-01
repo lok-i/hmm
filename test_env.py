@@ -4,6 +4,7 @@ from gym_hmm_ec.controllers.pd_controller import PDController
 import matplotlib.pyplot as plt
 import numpy as np
 import yaml
+import gym
 
 # TODO: Fix the mocap integration of env with the generated model
 # environment config and setup
@@ -18,6 +19,16 @@ traning_config = yaml.load(config_file, Loader=yaml.FullLoader)
 env_conf =  traning_config['env_kwargs'].copy()
 
 
+
+# gym.envs.register(
+#      id='hmm-v0',
+#      entry_point='gym_hmm_ec.envs:BipedEnv',
+#      kwargs=env_conf,
+# )
+# env = gym.make('hmm-v0')
+
+
+# exit()
 env = BipedEnv(**env_conf)
 
 # initialse the env,reset simualtion
@@ -57,7 +68,7 @@ while True:
     # print("obs:",obs)
     # print("rew:",reward)
     # print("done:",done)
-    
+
     if done:
         break
 
