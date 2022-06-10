@@ -11,6 +11,39 @@ class reward_base():
         raise NotImplementedError
 
 
+class forward_x_base_pos(reward_base):
+
+        
+    def step(self,input_dict):
+        px = input_dict['q'][0]
+        return self.params['k']*np.power(px,self.params['pow'])
+
+
+    def reset(self):
+        pass
+
+class penalise_effort(reward_base):
+
+        
+    def step(self,input_dict):
+        torques = input_dict['ctrl']
+        return self.params['k']*np.power(torques,self.params['pow']).sum()
+    def reset(self):
+        pass
+
+
+class forward_x_base_vel(reward_base):
+
+        
+    def step(self,input_dict):
+        vx = input_dict['dq'][0]
+        return self.params['k']*np.power(vx,self.params['pow'])
+
+
+    def reset(self):
+        pass
+
+
 class motion_imitation(reward_base):
 
 

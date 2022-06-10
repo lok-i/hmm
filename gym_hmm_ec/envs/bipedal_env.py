@@ -50,10 +50,9 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                                       )
         utils.EzPickle.__init__(self)
 
-        dummy_obs = self.get_observation()
-        
         
         # TODO: obs - action deicsion
+        dummy_obs = self.get_observation()
         self.obs_dim = dummy_obs.shape[0]
         self.action_dim = self.get_action(inital=True)
 
@@ -67,7 +66,6 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
 
         self.n_act_joints = len(self.sim.data.ctrl)
-        # print("No. of actuated joints:",self.n_act_joints)
 
     def init_observations(self):
         self.observation_list = []
@@ -131,7 +129,7 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
             self.render()
         
         # print('ctrl:', applied_actuator_torque)#, reward, done)
-        # print('obs :', obs)#, reward, done)
+        # print('q :',  self.sim.data.qpos[:])#, reward, done)
         # if self.env_n_step == 0:
         #     print('rew :', reward)#, reward, done)
         # print('done:', done)#, reward, done)
@@ -227,7 +225,10 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         data_dict = {}
         data_dict['q'] = self.sim.data.qpos[:].copy()
         data_dict['dq'] = self.sim.data.qpos[:].copy() 
-        data_dict['ik_solns'] = self.ik_solns
+        data_dict['ctrl'] = self.sim.data.ctrl[:].copy() 
+
+        if 'mocap_data' in self.env_params.keys(): 
+            data_dict['ik_solns'] = self.ik_solns
 
         total_reward = 0
         self.reward_value_list = {}
@@ -244,10 +245,10 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         if 'mocap_data' in self.env_params.keys():
             data_dict['mocap_len'] = self.ik_solns.shape[0]
             data_dict['mocap_n_step'] = self.mocap_n_step
+            data_dict['motion_imitation'] = self.reward_value_list['motion_imitation']
 
         data_dict['q'] = self.sim.data.qpos[:].copy()
         data_dict['dq'] = self.sim.data.qpos[:].copy() 
-        data_dict['motion_imitation'] = self.reward_value_list['motion_imitation']
 
         dones = []
         for termination in self.terminations:

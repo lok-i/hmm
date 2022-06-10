@@ -1,6 +1,6 @@
 from gym_hmm_ec.envs.bipedal_env import BipedEnv 
 from mujoco_py import functions
-from gym_hmm_ec.envs.utils.parse_amc import euler2quat 
+from utils.parse_amc import euler2quat 
 from gym_hmm_ec.controllers.pd_controller import PDController 
 import matplotlib.pyplot as plt
 import numpy as np

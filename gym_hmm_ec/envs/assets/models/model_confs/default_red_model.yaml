@@ -1,0 +1,17 @@
+total_mass: 50
+com_radius: 0.1
+knee_actuation:
+  joint: 'hinge'
+  actuation: 'motor'
+
+leg_scales:
+  left_leg:
+    foot_r_scale: 1.0
+    shin_h_scale: 1.0
+    thigh_h_scale: 1.0
+  right_leg:
+    foot_r_scale: 1.0
+    shin_h_scale: 1.0
+    thigh_h_scale: 1.0
+
+

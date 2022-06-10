@@ -6,29 +6,20 @@ import numpy as np
 import yaml
 import gym
 
+
 # TODO: Fix the mocap integration of env with the generated model
-# environment config and setup
+# # environment config and setup
 # env_conf = {
 #             'set_on_rack': False,
 #             'render': True,
-#             'model_name': 'AB1_Session1_upd',#'rand_1_updated',
+#             'model_name': 'hopper'#'AB1_Session1_upd',#'rand_1_updated',
 #             }
 
-config_file = open("./trng_confs/test.yaml")
+config_file = open("./experiments/redu_exp/sub_exp/conf.yaml")
 traning_config = yaml.load(config_file, Loader=yaml.FullLoader)
 env_conf =  traning_config['env_kwargs'].copy()
 
 
-
-# gym.envs.register(
-#      id='hmm-v0',
-#      entry_point='gym_hmm_ec.envs:BipedEnv',
-#      kwargs=env_conf,
-# )
-# env = gym.make('hmm-v0')
-
-
-# exit()
 env = BipedEnv(**env_conf)
 
 # initialse the env,reset simualtion
@@ -74,3 +65,21 @@ while True:
 
 env.close()
 
+'''
+#to load arbitary xml and view
+
+import mujoco_py
+
+fullpath = 'gym_hmm_ec/envs/assets/models/default_red_model.xml'
+model = mujoco_py.load_model_from_path(fullpath)
+sim = mujoco_py.MjSim(model)
+viewer = mujoco_py.MjViewer(sim)
+
+
+sim.reset()
+viewer._paused = True
+while True:
+    sim.step()
+    viewer.render()
+
+'''

@@ -9,6 +9,24 @@ class termination_base():
     def reset(self):
         raise NotImplementedError
 
+
+class indefinite(termination_base):
+
+    def step(self,input_dict):
+        return False
+    def reset(self):
+        pass
+
+class min_base_height(termination_base):
+
+    def step(self,input_dict):
+        if input_dict['q'][3] < self.params['threshold']:
+            return True
+        else:
+            return False
+    def reset(self):
+        pass
+
 class min_imitation_threshold(termination_base):
 
     def step(self,input_dict):

@@ -1,0 +1,64 @@
+<mujoco model="red1">
+  <compiler settotalmass="50.0"/>
+  <default>
+    <default class="/"/>
+    <default class="left_leg/"/>
+    <default class="right_leg/"/>
+  </default>
+  <asset>
+    <texture name="texplane" type="2d" builtin="checker" rgb1="0.20000000000000001 0.20000000000000001 0.20000000000000001" rgb2="0.29999999999999999 0.29999999999999999 0.29999999999999999" width="512" height="512"/>
+    <material name="grid" class="/" texture="texplane" texrepeat="1 1" texuniform="true" reflectance="0.0"/>
+  </asset>
+  <worldbody>
+    <geom name="floor" class="/" type="plane" conaffinity="1" size="100 100 0.20000000000000001" material="grid" pos="0 0 0"/>
+    <body name="torso" pos="0 0 0.83000000000000007">
+      <light name="top" class="/" mode="trackcom" pos="0 0 2"/>
+      <camera name="back" class="/" mode="trackcom" pos="-3 0 1" xyaxes="0 -1 0 1 0 2"/>
+      <camera name="side" class="/" mode="trackcom" pos="0 -3 1" xyaxes="1 0 0 0 1 2"/>
+      <freejoint name="root"/>
+      <geom name="head" class="/" type="sphere" size="0.10000000000000001" pos="0 0 0"/>
+      <camera name="egocentric" class="/" fovy="80.0" pos="0.089999999999999997 0 0" xyaxes="0 -1 0 0.10000000000000001 1 2"/>
+      <site name="left_leg_site" class="/" size="9.9999999999999995e-07 9.9999999999999995e-07 9.9999999999999995e-07" pos="0 0.050000000000000003 0"/>
+      <body pos="0 0.050000000000000003 0" name="left_leg/">
+        <body name="left_leg/thigh">
+          <joint name="left_leg/hip_x" class="left_leg/" type="hinge" axis="1 0 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="10.0" range="-25 5" armature="0.01" damping="5.0"/>
+          <joint name="left_leg/hip_y" class="left_leg/" type="hinge" axis="0 1 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="20.0" range="-110 20" armature="0.01" damping="5.0"/>
+          <geom name="left_leg/thigh" class="left_leg/" type="capsule" size="0.029999999999999999" mass="1e-06" fromto="0 0 0 0 0 -0.31000000000000005"/>
+          <body name="left_leg/shin" pos="0 0 -0.373">
+            <joint name="left_leg/knee" class="left_leg/" type="hinge" pos="0 0 0.02" axis="0 -1 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="1.0" range="-160 2" armature="0.01" damping="0.2"/>
+            <geom name="left_leg/shin" class="left_leg/" type="capsule" size="0.029999999999999999" mass="1e-06" fromto="0 0 0 0 0 -0.23999999999999999"/>
+            <body name="left_leg/foot" pos="0 0 -0.26999999999999996">
+              <geom name="left_leg/foot" class="left_leg/" type="sphere" size="0.029999999999999999" pos="0 0 0"/>
+            </body>
+          </body>
+        </body>
+      </body>
+      <site name="right_leg_site" class="/" size="9.9999999999999995e-07 9.9999999999999995e-07 9.9999999999999995e-07" pos="0 -0.050000000000000003 0"/>
+      <body pos="0 -0.050000000000000003 0" name="right_leg/">
+        <body name="right_leg/thigh">
+          <joint name="right_leg/hip_x" class="right_leg/" type="hinge" axis="1 0 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="10.0" range="-25 5" armature="0.01" damping="5.0"/>
+          <joint name="right_leg/hip_y" class="right_leg/" type="hinge" axis="0 1 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="20.0" range="-110 20" armature="0.01" damping="5.0"/>
+          <geom name="right_leg/thigh" class="right_leg/" type="capsule" size="0.029999999999999999" mass="1e-06" fromto="0 0 0 0 0 -0.31000000000000005"/>
+          <body name="right_leg/shin" pos="0 0 -0.373">
+            <joint name="right_leg/knee" class="right_leg/" type="hinge" pos="0 0 0.02" axis="0 -1 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="1.0" range="-160 2" armature="0.01" damping="0.2"/>
+            <geom name="right_leg/shin" class="right_leg/" type="capsule" size="0.029999999999999999" mass="1e-06" fromto="0 0 0 0 0 -0.23999999999999999"/>
+            <body name="right_leg/foot" pos="0 0 -0.26999999999999996">
+              <geom name="right_leg/foot" class="right_leg/" type="sphere" size="0.029999999999999999" pos="0 0 0"/>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+  <equality>
+    <weld name="world_root" class="/" active="false" body1="torso" relpose="0 0 -2 1 0 0 0"/>
+  </equality>
+  <actuator>
+    <motor name="left_leg/hip_x" class="left_leg/" gear="40" joint="left_leg/hip_x"/>
+    <motor name="left_leg/hip_y" class="left_leg/" gear="120" joint="left_leg/hip_y"/>
+    <motor name="left_leg/knee" class="left_leg/" gear="80" joint="left_leg/knee"/>
+    <motor name="right_leg/hip_x" class="right_leg/" gear="40" joint="right_leg/hip_x"/>
+    <motor name="right_leg/hip_y" class="right_leg/" gear="120" joint="right_leg/hip_y"/>
+    <motor name="right_leg/knee" class="right_leg/" gear="80" joint="right_leg/knee"/>
+  </actuator>
+</mujoco>

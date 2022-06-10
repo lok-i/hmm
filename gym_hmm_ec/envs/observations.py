@@ -20,3 +20,4 @@ class current_model_state(observation_base):
     def reset(self):
         pass
 
+

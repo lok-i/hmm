@@ -51,7 +51,7 @@ env_kwargs:
     mocap_epi_len: null
     # TO ADD:
     # self collitions
-    # torso fell down
+    # torso down
     # min_imitation_threshold:
     #   threshold: 0.1
 
