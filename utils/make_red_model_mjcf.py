@@ -28,11 +28,32 @@ class Leg(object):
     # <body name="right_thigh" pos="0 -.1 -.04">
     self.thigh = self.mjcf_model.worldbody.add('body', name='thigh')
     # <joint name="right_hip_x" axis="1 0 0" range="-25 5"   class="big_joint"/>
-    self.hip_x = self.thigh.add('joint', name='hip_x', type='hinge',damping=5,stiffness=10, axis=[1, 0, 0], range=[-25, 5], armature=.01, limited=True, solimplimit=[0, .99 ,.01])
+    self.hip_x = self.thigh.add('joint', 
+                                  name='hip_x', 
+                                  type='hinge',
+                                  # damping=5, # TO ASK
+                                  # stiffness=10, # TO ASK
+                                  axis=[1, 0, 0], 
+                                  range=[-25, 5], 
+                                  # armature=.01,  # TO ASK
+                                  limited=True, 
+                                  solimplimit=[0, .99 ,.01]
+                                  )
     # <joint name="right_hip_z" axis="0 0 1" range="-60 35"  class="big_joint"/>
     # self.hip_z = self.thigh.add('joint', name='hip_z', type='hinge',damping=5,stiffness=10, axis=[0, 0, 1], range=[-60, 35], armature=.01, limited=True, solimplimit=[0, .99 ,.01])
     # <joint name="right_hip_y" axis="0 1 0" range="-110 20" class="big_stiff_joint"/>
-    self.hip_y = self.thigh.add('joint', name='hip_y', type='hinge',damping=5,stiffness=20, axis=[0, 1, 0], range=[-110, 20], armature=.01, limited=True, solimplimit=[0, .99 ,.01])
+
+    self.hip_y = self.thigh.add('joint', 
+                                  name='hip_y', 
+                                  type='hinge',
+                                  # damping=5, # TO ASK
+                                  # stiffness=20, # TO ASK
+                                  axis=[0, 1, 0], 
+                                  range=[-110, 20],
+                                  # armature=.01, # TO ASK 
+                                  limited=True, 
+                                  solimplimit=[0, .99 ,.01]
+                                  )
     # <geom name="right_thigh" fromto="0 0 0 0 .01 -.34" size=".06"/>
     
     thigh_name = 'thigh'
@@ -55,16 +76,24 @@ class Leg(object):
                                      )
     # <joint name="right_knee" pos="0 0 .02" axis="0 -1 0" range="-160 2"/>
     
+    series_spring_stiffness = knee_actuation['series_spring_stiffness'] if 'series_spring_stiffness' in knee_actuation.keys() else 1.
+    series_spring_damping = knee_actuation['series_spring_damping'] if 'series_spring_damping' in knee_actuation.keys() else 0.2
+
     if knee_actuation['joint'] == 'slide':
         self.knee = self.shin.add('joint', name='knee', 
                                 pos=[0, 0, .02],
-                                type='slide',damping=0.2,stiffness=1, 
+                                type='slide',
+                                damping=series_spring_damping,
+                                stiffness=series_spring_stiffness, 
                                 axis=[0, 0, 1], range=[-160, 2], 
-                                armature=.01, limited=True, solimplimit=[0, .99 ,.01])
+                                armature=.01, limited=True, solimplimit=[0, .99 ,.01],
+                                )
     else:
         self.knee = self.shin.add('joint', name='knee', 
                                 pos=[0, 0, .02],
-                                type='hinge',damping=0.2,stiffness=1, 
+                                type='hinge',
+                                damping=series_spring_damping,
+                                stiffness=series_spring_stiffness, 
                                 axis=[0, -1, 0], range=[-160, 2], 
                                 armature=.01, limited=True, solimplimit=[0, .99 ,.01])       
     # <geom name="right_shin" fromto="0 0 0 0 0 -.3"  size=".049"/>
@@ -106,15 +135,20 @@ class Leg(object):
     # <motor name="right_ankle_y"   gear="20"  joint="right_ankle_y"/> <!-- pitch -->
     # <motor name="right_ankle_x"   gear="20"  joint="right_ankle_x"/> <!-- roll -->
 
-    self.mjcf_model.actuator.add("motor",name='hip_x',gear=[40],joint='hip_x')
-    self.mjcf_model.actuator.add("motor",name='hip_y',gear=[120],joint='hip_y')
+    self.mjcf_model.actuator.add("motor",name='hip_x',joint='hip_x')
+    self.mjcf_model.actuator.add("motor",name='hip_y',joint='hip_y')
 
-    self.mjcf_model.actuator.add(knee_actuation['actuation'],name='knee',gear=[80],joint='knee')
+    self.mjcf_model.actuator.add(
+                                  knee_actuation['actuation'],
+                                  name='knee',
+                                  joint='knee',
+                                  )
 
 class Reduced_com_body(object):
 
   def __init__(self,
                name,
+               ground_clearence = 0.004,
                total_mass = 50.,
                com_radius = 0.1,
                inter_leg_distance = 0.1,
@@ -174,7 +208,6 @@ class Reduced_com_body(object):
     # </body>
     # nominal_torso_h ~ 0.585
     # nominal_leg_length ~ 0.45
-    ground_clearence = 0.004
     thigh_length =  leg_scales['left_leg']['thigh_h_scale']*0.34 
 
     shin_length =  leg_scales['right_leg']['shin_h_scale']*0.3

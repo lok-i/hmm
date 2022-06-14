@@ -1,8 +1,11 @@
 total_mass: 50
 com_radius: 0.1
 inter_leg_distance: 0.1
+
 knee_actuation:
-  joint: 'hinge'
+  joint: 'slide'
+  series_spring_stiffness: 1.
+  series_spring_damping: 0.
   actuation: 'motor'
 
 leg_scales:
