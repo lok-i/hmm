@@ -47,7 +47,7 @@ for i in range(env.model.nbody):
         print( i,env.model.body_id2name(i),mass )
 
 # # print(functions.mj_getTotalmass(env.model) )
-print(sum(env.model.body_mass) )
+print("Total Mass:",sum(env.model.body_mass) )
 
 
 while True:

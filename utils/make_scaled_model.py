@@ -13,6 +13,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--static_confpath',help='path of the conf file',default='AB1_Session1_Static',type=str)
     parser.add_argument('--static_processed_filepath',help='path of the processed marker data file',default='AB1_Session1_Static',type=str)
+    parser.add_argument('--model_type',help='type of model humanoid, pm_mll_hinge/slide_motor/muscle ',default='humanoid',type=str)
 
     args = parser.parse_args()
 

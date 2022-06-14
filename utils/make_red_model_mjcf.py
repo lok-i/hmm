@@ -91,7 +91,13 @@ class Leg(object):
     # quat = misc_functions.euler2quat(0,0,-1*symetric_transform*ankle_yaw_deviation),
     )
     #     <geom name="head" type="sphere" size=".09"/>
-    self.foot.add('geom', name='foot',pos=[0, 0, 0], type='sphere', size=[foot_radius])  
+    self.foot.add('geom', 
+                    name='foot',
+                    pos=[0, 0, 0], 
+                    type='sphere', 
+                    size=[foot_radius],
+                    mass=1e-1 # negligible mass, less than 0.1, it sinkss
+                    )  
 
     # <motor name="right_hip_x"     gear="40"  joint="right_hip_x"/> <!-- roll -->
     # <motor name="right_hip_z"     gear="40"  joint="right_hip_z"/> <!-- yaw -->
@@ -111,6 +117,7 @@ class Reduced_com_body(object):
                name,
                total_mass = 50.,
                com_radius = 0.1,
+               inter_leg_distance = 0.1,
                knee_actuation = 
                {
                    'joint':'slide',
@@ -167,26 +174,20 @@ class Reduced_com_body(object):
     # </body>
     # nominal_torso_h ~ 0.585
     # nominal_leg_length ~ 0.45
-    ground_clearence = 0.0
-    max_thigh_length =  leg_scales['right_leg']['thigh_h_scale']*0.34 if \
-                      leg_scales['right_leg']['thigh_h_scale']*0.34 > leg_scales['left_leg']['thigh_h_scale']*0.34 \
-                      else leg_scales['left_leg']['thigh_h_scale']*0.34 
+    ground_clearence = 0.004
+    thigh_length =  leg_scales['left_leg']['thigh_h_scale']*0.34 
 
-    max_shin_length =  leg_scales['right_leg']['shin_h_scale']*0.39 if \
-                      leg_scales['right_leg']['shin_h_scale']*0.39 > leg_scales['left_leg']['shin_h_scale']*0.39 \
-                      else leg_scales['left_leg']['shin_h_scale']*0.39 
-    max_foot_radius =  leg_scales['right_leg']['foot_r_scale']*.027 if \
-                      leg_scales['right_leg']['foot_r_scale']*.027 > leg_scales['left_leg']['foot_r_scale']*.027 \
-                      else leg_scales['left_leg']['foot_r_scale']*.027
+    shin_length =  leg_scales['right_leg']['shin_h_scale']*0.3
+                       
+    foot_radius =  leg_scales['right_leg']['foot_r_scale']*.027 
     
 
-    print(com_radius,max_thigh_length,max_shin_length,max_foot_radius)
     initial_torso_height =  ground_clearence + \
-                            com_radius + \
-                            max_thigh_length + \
-                            max_shin_length 
-                            # -0.5*com_radius + \
-                            # + max_foot_radius
+                            thigh_length + \
+                            shin_length + \
+                            foot_radius
+                            # com_radius # cox it is in the same vertical height of the com
+    
     self.torso = self.mjcf_model.worldbody.add('body', name='torso',pos=[0,0,initial_torso_height])#pos= base_pos)#[0, -.1 ,-.04])
     #   <light name="top" pos="0 0 2" mode="trackcom"/>
     self.torso.add('light',name='top',pos=[0, 0, 2],mode='trackcom')
@@ -209,7 +210,7 @@ class Reduced_com_body(object):
         # torso_h_scale*-.04]
 
         pos=[0, 
-        0.5*com_radius,
+        0.5*inter_leg_distance,
         0
         ]
         )
@@ -221,7 +222,7 @@ class Reduced_com_body(object):
         # torso_h_scale*-.04]
 
         pos=[0, 
-        -0.5*com_radius,
+        -0.5*inter_leg_distance,
         0
         ]
         
@@ -254,139 +255,18 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
   parser.add_argument('--conf_xml_filename',help='common filename of xml and conf',default='default_red_model',type=str)
-  parser.add_argument('--update_red_model_conf',help='whether to rewrtie the defaul humanoid model config',default=False, action='store_true')
 
   args = parser.parse_args()  
 
   assets_path = './gym_hmm_ec/envs/assets/'
   conf_file_name = args.conf_xml_filename+'.yaml'
 
-  if args.update_red_model_conf:
-
-    full_humanoid_conf ={               
-                  'torso_h_scale' : 1.0,
-                  'torso_b_scale' : 1.0,
-                  'head_r_scale' : 1.0,
-                  
-                  'leg_scales' :  {
-
-                                    'left_leg':                           
-                                      {
-                                      'thigh_h_scale':1.0,
-                                      'thigh_r_scale':1.0,
-
-                                      'shin_h_scale':1.0,
-                                      'shin_r_scale':1.0,
-
-                                      'foot_l_scale':1.0,
-                                      'foot_r_scale':1.0
-                                      },
-                                  
-                                    'right_leg':                           
-                                      {
-                                      'thigh_h_scale':1.0,
-                                      'thigh_r_scale':1.0,
-
-                                      'shin_h_scale':1.0,
-                                      'shin_r_scale':1.0,
-
-                                      'foot_l_scale':1.0,
-                                      'foot_r_scale':1.0
-                                      }                        
-                                  
-                                  },
-                    'marker_pos_params':
-                                {
-                                  'torso':
-                                      {
-                                        'C7' : {'theta':120,'k':0.0,'r_nominal':0.09},
-                                        'RSHO' : {'theta':90,'k':-1.5},
-                                        'LSHO' : {'theta':90,'k':1.5},
-                                        'CLAV' : {'theta':20,'k':0.0},
-                                      },
-                                  'pelvis':
-                                      {
-                                        'RASI' : {'theta':40,'k':-1.5,}, #if r is given, r_link is over written
-                                        'LASI' : {'theta':40,'k': 1.5},
-                                        'RPSI' : {'theta':115,'k':-.3,'r_nominal':0.11},
-                                        'LPSI' : {'theta':115,'k':0.3,'r_nominal':0.11},
-                                      },
-                                  
-                                  'left_leg':
-                                  {
-
-                                      'thigh': 
-                                        {
-                                          'LGT': {'theta': 50, 'k': 1.0},
-                                          'LT1': {'theta': 0, 'k': 0.3}, 
-                                          'LT2': {'theta': 30, 'k': 0}, 
-                                          'LT3': {'theta': 0, 'k': -0.3}, 
-                                          'LT4': {'theta': -30, 'k': 0}
-                                        }, 
-                                      'shin': 
-                                          {
-                                            'LKNL': {'theta': 90, 'k': 1.0}, 
-                                            'LKNM': {'theta': 270, 'k': 1.0},
-                                            'LS1': {'theta': 0, 'k': 0.3}, 
-                                            'LS2': {'theta': 30, 'k': 0}, 
-                                            'LS3': {'theta': 0, 'k': -0.3}, 
-                                            'LS4': {'theta': -30, 'k': 0}
-                                          }, 
-                                    'foot': 
-                                        {
-                                          'LANL': {'theta': 50, 'k': 0,'r_nominal':0.055}, 
-                                          'LANM': {'theta': 130, 'k': 0,'r_nominal':0.055},
-                                          'LHEE': {'theta': 90, 'k': -0.75}, 
-                                          'LM1': {'theta': 135, 'k':1.3,'r_nominal':0.03}, 
-                                          'LM5': {'theta': 45, 'k': 1.3,'r_nominal':0.03}
-                                        }, 
-                                  },
-                                  'right_leg':
-                                  {
-
-                                      'thigh': 
-                                        {
-                                          'RGT': {'theta': 310, 'k': 1.0},
-                                          'RT1': {'theta': 0, 'k': 0.3}, 
-                                          'RT2': {'theta': 30, 'k': 0}, 
-                                          'RT3': {'theta': 0, 'k': -0.3}, 
-                                          'RT4': {'theta': -30, 'k': 0}
-                                        }, 
-                                      'shin': 
-                                          {
-                                            'RKNL': {'theta': 270, 'k': 1.0}, 
-                                            'RKNM': {'theta': 90, 'k': 1.0},
-                                            'RS1': {'theta': 0, 'k': 0.3}, 
-                                            'RS2': {'theta': 30, 'k': 0}, 
-                                            'RS3': {'theta': 0, 'k': -0.3}, 
-                                            'RS4': {'theta': -30, 'k': 0}
-                                          }, 
-                                    'foot': 
-                                        {
-                                          'RANL': {'theta': 130, 'k': 0,'r_nominal':0.055}, 
-                                          'RANM': {'theta': 50, 'k': 0,'r_nominal':0.055},
-                                          'RHEE': {'theta': 90, 'k': -0.75}, 
-                                          'RM1': {'theta': 45, 'k':1.3,'r_nominal':0.03}, 
-                                          'RM5': {'theta': 135, 'k': 1.3,'r_nominal':0.03}
-                                        }, 
-                                  }
-                                }
-                                }
-    key = 'y'
-    if os.path.exists(assets_path+"models/model_confs/"+ conf_file_name):
-      print( 'Warning: the file '+conf_file_name+' already exists, wanna rewrite ?[y/n]',end=' ')
-      key = input()    
-    if key == 'y':
-      print("File Updated")
-      config_file = open(assets_path+"models/model_confs/"+ conf_file_name,'w')
-      marker_conf = yaml.dump(full_humanoid_conf, config_file)
-
   # load the nominal default conf pre-saved
   config_file = open(assets_path+"models/model_confs/"+ conf_file_name,'r+')
-  full_humanoid_conf = yaml.load(config_file, Loader=yaml.FullLoader)
+  model_conf = yaml.load(config_file, Loader=yaml.FullLoader)
   print(conf_file_name)
-  body = Reduced_com_body(name='red1',
-                  **full_humanoid_conf
+  body = Reduced_com_body(name='pm_mll_'+ model_conf['knee_actuation']['joint']+'_'+model_conf['knee_actuation']['actuation'],
+                  **model_conf
                   )
   physics = mjcf.Physics.from_mjcf_model(body.mjcf_model)
 

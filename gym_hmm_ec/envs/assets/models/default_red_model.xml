@@ -1,4 +1,4 @@
-<mujoco model="red1">
+<mujoco model="pm_mll_hinge_motor">
   <compiler settotalmass="50.0"/>
   <default>
     <default class="/"/>
@@ -11,7 +11,7 @@
   </asset>
   <worldbody>
     <geom name="floor" class="/" type="plane" conaffinity="1" size="100 100 0.20000000000000001" material="grid" pos="0 0 0"/>
-    <body name="torso" pos="0 0 0.83000000000000007">
+    <body name="torso" pos="0 0 0.67100000000000004">
       <light name="top" class="/" mode="trackcom" pos="0 0 2"/>
       <camera name="back" class="/" mode="trackcom" pos="-3 0 1" xyaxes="0 -1 0 1 0 2"/>
       <camera name="side" class="/" mode="trackcom" pos="0 -3 1" xyaxes="1 0 0 0 1 2"/>
@@ -28,7 +28,7 @@
             <joint name="left_leg/knee" class="left_leg/" type="hinge" pos="0 0 0.02" axis="0 -1 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="1.0" range="-160 2" armature="0.01" damping="0.2"/>
             <geom name="left_leg/shin" class="left_leg/" type="capsule" size="0.029999999999999999" mass="1e-06" fromto="0 0 0 0 0 -0.23999999999999999"/>
             <body name="left_leg/foot" pos="0 0 -0.26999999999999996">
-              <geom name="left_leg/foot" class="left_leg/" type="sphere" size="0.029999999999999999" pos="0 0 0"/>
+              <geom name="left_leg/foot" class="left_leg/" type="sphere" size="0.029999999999999999" mass="0.1" pos="0 0 0"/>
             </body>
           </body>
         </body>
@@ -43,7 +43,7 @@
             <joint name="right_leg/knee" class="right_leg/" type="hinge" pos="0 0 0.02" axis="0 -1 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="1.0" range="-160 2" armature="0.01" damping="0.2"/>
             <geom name="right_leg/shin" class="right_leg/" type="capsule" size="0.029999999999999999" mass="1e-06" fromto="0 0 0 0 0 -0.23999999999999999"/>
             <body name="right_leg/foot" pos="0 0 -0.26999999999999996">
-              <geom name="right_leg/foot" class="right_leg/" type="sphere" size="0.029999999999999999" pos="0 0 0"/>
+              <geom name="right_leg/foot" class="right_leg/" type="sphere" size="0.029999999999999999" mass="0.1" pos="0 0 0"/>
             </body>
           </body>
         </body>
