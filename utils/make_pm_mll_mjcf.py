@@ -147,7 +147,7 @@ class Leg(object):
 class Pm_mll(object):
 
   def __init__(self,
-               name,
+               name='pm_mll',
                ground_clearence = 0.004,
                total_mass = 50.,
                com_radius = 0.1,
@@ -288,7 +288,7 @@ if __name__ == '__main__':
 
   parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-  parser.add_argument('--conf_xml_filename',help='common filename of xml and conf',default='default_red_model',type=str)
+  parser.add_argument('--conf_xml_filename',help='common filename of xml and conf',default='default_pm_mll',type=str)
 
   args = parser.parse_args()  
 

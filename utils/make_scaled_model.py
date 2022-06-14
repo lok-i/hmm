@@ -1,9 +1,11 @@
 
+import inspect
 import numpy as np
 import os
 import yaml
 from dm_control import mjcf
 import argparse
+import inspect
 import matplotlib.pyplot as plt 
 
 
@@ -130,9 +132,7 @@ if __name__ == '__main__':
                 print('\n',link,metric,'nominal:',base_measure,'subj:','= nominal','scale:',marker_geometry_avg[link][metric]['scale'])
 
 
-    subj_geom_conf = {'humanoid':marker_geometry_avg}
-    config_file = open(assets_path+"models/model_confs/"+ subject_file_name,'w')
-    yaml.dump(subj_geom_conf,config_file)
+
 
     if args.model_type == 'humanoid':
         from utils.make_humanoid_mjcf import Humanoid 
@@ -172,7 +172,6 @@ if __name__ == '__main__':
 
                         }
 
-
         # if os.path.exists(assets_path+"models/model_confs/"+ model_file+'.yaml'):
         #     print( 'Warning: the file '+model_file+' already exists, wanna rewrite ?[y/n]',end=' ')
         #     key = input()    
@@ -181,10 +180,22 @@ if __name__ == '__main__':
         #     config_file = open(assets_path+"models/model_confs/"+ model_file+'.yaml','w')
         #     marker_conf = yaml.dump(scaled_humanoid_conf, config_file)
 
-        body = Humanoid(name=args.model_type,
-                        **scaled_humanoid_conf
+        all_conf = { }
+        signature = inspect.signature(Humanoid.__init__)
+
+        for param in signature.parameters.values():
+            if param.name != 'self':
+                if param.name in scaled_humanoid_conf.keys():
+                    all_conf[param.name]= scaled_humanoid_conf[param.name]
+                else:
+                    all_conf[param.name] = param.default
+
+        body = Humanoid(
+                        **all_conf
                         )
 
+        config_file = open(assets_path+"models/model_confs/"+ subject_file_name.replace('.yaml','_humanoid.yaml'),'w')
+        yaml.dump(all_conf,config_file)
     
     elif args.model_type == 'pm_mll':
         from utils.make_pm_mll_mjcf import Pm_mll 
@@ -225,9 +236,24 @@ if __name__ == '__main__':
         #     config_file = open(assets_path+"models/model_confs/"+ model_file+'.yaml','w')
         #     marker_conf = yaml.dump(scaled_humanoid_conf, config_file)
 
-        body = Pm_mll(name=args.model_type,
-                        **scaled_pm_mll_conf
+        
+        all_conf = { }
+        signature = inspect.signature(Pm_mll.__init__)
+
+        for param in signature.parameters.values():
+            if param.name != 'self':
+                if param.name in scaled_pm_mll_conf.keys():
+                    all_conf[param.name]= scaled_pm_mll_conf[param.name]
+                else:
+                    all_conf[param.name] = param.default
+
+        body = Pm_mll(
+                        **all_conf
                         )
+
+        config_file = open(assets_path+"models/model_confs/"+ subject_file_name.replace('.yaml','_pm_mll.yaml'),'w')
+        yaml.dump(all_conf,config_file)
+
     physics = mjcf.Physics.from_mjcf_model(body.mjcf_model)
     model_filename = subject_file_name.replace('.yaml','_'+args.model_type+'.xml')
     mjcf.export_with_assets(body.mjcf_model,"./gym_hmm_ec/envs/assets/models/",model_filename)

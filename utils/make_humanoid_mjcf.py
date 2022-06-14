@@ -193,7 +193,7 @@ class Leg(object):
 class Humanoid(object):
 
   def __init__(self,
-               name,
+               name='humanoid',
                torso_h_scale = 1.0,
                torso_b_scale = 1.0,
                head_r_scale = 1.0,
