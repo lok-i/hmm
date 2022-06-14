@@ -139,12 +139,12 @@ class Leg(object):
     self.mjcf_model.actuator.add("motor",name='hip_y',joint='hip_y')
 
     self.mjcf_model.actuator.add(
-                                  knee_actuation['actuation'],
+                                  'motor',
                                   name='knee',
                                   joint='knee',
                                   )
 
-class Reduced_com_body(object):
+class Pm_mll(object):
 
   def __init__(self,
                name,
@@ -154,8 +154,9 @@ class Reduced_com_body(object):
                inter_leg_distance = 0.1,
                knee_actuation = 
                {
-                   'joint':'slide',
-                   'actuation':'motor'
+                    'joint':'slide',
+                    'series_spring_stiffness': 1.,
+                    'series_spring_damping': 0.
                },
                leg_scales =  
                             {
@@ -298,7 +299,7 @@ if __name__ == '__main__':
   config_file = open(assets_path+"models/model_confs/"+ conf_file_name,'r+')
   model_conf = yaml.load(config_file, Loader=yaml.FullLoader)
   print(conf_file_name)
-  body = Reduced_com_body(name='pm_mll_'+ model_conf['knee_actuation']['joint']+'_'+model_conf['knee_actuation']['actuation'],
+  body = Pm_mll(name='pm_mll',
                   **model_conf
                   )
   physics = mjcf.Physics.from_mjcf_model(body.mjcf_model)

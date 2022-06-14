@@ -1,4 +1,4 @@
-<mujoco model="pm_mll_slide_motor">
+<mujoco model="pm_mll">
   <compiler settotalmass="50.0"/>
   <default>
     <default class="/"/>

@@ -10,6 +10,15 @@ class reward_base():
     def reset(self):
         raise NotImplementedError
 
+class zero_reward(reward_base):
+
+        
+    def step(self,input_dict):
+        return 0
+
+    def reset(self):
+        pass
+
 
 class forward_x_base_pos(reward_base):
 

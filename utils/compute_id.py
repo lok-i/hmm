@@ -39,11 +39,30 @@ if __name__ == '__main__':
 
     # environment config and setup
     env_conf = {
-        'set_on_rack': False,
-        'render': args.render,
-        'model_name': args.model_filename if '.xml' not in args.model_filename else args.model_filename.replace('.xml',''),
-        'mocap': False
-    }
+                'set_on_rack': False,
+                'render': args.render,
+                'model_name': args.model_filename if '.xml' not in args.model_filename else args.model_filename.replace('.xml','') ,
+                'mocap':False,
+                'observations':
+                {
+                    'current_model_state': None
+                },
+                'actions':
+                {   'joint_torques':
+                        {
+                            'dim': 15,
+                            'torque_max': 5
+                        }                
+                },
+                'rewards':
+                {
+                    'zero_reward':None
+                },
+                'terminations':
+                {
+                    'indefinite':None
+                }                
+                }
     # marker config
     marker_confpath = args.processed_filepath.split('processed_data/')[0]+'confs/' \
                         + args.processed_filepath.split('processed_data/')[-1].split('_from')[0]+'.yaml' 

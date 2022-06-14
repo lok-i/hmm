@@ -2,7 +2,6 @@
 import numpy as np
 import os
 import yaml
-from utils.make_humanoid_mjcf import Humanoid 
 from dm_control import mjcf
 import argparse
 import matplotlib.pyplot as plt 
@@ -13,7 +12,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--static_confpath',help='path of the conf file',default='AB1_Session1_Static',type=str)
     parser.add_argument('--static_processed_filepath',help='path of the processed marker data file',default='AB1_Session1_Static',type=str)
-    parser.add_argument('--model_type',help='type of model humanoid, pm_mll_hinge/slide_motor/muscle ',default='humanoid',type=str)
+    parser.add_argument('--model_type',help='type of model humanoid, pm_mll',default='humanoid',type=str)
 
     args = parser.parse_args()
 
@@ -135,59 +134,102 @@ if __name__ == '__main__':
     config_file = open(assets_path+"models/model_confs/"+ subject_file_name,'w')
     yaml.dump(subj_geom_conf,config_file)
 
+    if args.model_type == 'humanoid':
+        from utils.make_humanoid_mjcf import Humanoid 
+        scaled_humanoid_conf ={     'torso_h_scale': marker_geometry_avg['torso_all']['length']['scale'],
+                                    'torso_b_scale': marker_geometry_avg['torso_all']['breadth']['scale'],
+                                    'ankle_yaw_deviation': marker_geometry_avg['ankle']['yaw_offset']['value'],
+                                    'leg_scales' :  {
 
-    scaled_humanoid_conf ={     'torso_h_scale': marker_geometry_avg['torso_all']['length']['scale'],
-                                'torso_b_scale': marker_geometry_avg['torso_all']['breadth']['scale'],
-                                'ankle_yaw_deviation': marker_geometry_avg['ankle']['yaw_offset']['value'],
-                                'leg_scales' :  {
 
+                                        'left_leg':                           
+                                        {
+                                        'thigh_h_scale':marker_geometry_avg['thigh']['length']['scale'],
+                                        'thigh_r_scale':marker_geometry_avg['thigh']['radius']['scale'],
 
-                                    'left_leg':                           
-                                    {
-                                    'thigh_h_scale':marker_geometry_avg['thigh']['length']['scale'],
-                                    'thigh_r_scale':marker_geometry_avg['thigh']['radius']['scale'],
+                                        'shin_h_scale':marker_geometry_avg['shin']['length']['scale'],
+                                        'shin_r_scale':marker_geometry_avg['shin']['radius']['scale'],
 
-                                    'shin_h_scale':marker_geometry_avg['shin']['length']['scale'],
-                                    'shin_r_scale':marker_geometry_avg['shin']['radius']['scale'],
+                                        'foot_l_scale':marker_geometry_avg['foot']['length']['scale'],
+                                        'foot_r_scale':marker_geometry_avg['foot']['length']['scale']
+                                        },
+                                    
+                                        'right_leg':                           
+                                        {
+                                        'thigh_h_scale':marker_geometry_avg['thigh']['length']['scale'],
+                                        'thigh_r_scale':marker_geometry_avg['thigh']['radius']['scale'],
 
-                                    'foot_l_scale':marker_geometry_avg['foot']['length']['scale'],
-                                    'foot_r_scale':marker_geometry_avg['foot']['length']['scale']
+                                        'shin_h_scale':marker_geometry_avg['shin']['length']['scale'],
+                                        'shin_r_scale':marker_geometry_avg['shin']['radius']['scale'],
+
+                                        'foot_l_scale':marker_geometry_avg['foot']['length']['scale'],
+                                        'foot_r_scale':marker_geometry_avg['foot']['length']['scale']
+                                        },
+                                                        
+                                    
                                     },
-                                
-                                    'right_leg':                           
-                                    {
-                                    'thigh_h_scale':marker_geometry_avg['thigh']['length']['scale'],
-                                    'thigh_r_scale':marker_geometry_avg['thigh']['radius']['scale'],
 
-                                    'shin_h_scale':marker_geometry_avg['shin']['length']['scale'],
-                                    'shin_r_scale':marker_geometry_avg['shin']['radius']['scale'],
 
-                                    'foot_l_scale':marker_geometry_avg['foot']['length']['scale'],
-                                    'foot_r_scale':marker_geometry_avg['foot']['length']['scale']
+                        }
+
+
+        # if os.path.exists(assets_path+"models/model_confs/"+ model_file+'.yaml'):
+        #     print( 'Warning: the file '+model_file+' already exists, wanna rewrite ?[y/n]',end=' ')
+        #     key = input()    
+        # if key == 'y':
+        #     print("Model Conf. File Updated")
+        #     config_file = open(assets_path+"models/model_confs/"+ model_file+'.yaml','w')
+        #     marker_conf = yaml.dump(scaled_humanoid_conf, config_file)
+
+        body = Humanoid(name=args.model_type,
+                        **scaled_humanoid_conf
+                        )
+
+    
+    elif args.model_type == 'pm_mll':
+        from utils.make_pm_mll_mjcf import Pm_mll 
+        scaled_pm_mll_conf ={     
+                                    'leg_scales' :  {
+
+
+                                        'left_leg':                           
+                                        {
+                                        'thigh_h_scale':marker_geometry_avg['thigh']['length']['scale'],
+
+                                        'shin_h_scale':marker_geometry_avg['shin']['length']['scale'],
+
+                                        'foot_r_scale':marker_geometry_avg['foot']['length']['scale']
+                                        },
+                                    
+                                        'right_leg':                           
+                                        {
+                                        'thigh_h_scale':marker_geometry_avg['thigh']['length']['scale'],
+
+                                        'shin_h_scale':marker_geometry_avg['shin']['length']['scale'],
+
+                                        'foot_r_scale':marker_geometry_avg['foot']['length']['scale']
+                                        },
+                                                        
+                                    
                                     },
-                                                    
-                                
-                                },
 
 
-                    }
+                        }
 
 
-    # if os.path.exists(assets_path+"models/model_confs/"+ model_file+'.yaml'):
-    #     print( 'Warning: the file '+model_file+' already exists, wanna rewrite ?[y/n]',end=' ')
-    #     key = input()    
-    # if key == 'y':
-    #     print("Model Conf. File Updated")
-    #     config_file = open(assets_path+"models/model_confs/"+ model_file+'.yaml','w')
-    #     marker_conf = yaml.dump(scaled_humanoid_conf, config_file)
+        # if os.path.exists(assets_path+"models/model_confs/"+ model_file+'.yaml'):
+        #     print( 'Warning: the file '+model_file+' already exists, wanna rewrite ?[y/n]',end=' ')
+        #     key = input()    
+        # if key == 'y':
+        #     print("Model Conf. File Updated")
+        #     config_file = open(assets_path+"models/model_confs/"+ model_file+'.yaml','w')
+        #     marker_conf = yaml.dump(scaled_humanoid_conf, config_file)
 
-    body = Humanoid(name='humanoid',
-                    **scaled_humanoid_conf
-                    )
+        body = Pm_mll(name=args.model_type,
+                        **scaled_pm_mll_conf
+                        )
     physics = mjcf.Physics.from_mjcf_model(body.mjcf_model)
-
-
-    model_filename = subject_file_name.replace('.yaml','.xml')
+    model_filename = subject_file_name.replace('.yaml','_'+args.model_type+'.xml')
     mjcf.export_with_assets(body.mjcf_model,"./gym_hmm_ec/envs/assets/models/",model_filename)
     print("Model File Updated")
     print("written to ","./gym_hmm_ec/envs/assets/models/"+model_filename)

@@ -52,20 +52,19 @@ if __name__ == '__main__':
 
     subject_file_name = conf_filepath.split('/')[-1].replace('_Static','')
     
-    model_filename = subject_file_name.replace('.yaml','.xml')
+    model_filename = subject_file_name.replace('.yaml','_humanoid.xml')
     model_filepath = "./gym_hmm_ec/envs/assets/models/"+model_filename
     
     upd_model_filename = model_filename.replace('.xml','_upd.xml')
     upd_model_filepath = model_filepath.replace('.xml','_upd.xml')
-
     
     key = 'y'
     if os.path.exists(upd_model_filepath):
         print( '\nWarning: the file '+upd_model_filename+' already exists, wanna edit again ?[y/n]',end=' ')
         key = input()    
     if key == 'y':
-        print("File Updated")
         os.system('python3 utils/mujoco_model_editor/main.py --input_modelpath '+model_filepath+' --static_filepath '+proceesed_filepath)
+        print("File Updated")
     
     
     ############### COMPUTE IK #######################

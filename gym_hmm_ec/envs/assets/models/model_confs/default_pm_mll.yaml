@@ -6,7 +6,6 @@ knee_actuation:
   joint: 'slide'
   series_spring_stiffness: 1.
   series_spring_damping: 0.
-  actuation: 'motor'
 
 leg_scales:
   left_leg:

@@ -93,6 +93,7 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
             reward_params = self.env_params['rewards'][rew_name]
             reward_class = getattr(rew,rew_name)
             self.rewards.append(reward_class(reward_params))
+        
 
     def init_terminations(self):
         self.termination_list = []
