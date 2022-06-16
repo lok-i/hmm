@@ -532,7 +532,7 @@ if __name__ == '__main__':
 
   parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-  parser.add_argument('--conf_xml_filename',help='common filename of xml and conf',default='default_humanoid_mocap',type=str)
+  parser.add_argument('--conf_xml_filename',help='common filename of xml and conf',default='default_humanoid',type=str)
   parser.add_argument('--update_humanoid_conf',help='whether to rewrtie the defaul humanoid model config',default=False, action='store_true')
 
   args = parser.parse_args()  
@@ -664,7 +664,7 @@ if __name__ == '__main__':
   config_file = open(assets_path+"models/model_confs/"+ conf_file_name,'r+')
   full_humanoid_conf = yaml.load(config_file, Loader=yaml.FullLoader)
   print(conf_file_name)
-  body = Humanoid(name='humanoid',
+  body = Humanoid(
                   **full_humanoid_conf
                   )
   physics = mjcf.Physics.from_mjcf_model(body.mjcf_model)

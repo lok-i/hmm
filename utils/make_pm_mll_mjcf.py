@@ -13,9 +13,6 @@ class Leg(object):
               name,
               knee_actuation,
               marker_pos_params,
-              symetric_transform = 1,
-              
-
               thigh_h_scale =1.,
               thigh_r_scale =1.,
               shin_h_scale = 1.,
@@ -142,10 +139,8 @@ class Leg(object):
     ankle_clearence =  0.0
     foot_radius = foot_r_scale*.03
     self.foot = self.shin.add('body',name='foot',
-    pos=[0, 0, (shin_h_scale*-.3) - (foot_radius+ ankle_clearence) + 2*shin_radius ],
-    # quat=[0, 0, 0,1],
-    # quat = misc_functions.euler2quat(0,0,-1*symetric_transform*ankle_yaw_deviation),
-    )
+                              pos=[0, 0, (shin_h_scale*-.3) - (foot_radius+ ankle_clearence) + 2*shin_radius ],
+                              )
     #     <geom name="head" type="sphere" size=".09"/>
     self.foot.add('geom', 
                     name='foot',
@@ -395,7 +390,6 @@ class Pm_mll(object):
         )
     
     self.left_leg = Leg(name='left_leg',
-                        symetric_transform = -1.,
                         knee_actuation = knee_actuation,
                         marker_pos_params = marker_pos_params['left_leg'],
 
@@ -404,7 +398,6 @@ class Pm_mll(object):
     left_leg_site.attach(self.left_leg.mjcf_model)
 
     self.right_leg = Leg(name='right_leg',
-                        symetric_transform = 1.,
                         knee_actuation = knee_actuation,
                         marker_pos_params = marker_pos_params['right_leg'],
                         **leg_scales['right_leg']

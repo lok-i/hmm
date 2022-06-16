@@ -1,24 +1,21 @@
-total_mass: 50
+ankle_yaw_deviation: 15.81054915802073
+force_points_per_m_in_foot: 48
 head_r_scale: 1.0
 leg_scales:
   left_leg:
-    foot_l_scale: 1.0
-    foot_r_scale: 1.0
-    shin_h_scale: 1.0
-    shin_r_scale: 1.0
-    thigh_h_scale: 1.0
-    thigh_r_scale: 1.0
+    foot_l_scale: 0.8714853211111084
+    foot_r_scale: 0.8714853211111084
+    shin_h_scale: 1.2659885759665492
+    shin_r_scale: 0.7167317620401581
+    thigh_h_scale: 1.289662329700079
+    thigh_r_scale: 1.0800097986391857
   right_leg:
-    foot_l_scale: 1.0
-    foot_r_scale: 1.0
-    shin_h_scale: 1.0
-    shin_r_scale: 1.0
-    thigh_h_scale: 1.0
-    thigh_r_scale: 1.0
-
-force_points_per_m_in_foot: 48
-ankle_yaw_deviation: 30
-
+    foot_l_scale: 0.8714853211111084
+    foot_r_scale: 0.8714853211111084
+    shin_h_scale: 1.2659885759665492
+    shin_r_scale: 0.7167317620401581
+    thigh_h_scale: 1.289662329700079
+    thigh_r_scale: 1.0800097986391857
 marker_pos_params:
   left_leg:
     foot:
@@ -161,5 +158,7 @@ marker_pos_params:
     RSHO:
       k: -1.5
       theta: 90
-torso_b_scale: 1.0
-torso_h_scale: 1.0
+name: humanoid
+torso_b_scale: 2.61944673782505
+torso_h_scale: 1
+total_mass: 50.0

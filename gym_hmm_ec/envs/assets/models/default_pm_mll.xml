@@ -35,7 +35,7 @@
           <site name="left_leg/LT3" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.059999999999999998 0 -0.18200000000000002"/>
           <site name="left_leg/LT4" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.051961524227066319 -0.029999999999999995 -0.14000000000000001"/>
           <body name="left_leg/shin" pos="0 0 -0.34300000000000003">
-            <joint name="left_leg/knee" class="left_leg/" type="hinge" pos="0 0 0.02" axis="0 -1 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="0.0" range="-160 2" armature="0.01" damping="0.0"/>
+            <joint name="left_leg/knee" class="left_leg/" type="slide" pos="0 0 0.02" axis="0 0 1" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="0.0" range="-160 2" armature="0.01" damping="0.0"/>
             <geom name="left_leg/shin" class="left_leg/" type="capsule" size="0.049000000000000002" mass="1e-06" fromto="0 0 0 0 0 -0.20199999999999999"/>
             <site name="left_leg/LANL" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="3.0003846579110156e-18 0.049000000000000002 -0.20199999999999999"/>
             <site name="left_leg/LANM" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="-9.0011539737330462e-18 -0.049000000000000002 -0.20199999999999999"/>
@@ -64,7 +64,7 @@
           <site name="right_leg/RT3" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.059999999999999998 0 -0.18200000000000002"/>
           <site name="right_leg/RT4" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.051961524227066319 -0.029999999999999995 -0.14000000000000001"/>
           <body name="right_leg/shin" pos="0 0 -0.34300000000000003">
-            <joint name="right_leg/knee" class="right_leg/" type="hinge" pos="0 0 0.02" axis="0 -1 0" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="0.0" range="-160 2" armature="0.01" damping="0.0"/>
+            <joint name="right_leg/knee" class="right_leg/" type="slide" pos="0 0 0.02" axis="0 0 1" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="0.0" range="-160 2" armature="0.01" damping="0.0"/>
             <geom name="right_leg/shin" class="right_leg/" type="capsule" size="0.049000000000000002" mass="1e-06" fromto="0 0 0 0 0 -0.20199999999999999"/>
             <site name="right_leg/RANL" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="3.0003846579110156e-18 0.049000000000000002 -0.20199999999999999"/>
             <site name="right_leg/RANM" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="-9.0011539737330462e-18 -0.049000000000000002 -0.20199999999999999"/>

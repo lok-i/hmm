@@ -404,11 +404,12 @@ def init_skeleton():
     global skeleton
     skeleton = Skeleton( xml_file = args.input_modelpath,static_marker_file=args.static_filepath)
     
-    output_file = args.input_modelpath.partition('.xml')[0]+'_upd.xml'
-    skeleton.save_to_xml(output_file, args.local)
-    print('model saved to {}'.format(output_file))
-    exit(0)      
-    
+    if args.dont_update:
+        output_file = args.input_modelpath #.partition('.xml')[0]+'_upd.xml'
+        skeleton.save_to_xml(output_file, args.local)
+        print('model saved to {}'.format(output_file))
+        exit(0)      
+        
     
     # center_z = skeleton.bones[0].body_w_pos[2] / 2.0
     pass

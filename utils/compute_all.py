@@ -54,16 +54,19 @@ if __name__ == '__main__':
     
     model_filename = subject_file_name.replace('.yaml','_'+args.model_type+'.xml')
     model_filepath = "./gym_hmm_ec/envs/assets/models/"+model_filename
-    
-    upd_model_filename = model_filename.replace('.xml','_upd.xml')
-    upd_model_filepath = model_filepath.replace('.xml','_upd.xml')
-    
-    
+        
 
-    print("\nStatus of previous manual update of the file:",os.path.exists(upd_model_filepath))
+    print("\nStatus of previous manual update of the file:",os.path.exists(model_filepath))
 
-    print( '\nDo you wanna manually update the xml marker pos again ?[y/n]',end=' ')
-    key = input()    
+    if 'humanoid' in args.model_type:
+        # NOTE: GUI model editor support only available for humanoi mode, not pm_mll
+        print( '\nDo you wanna manually update the xml marker pos again ?[y/n]',end=' ')
+        key = input()
+    else:
+        key = 'n'
+
+
+
     if key == 'y':
         os.system('python3 utils/mujoco_model_editor/main.py --input_modelpath '+model_filepath+' --static_filepath '+proceesed_filepath)
         print("File Updated")
@@ -71,7 +74,6 @@ if __name__ == '__main__':
         print("here")
         os.system('python3 utils/mujoco_model_editor/main.py --input_modelpath '+model_filepath+' --static_filepath '+proceesed_filepath+' --dont_update')
         print("File Updated")   
-    
     
     ############### COMPUTE IK #######################
     
@@ -83,7 +85,7 @@ if __name__ == '__main__':
                    +'_from_'+str(args.roi_start)+'_to_'+str(args.roi_stop)+'.npz'
 
     
-    ik_command = 'python3 utils/compute_ik.py --processed_filepath '+proceesed_filepath+' --model_filename '+upd_model_filename+' --export_solns'
+    ik_command = 'python3 utils/compute_ik.py --processed_filepath '+proceesed_filepath+' --model_filename '+model_filename+' --export_solns'
 
 
     if args.render_ik:
@@ -94,7 +96,7 @@ if __name__ == '__main__':
     
     ############### COMPUTE ID #######################
 
-    id_command = 'python3 utils/compute_id.py --processed_filepath '+proceesed_filepath+' --model_filename '+upd_model_filename+' --export_solns'
+    id_command = 'python3 utils/compute_id.py --processed_filepath '+proceesed_filepath+' --model_filename '+model_filename+' --export_solns'
     
     if args.render_id:
         id_command += ' --render'

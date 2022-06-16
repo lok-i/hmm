@@ -4,10 +4,31 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # environment config and setup
+
 env_conf = {
             'set_on_rack': True,
-            'render': True,
-            'model_name':'humanoid_no_hands_mocap_generated'
+            'render':True,
+            'model_name': 'default_humanoid',
+            'mocap':False,
+            'observations':
+            {
+                'current_model_state': None
+            },
+            'actions':
+            {   'joint_torques':
+                    {
+                        'dim': 15,
+                        'torque_max': 5
+                    }                
+            },
+            'rewards':
+            {
+                'zero_reward':None
+            },
+            'terminations':
+            {
+                'indefinite':None
+            }                
             }
 
 env = BipedEnv(**env_conf)
@@ -29,7 +50,7 @@ tau_list = []
 
 
 # select the joint to test
-joint_actuator_to_chk = "right_leg/ankle_x"
+joint_actuator_to_chk = "right_leg/hip_x"
 actuator_id_being_chkd = env.model.actuator_name2id(joint_actuator_to_chk) 
 base_dof = env.sim.data.qpos.shape[0] - env.n_act_joints
 
@@ -42,7 +63,8 @@ if env.env_params['render']:
 
 for _ in range(2000):
 
-    qpos,qvel = env.get_state()
+    qpos = env.sim.data.qpos[:].copy()
+    qvel = env.sim.data.qvel[:].copy()
     q_act_des[actuator_id_being_chkd ] = np.radians(50*np.sin(0.01*_))
     torque = pd_controller.get_torque(
                                       q_des = q_act_des,
