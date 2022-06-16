@@ -1,5 +1,5 @@
-# hmm-ec
-a mujoco env for learning human motor models through deep rl with added tools for IK, ID, direct mocap data integration, stablebaselines3 integration
+# hmm
+a mujoco env for learning human motor models through deep rl with added tools for IK, ID, direct mocap data integration, and stablebaselines3 integration.
 
 # Getting Started and Installation:
  
@@ -38,7 +38,7 @@ This is an optional installation. Required for training and testing [rl policies
 
 # Usage Instructions
 
-Checkout the readme's inside (utils)[./utils] and (rl_policy)[./rl_policy] for corresponding specific usage of the scripts.
+Checkout the readme's inside [utils](./utils) and [rl_policy](./rl_policy) for corresponding specific usage of the scripts.
 
 
 ## Expected Data Directory Structure
