@@ -1,11 +1,9 @@
 # hmm-ec
-an env for learning human motor models and exoskeleton control
+a mujoco env for learning human motor models through deep rl with added tools for IK, ID, direct mocap data integration, stablebaselines3 integration
 
 # Getting Started and Installation:
-
-In order to keep it experiment friendly, this codebase uses local scripts with very less modules to install/maintain. The only requirement is the sucessfull installation of mujoco and mujoco-py.
-
-## Install MuJoCo
+ 
+### Install MuJoCo
 
 1. Download the MuJoCo version 2.1 binaries here: [Mujoco](https://mujoco.org/download).
 
@@ -13,7 +11,7 @@ In order to keep it experiment friendly, this codebase uses local scripts with v
 
 If you want to specify a nonstandard location for the package, use the env variable `MUJOCO_PY_MUJOCO_PATH`.
 
-## Install mujoco-py
+### Install mujoco-py
 
 To install mujoco-py, run the following
 
@@ -25,30 +23,57 @@ After testing the sucessfull isntallation of mujoco-py,to test the codebase,run
         cd hmm-ec/
         python3 test_env.py
 
+### Install dm_control
+
+This is an optional installation. Required for building a [custom scaled model from data](./utils/make_humanoid_mjcf.py)  and to [compute IK](./utils/compute_ik.py) .
+        
+        pip3 install dm_control
+
+### Install Stable-Baselines3
+
+This is an optional installation. Required for training and testing [rl policies](./rl_policy/train.py)
+        
+        pip3 install stable-baselines3
+
+
 # Usage Instructions
 
-Since it is a evolving code base, at present kindly follow the usage and implementations in [demos](./demos) and [utils](./utils).
+Checkout the readme's inside (utils)[./utils] and (rl_policy)[./rl_policy] for corresponding specific usage of the scripts.
 
 
 ## Expected Data Directory Structure
 
 Make a directory named data and a directory for your data with the following structure,
 
-        data 
-        |- your_data
-           |- marker_data
-              |- c3ds # keep all your c3d files inside this folder
-           |- id_solns
-           |- ik_solns
+        hmm-ec
+            |-data 
+                |- your_data
+                |- marker_data
+                    |- c3ds # keep all your c3d files inside this folder
+                |- id_solns
+                |- ik_solns
 
 
-To generate an end to end demo, simply run
+### For example,
+You can download our [data folder](https://drive.google.com/drive/folders/1zU2zTHr110v3TbVdbKXGiXlRRw0raZVT), that we use to recreate the experiments we conduct. Place it inside `hmm-ec/` 
 
-        python3 utils/compute_all.py --static_c3dfilepath data/your_data/marker_data/c3ds/static.c3d --trial_c3dfilepath data/your_data/marker_data/c3ds/trial.c3d  --plot_id_solns --plot_ik_solns 
+To generate an end to end demo of the tools in [./utils] , simply run
+
+#### For simple model (point mass massless leg)
+
+        python3 utils/compute_all.py --model_type pm_mll --static_c3dfilepath data/our_data/marker_data/c3ds/AB3_Session1_Static.c3d --trial_c3dfilepath data/our_data/marker_data/c3ds/AB3_Session1_Right10_Left10.c3d --roi_start 2000 --roi_stop 2100 --plot_ik_solns --plot_id_solns --render_ik --render_id
+
+#### For full humanoid model
+
+        python3 utils/compute_all.py --model_type humanoid --static_c3dfilepath data/our_data/marker_data/c3ds/AB3_Session1_Static.c3d --trial_c3dfilepath data/our_data/marker_data/c3ds/AB3_Session1_Right10_Left10.c3d --roi_start 2000 --roi_stop 2100 --plot_ik_solns --plot_id_solns --render_ik --render_id
+
+# Colab Notebook
+
+You can find the detaild usage of the various tools in this code base in thie google [colab notebook](https://colab.research.google.com/drive/1C0Oatm7bamBYBOxtQU2C1DOgUbSjWFyk?usp=sharing).
 
 # To Do
 
-- [x] data directory addition in read me.
-- [x] update commands.md.
-- [ ] COP point of application to be fixed.
+- [ ] Complete readme in utils/ and rl_policy/ (make illustrative figures aswell).
+- [ ] Add other deep rl algo support from sb3 in rl_policy/
+- [ ] Add an well explained colab notebook, well explained and with exhaustive examples.
 
