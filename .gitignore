@@ -1,13 +1,9 @@
 gym_hmm_ec/envs/__pycache__/
-gym_hmm_ec/envs/utils/__pycache__/
-gym_hmm_ec/envs/utils/mujoco_modeller/__pycache__/
 utils/mujoco_model_editor/__pycache__/
-
+utils/__pycache__/
 gym_hmm_ec/envs/assets/__pycache__/
-gym_hmm_ec/envs/assets/our_data/marker_data/
-gym_hmm_ec/envs/assets/our_data/ik_solns/
-gym_hmm_ec/envs/assets/our_data/pose_esti/
 evaluation_plots/
 experiments/
-rl_policy/__pycache__
+misc_demos/__pycache__/
+rl_policy/__pycache__/
 data/
