@@ -81,7 +81,7 @@ if __name__ == '__main__':
                    +'_from_'+str(args.roi_start)+'_to_'+str(args.roi_stop)+'.npz'
 
 
-    ik_command = 'python3 utils/compute_ik_humanoid.py --processed_filepath '+proceesed_filepath+' --model_filename '+upd_model_filename+' --export_solns'
+    ik_command = 'python3 utils/compute_ik.py --processed_filepath '+proceesed_filepath+' --model_filename '+upd_model_filename+' --export_solns'
 
 
     if args.render_ik:
