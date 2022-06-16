@@ -5,16 +5,21 @@ a mujoco env for learning human motor models through deep rl with added tools fo
  
 ### Install MuJoCo
 
-1. Download the MuJoCo version 2.1 binaries here: [Mujoco](https://mujoco.org/download).
-
+1. Download the MuJoCo version 2.1 binaries for [Linux](https://mujoco.org/download/mujoco210-linux-x86_64.tar.gz) or
+   [OSX](https://mujoco.org/download/mujoco210-macos-x86_64.tar.gz).
 2. Extract the downloaded `mujoco210` directory into `~/.mujoco/mujoco210`.
 
-If you want to specify a nonstandard location for the package, use the env variable `MUJOCO_PY_MUJOCO_PATH`.
+If you want to specify a nonstandard location for the package,
+use the env variable `MUJOCO_PY_MUJOCO_PATH`.
 
-### Install mujoco-py
+### Install and use `mujoco-py`
 
-To install mujoco-py, run the following
-
+To include `mujoco-py` in your own package, add it to your requirements like so:
+```
+mujoco-py<2.2,>=2.1
+```
+To install `mujoco-py`, run:
+```
         pip3 install -U 'mujoco-py<2.2,>=2.1'
 
 
