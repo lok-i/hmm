@@ -55,7 +55,7 @@ Make a directory named data and a directory for your data with the following str
 
 
 ### For example,
-You can download our [data folder](https://drive.google.com/drive/folders/1zU2zTHr110v3TbVdbKXGiXlRRw0raZVT), that we use to recreate the experiments we conduct. Place it inside `hmm-ec/` 
+You can download our [data](https://drive.google.com/drive/folders/1zU2zTHr110v3TbVdbKXGiXlRRw0raZVT)  folder, that we use to recreate the experiments we conduct. Place it inside `hmm-ec/` 
 
 To generate an end to end demo of the tools in [./utils] , simply run
 
