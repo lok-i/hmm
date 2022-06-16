@@ -19,7 +19,7 @@ To include `mujoco-py` in your own package, add it to your requirements like so:
 mujoco-py<2.2,>=2.1
 ```
 To install `mujoco-py`, run:
-```
+
         pip3 install -U 'mujoco-py<2.2,>=2.1'
 
 
