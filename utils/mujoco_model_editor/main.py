@@ -14,6 +14,7 @@ parser.add_argument('--static_filepath', default="data/humanoid_out.xml", metava
                     help='input path of the static marker pose file')
 
 parser.add_argument('--local', action='store_true', default=False)
+parser.add_argument("--dont_update",action='store_true', default=False)
 
 args = parser.parse_args()
 
@@ -127,6 +128,8 @@ def keyboard(key, x, y):
     rot_angle = 5
     trans_dist = 0.002
     d_size = 0.002
+    
+      
     if key == '`':
         exit(0)
     elif key == 'v':
@@ -400,6 +403,13 @@ def init_skeleton():
     global center_x, center_y, center_z
     global skeleton
     skeleton = Skeleton( xml_file = args.input_modelpath,static_marker_file=args.static_filepath)
+    
+    output_file = args.input_modelpath.partition('.xml')[0]+'_upd.xml'
+    skeleton.save_to_xml(output_file, args.local)
+    print('model saved to {}'.format(output_file))
+    exit(0)      
+    
+    
     # center_z = skeleton.bones[0].body_w_pos[2] / 2.0
     pass
 
@@ -429,3 +439,4 @@ if __name__ == "__main__":
     glutSpecialFunc(special)
     # Turn the flow of control over to GLUT
     glutMainLoop()
+

@@ -1,18 +1,123 @@
 com_radius: 0.1
 ground_clearence: 0.004
-inter_leg_distance: 0.1
 knee_actuation:
   joint: slide
   series_spring_damping: 0.0
-  series_spring_stiffness: 1.0
+  series_spring_stiffness: 0.0
 leg_scales:
   left_leg:
     foot_r_scale: 0.8714853211111084
     shin_h_scale: 1.2659885759665492
+    shin_r_scale: 0.7167317620401581
     thigh_h_scale: 1.289662329700079
+    thigh_r_scale: 1.0800097986391857
   right_leg:
     foot_r_scale: 0.8714853211111084
     shin_h_scale: 1.2659885759665492
+    shin_r_scale: 0.7167317620401581
     thigh_h_scale: 1.289662329700079
+    thigh_r_scale: 1.0800097986391857
+marker_pos_params:
+  left_leg:
+    shin:
+      LANL:
+        k: -1.0
+        theta: 90
+      LANM:
+        k: -1.0
+        theta: 270
+      LKNL:
+        k: 1.0
+        theta: 90
+      LKNM:
+        k: 1.0
+        theta: 270
+      LS1:
+        k: 0.3
+        theta: 0
+      LS2:
+        k: 0
+        theta: 30
+      LS3:
+        k: -0.3
+        theta: 0
+      LS4:
+        k: 0
+        theta: -30
+    thigh:
+      LGT:
+        k: 1.0
+        theta: 50
+      LT1:
+        k: 0.3
+        theta: 0
+      LT2:
+        k: 0
+        theta: 30
+      LT3:
+        k: -0.3
+        theta: 0
+      LT4:
+        k: 0
+        theta: -30
+  right_leg:
+    shin:
+      RANL:
+        k: -1.0
+        theta: 90
+      RANM:
+        k: -1.0
+        theta: 270
+      RKNL:
+        k: 1.0
+        theta: 270
+      RKNM:
+        k: 1.0
+        theta: 90
+      RS1:
+        k: 0.3
+        theta: 0
+      RS2:
+        k: 0
+        theta: 30
+      RS3:
+        k: -0.3
+        theta: 0
+      RS4:
+        k: 0
+        theta: -30
+    thigh:
+      RGT:
+        k: 1.0
+        theta: 310
+      RT1:
+        k: 0.3
+        theta: 0
+      RT2:
+        k: 0
+        theta: 30
+      RT3:
+        k: -0.3
+        theta: 0
+      RT4:
+        k: 0
+        theta: -30
+  torso:
+    LASI:
+      k: 1.5
+      theta: 40
+    LPSI:
+      k: 0.3
+      r_nominal: 0.11
+      theta: 115
+    RASI:
+      k: -1.5
+      theta: 40
+    RPSI:
+      k: -0.3
+      r_nominal: 0.11
+      theta: 115
 name: pm_mll
+torso_b_scale: 2.61944673782505
+torso_h_scale: 1
 total_mass: 50.0

@@ -15,16 +15,8 @@ rl_setting:
       - 64
     type: MlpPolicy
   total_timesteps: 5000
+
 env_kwargs:
-
-  set_on_rack: False
-  render: True
-  model_name: 'AB3_Session1_upd'
-
-  mocap_data:
-    processed_data_path: './data/our_data/marker_data/processed_data/AB3_Session1_Right10_Left10_from_2000_to_2500.npz'
-    ik_solns_path: './data/our_data/ik_solns/AB3_Session1_Right10_Left10_from_2000_to_2500.npz'
-
   observations:
     current_model_state: null
   
@@ -49,12 +41,15 @@ env_kwargs:
 
   terminations:
     mocap_epi_len: null
-    # TO ADD:
-    # self collitions
-    # torso down
-    # min_imitation_threshold:
-    #   threshold: 0.1
-
+    min_base_height:
+      threshold: 0.45 
     
+  set_on_rack: False
+  render: True
+  model_name: 'AB3_Session1_humanoid'
+
+  mocap_data:
+    processed_data_path: './data/our_data/marker_data/processed_data/AB3_Session1_Right10_Left10_from_2000_to_2500.npz'
+    ik_solns_path: './data/our_data/ik_solns/AB3_Session1_Right10_Left10_from_2000_to_2500.npz'
 
 

@@ -12,13 +12,14 @@ class Leg(object):
               self, 
               name,
               knee_actuation,
-
+              marker_pos_params,
               symetric_transform = 1,
               
 
               thigh_h_scale =1.,
-              
+              thigh_r_scale =1.,
               shin_h_scale = 1.,
+              shin_r_scale = 1.,
 
               foot_r_scale = 1.,
               
@@ -57,7 +58,7 @@ class Leg(object):
     # <geom name="right_thigh" fromto="0 0 0 0 .01 -.34" size=".06"/>
     
     thigh_name = 'thigh'
-    thigh_radius = 0.03
+    thigh_radius = thigh_r_scale*0.06
     thigh_length = thigh_h_scale*.34 - thigh_radius  
     self.thigh.add('geom', 
                     name='thigh', 
@@ -66,7 +67,20 @@ class Leg(object):
                     size=[thigh_radius],
                     mass=1e-6 # negligible mass
                     )
-                   
+    for t_m in marker_pos_params[thigh_name]:
+      
+      r = thigh_r_scale*marker_pos_params[thigh_name][t_m]['r_nominal'] if 'r_nominal' in marker_pos_params[thigh_name][t_m].keys() else thigh_radius
+      theta = np.radians(marker_pos_params[thigh_name][t_m]['theta'])
+      k = marker_pos_params[thigh_name][t_m]['k']
+      
+      self.thigh.add(
+          'site', name=t_m,type="sphere", rgba="1. 0. 0. 1.",size=[0.01], 
+          pos=[
+              r*np.cos(theta), 
+              r*np.sin(theta), 
+              k*0.5*thigh_length - 0.5*thigh_length,
+              ]
+              )                      
 
     #  <body name="right_shin" pos="0 .01 -.403">
     self.shin = self.thigh.add('body', name='shin',
@@ -99,7 +113,7 @@ class Leg(object):
     # <geom name="right_shin" fromto="0 0 0 0 0 -.3"  size=".049"/>
     
     shin_name = 'shin'
-    shin_radius = thigh_radius
+    shin_radius = shin_r_scale*.049
     shin_length = shin_h_scale*.3 - 2*shin_radius
     
     self.shin.add('geom', 
@@ -110,7 +124,20 @@ class Leg(object):
                     mass=1e-6 # negligible mass
                     )
                         
-
+    for t_m in marker_pos_params[shin_name]:
+      
+      r = shin_r_scale*marker_pos_params[shin_name][t_m]['r_nominal'] if 'r_nominal' in marker_pos_params[shin_name][t_m].keys() else shin_radius
+      theta = np.radians(marker_pos_params[shin_name][t_m]['theta'])
+      k = marker_pos_params[shin_name][t_m]['k']
+      
+      self.shin.add(
+          'site', name=t_m,type="sphere", rgba="1. 0. 0. 1.",size=[0.01], 
+          pos=[
+              r*np.cos(theta), 
+              r*np.sin(theta), 
+              k*0.5*shin_length - 0.5*shin_length,
+              ]
+              )   
 
     ankle_clearence =  0.0
     foot_radius = foot_r_scale*.03
@@ -128,6 +155,10 @@ class Leg(object):
                     mass=1e-1 # negligible mass, less than 0.1, it sinkss
                     )  
 
+    self.foot.add(
+        'site', name='foot',type="sphere", rgba="1. 0. 0. 1.",size=[0.01], 
+        pos=[0.,0.,0.]
+            ) 
     # <motor name="right_hip_x"     gear="40"  joint="right_hip_x"/> <!-- roll -->
     # <motor name="right_hip_z"     gear="40"  joint="right_hip_z"/> <!-- yaw -->
     # <motor name="right_hip_y"     gear="120" joint="right_hip_y"/> <!-- pitch -->
@@ -151,11 +182,12 @@ class Pm_mll(object):
                ground_clearence = 0.004,
                total_mass = 50.,
                com_radius = 0.1,
-               inter_leg_distance = 0.1,
+               torso_h_scale = 1,
+               torso_b_scale = 1,
                knee_actuation = 
                {
                     'joint':'slide',
-                    'series_spring_stiffness': 1.,
+                    'series_spring_stiffness': 0.,
                     'series_spring_damping': 0.
                },
                leg_scales =  
@@ -163,8 +195,11 @@ class Pm_mll(object):
                                 'left_leg':                           
                                   {
                                   'thigh_h_scale':1.0,
+                                  'thigh_r_scale':1.0,
 
                                   'shin_h_scale':1.0,
+                                  'shin_r_scale':1.0,
+
 
                                   'foot_r_scale':1.0
                                   },
@@ -172,14 +207,81 @@ class Pm_mll(object):
                                 'right_leg':                           
                                   {
                                   'thigh_h_scale':1.0,
+                                  'thigh_r_scale':1.0,
 
                                   'shin_h_scale':1.0,
+                                  'shin_r_scale':1.0,
+
 
                                   'foot_r_scale':1.0
                                   }                        
                               
                               },
 
+
+               marker_pos_params=
+                            {
+
+
+                              'torso':
+                                  {
+                                    'RASI' : {'theta':40,'k':-1.5,}, #if r is given, r_link is over written
+                                    'LASI' : {'theta':40,'k': 1.5},
+                                    'RPSI' : {'theta':115,'k':-.3,'r_nominal':0.11},
+                                    'LPSI' : {'theta':115,'k':0.3,'r_nominal':0.11},
+                                  },
+
+                              'left_leg':
+                              {
+
+                                  'thigh': 
+                                    {
+                                      'LGT': {'theta': 50, 'k': 1.0},
+                                      'LT1': {'theta': 0, 'k': 0.3}, 
+                                      'LT2': {'theta': 30, 'k': 0}, 
+                                      'LT3': {'theta': 0, 'k': -0.3}, 
+                                      'LT4': {'theta': -30, 'k': 0}
+                                    }, 
+                                  'shin': 
+                                      {
+                                        'LKNL': {'theta': 90, 'k': 1.0}, 
+                                        'LKNM': {'theta': 270, 'k': 1.0},
+                                        'LS1': {'theta': 0, 'k': 0.3}, 
+                                        'LS2': {'theta': 30, 'k': 0}, 
+                                        'LS3': {'theta': 0, 'k': -0.3}, 
+                                        'LS4': {'theta': -30, 'k': 0},
+                                        'LANL': {'theta': 90, 'k': -1.0}, 
+                                        'LANM': {'theta': 270, 'k': -1.0},
+                                      }, 
+
+
+                              },
+                              'right_leg':
+                              {
+
+                                  'thigh': 
+                                    {
+                                      'RGT': {'theta': 310, 'k': 1.0},
+                                      'RT1': {'theta': 0, 'k': 0.3}, 
+                                      'RT2': {'theta': 30, 'k': 0}, 
+                                      'RT3': {'theta': 0, 'k': -0.3}, 
+                                      'RT4': {'theta': -30, 'k': 0}
+                                    }, 
+                                  'shin': 
+                                      {
+                                        'RKNL': {'theta': 270, 'k': 1.0}, 
+                                        'RKNM': {'theta': 90, 'k': 1.0},
+                                        'RS1': {'theta': 0, 'k': 0.3}, 
+                                        'RS2': {'theta': 30, 'k': 0}, 
+                                        'RS3': {'theta': 0, 'k': -0.3}, 
+                                        'RS4': {'theta': -30, 'k': 0},
+                                        'RANL': {'theta': 90, 'k': -1.0}, 
+                                        'RANM': {'theta': 270, 'k': -1.0},
+
+                                      }, 
+
+                              }
+                            }, 
                               
                ):
 
@@ -233,9 +335,39 @@ class Pm_mll(object):
     self.torso.add('freejoint',name='root')
     
     self.torso.add('geom', name='head',pos=[0, 0, 0], type='sphere', size=[com_radius])  
-
+    self.torso.add(
+        'site', name='com',type="sphere", rgba="1. 0. 0. 1.",size=[0.01], 
+        pos=[0.,0.,0.]
+            ) 
     self.torso.add('camera',name='egocentric',pos=[.09, 0, 0],xyaxes=[0, -1, 0, 0.1, 1, 2] ,fovy="80")
+
+
+    link_name = 'torso'
+    link_radius = torso_h_scale*.09
+    y1 = -.07
+    y2 =  .07
+    alpha = (torso_b_scale - 1) * (y2 - y1) * 0.5 - link_radius if torso_b_scale!= 1 else 0
+
+    link_length = y2+alpha - (y1-alpha) 
+
+    # self.torso.add('geom', name='butt', type='capsule',
+    #                 fromto=[-.02, y1-alpha, 0, -.02, y2+alpha, 0], size=[link_radius])
     
+    for t_m in marker_pos_params[link_name]:
+      
+      r = torso_h_scale*marker_pos_params[link_name][t_m]['r_nominal'] if 'r_nominal' in marker_pos_params[link_name][t_m].keys() else link_radius
+      theta = np.radians(marker_pos_params[link_name][t_m]['theta'])
+      k = marker_pos_params[link_name][t_m]['k']
+      
+      self.torso.add(
+          'site', name=t_m,type="sphere", rgba="1. 0. 0. 1.",size=[0.01], 
+          pos=[
+              r*np.cos(theta) - 0.02, # pelvis is asymetrical
+              k*0.5*link_length ,
+              r*np.sin(theta), 
+              ]
+              )
+
 
     left_leg_site = self.torso.add(
         'site', name='left_leg_site',size=[1e-6]*3, 
@@ -244,9 +376,9 @@ class Pm_mll(object):
         # torso_h_scale*-.04]
 
         pos=[0, 
-        0.5*inter_leg_distance,
-        0
-        ]
+        0.1+ (alpha if torso_b_scale!= 1 else 0),
+        0]
+
         )
     
     right_leg_site = self.torso.add(
@@ -256,16 +388,16 @@ class Pm_mll(object):
         # torso_h_scale*-.04]
 
         pos=[0, 
-        -0.5*inter_leg_distance,
-        0
-        ]
-        
+        -0.1 - (alpha if torso_b_scale!= 1 else 0) ,
+        0]
+
 
         )
     
     self.left_leg = Leg(name='left_leg',
                         symetric_transform = -1.,
                         knee_actuation = knee_actuation,
+                        marker_pos_params = marker_pos_params['left_leg'],
 
                         **leg_scales['left_leg']
                         )
@@ -274,11 +406,15 @@ class Pm_mll(object):
     self.right_leg = Leg(name='right_leg',
                         symetric_transform = 1.,
                         knee_actuation = knee_actuation,
-
+                        marker_pos_params = marker_pos_params['right_leg'],
                         **leg_scales['right_leg']
+
                         )
     right_leg_site.attach(self.right_leg.mjcf_model)
 
+    for i in range(40):
+      self.marker = self.mjcf_model.worldbody.add('body', name='m'+str(i),mocap=True,pos=[0,0,0])
+      self.marker.add('geom',name='m'+str(i),type='sphere', size=[0.01],rgba=[0.,1.,0.,1.0],mass=0.)
 
 
 
@@ -299,7 +435,7 @@ if __name__ == '__main__':
   config_file = open(assets_path+"models/model_confs/"+ conf_file_name,'r+')
   model_conf = yaml.load(config_file, Loader=yaml.FullLoader)
   print(conf_file_name)
-  body = Pm_mll(name='pm_mll',
+  body = Pm_mll(
                   **model_conf
                   )
   physics = mjcf.Physics.from_mjcf_model(body.mjcf_model)

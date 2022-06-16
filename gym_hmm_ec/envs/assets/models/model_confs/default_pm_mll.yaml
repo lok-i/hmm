@@ -1,12 +1,13 @@
 total_mass: 50
 com_radius: 0.1
-inter_leg_distance: 0.1
-
+torso_b_scale: 1.
+torso_h_scale: 1.
+com_radius: 0.1
+ground_clearence: 0.004
 knee_actuation:
-  joint: 'slide'
-  series_spring_stiffness: 1.
-  series_spring_damping: 0.
-
+  joint: hinge
+  series_spring_damping: 0.0
+  series_spring_stiffness: 0.0
 leg_scales:
   left_leg:
     foot_r_scale: 1.0
@@ -17,4 +18,103 @@ leg_scales:
     shin_h_scale: 1.0
     thigh_h_scale: 1.0
 
-
+marker_pos_params:
+  left_leg:
+    shin:
+      LANL:
+        k: -1.0
+        theta: 90
+      LANM:
+        k: -1.0
+        theta: 270
+      LKNL:
+        k: 1.0
+        theta: 90
+      LKNM:
+        k: 1.0
+        theta: 270
+      LS1:
+        k: 0.3
+        theta: 0
+      LS2:
+        k: 0
+        theta: 30
+      LS3:
+        k: -0.3
+        theta: 0
+      LS4:
+        k: 0
+        theta: -30
+    thigh:
+      LGT:
+        k: 1.0
+        theta: 50
+      LT1:
+        k: 0.3
+        theta: 0
+      LT2:
+        k: 0
+        theta: 30
+      LT3:
+        k: -0.3
+        theta: 0
+      LT4:
+        k: 0
+        theta: -30
+  right_leg:
+    shin:
+      RANL:
+        k: -1.0
+        theta: 90
+      RANM:
+        k: -1.0
+        theta: 270
+      RKNL:
+        k: 1.0
+        theta: 270
+      RKNM:
+        k: 1.0
+        theta: 90
+      RS1:
+        k: 0.3
+        theta: 0
+      RS2:
+        k: 0
+        theta: 30
+      RS3:
+        k: -0.3
+        theta: 0
+      RS4:
+        k: 0
+        theta: -30
+    thigh:
+      RGT:
+        k: 1.0
+        theta: 310
+      RT1:
+        k: 0.3
+        theta: 0
+      RT2:
+        k: 0
+        theta: 30
+      RT3:
+        k: -0.3
+        theta: 0
+      RT4:
+        k: 0
+        theta: -30
+  torso:
+    LASI:
+      k: 1.5
+      theta: 40
+    LPSI:
+      k: 0.3
+      r_nominal: 0.11
+      theta: 115
+    RASI:
+      k: -1.5
+      theta: 40
+    RPSI:
+      k: -0.3
+      r_nominal: 0.11
+      theta: 115

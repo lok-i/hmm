@@ -28,6 +28,15 @@ env.reset()
 # keep the similation in pause until activated manually
 if env.env_params['render']:
     env.viewer._paused = True
+    env.viewer.cam.distance = 3
+    cam_pos = [0.0, 0.0, 0.75]
+
+    for i in range(3):        
+        env.viewer.cam.lookat[i]= cam_pos[i] 
+    env.viewer.cam.elevation = -15
+    env.viewer.cam.azimuth = 180
+
+    # env.viewer.cam.azimuth = 180
 
 
 # print(env.model.actuator_names,'\n',env.model.joint_names)

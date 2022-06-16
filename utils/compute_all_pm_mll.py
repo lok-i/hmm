@@ -49,11 +49,45 @@ if __name__ == '__main__':
     
     
     os.system('python3 utils/make_scaled_model.py --static_confpath '+conf_filepath+' --static_processed_filepath '+ proceesed_filepath+' --model_type pm_mll')
+    subject_file_name = conf_filepath.split('/')[-1].replace('_Static','')
+    
+    model_filename = subject_file_name.replace('.yaml','_pm_mll.xml')
+    model_filepath = "./gym_hmm_ec/envs/assets/models/"+model_filename
+    
+    upd_model_filename = model_filename.replace('.xml','_upd.xml')
+    upd_model_filepath = model_filepath.replace('.xml','_upd.xml')
+    
+    
 
-    # subject_file_name = conf_filepath.split('/')[-1].replace('_Static','')
+    print("\nStatus of previous manual update of the file:",os.path.exists(upd_model_filepath))
+
+    print( '\nDo you wanna manually update the xml marker pos again ?[y/n]',end=' ')
+    key = input()    
+    if key == 'y':
+        os.system('python3 utils/mujoco_model_editor/main.py --input_modelpath '+model_filepath+' --static_filepath '+proceesed_filepath)
+        print("File Updated")
+    else:
+        print("here")
+        os.system('python3 utils/mujoco_model_editor/main.py --input_modelpath '+model_filepath+' --static_filepath '+proceesed_filepath+' --dont_update')
+        print("File Updated")        
     
-    # model_filename = subject_file_name.replace('.yaml','_humanoid.xml')
-    # model_filepath = "./gym_hmm_ec/envs/assets/models/"+model_filename
     
+    ############### COMPUTE IK #######################
+    c3d_removed_path = args.trial_c3dfilepath.replace('.c3d','')
+    
+    conf_filepath = c3d_removed_path.replace('c3ds','confs')+'.yaml'
+    
+    proceesed_filepath = c3d_removed_path.replace('c3ds','processed_data')\
+                   +'_from_'+str(args.roi_start)+'_to_'+str(args.roi_stop)+'.npz'
+
+
+    ik_command = 'python3 utils/compute_ik_humanoid.py --processed_filepath '+proceesed_filepath+' --model_filename '+upd_model_filename+' --export_solns'
+
+
+    if args.render_ik:
+        ik_command += ' --render'
+    if args.plot_ik_solns:
+        ik_command += ' --plot_solns'
+    os.system(ik_command)
     
     

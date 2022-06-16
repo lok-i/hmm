@@ -199,15 +199,16 @@ if __name__ == '__main__':
     
     elif args.model_type == 'pm_mll':
         from utils.make_pm_mll_mjcf import Pm_mll 
-        scaled_pm_mll_conf ={     
-                                    'leg_scales' :  {
-
+        scaled_pm_mll_conf ={       'torso_h_scale': marker_geometry_avg['torso_all']['length']['scale'],
+                                    'torso_b_scale': marker_geometry_avg['torso_all']['breadth']['scale'],'leg_scales' :  {
 
                                         'left_leg':                           
                                         {
                                         'thigh_h_scale':marker_geometry_avg['thigh']['length']['scale'],
+                                        'thigh_r_scale':marker_geometry_avg['thigh']['radius']['scale'],
 
                                         'shin_h_scale':marker_geometry_avg['shin']['length']['scale'],
+                                        'shin_r_scale':marker_geometry_avg['shin']['radius']['scale'],
 
                                         'foot_r_scale':marker_geometry_avg['foot']['length']['scale']
                                         },
@@ -215,8 +216,10 @@ if __name__ == '__main__':
                                         'right_leg':                           
                                         {
                                         'thigh_h_scale':marker_geometry_avg['thigh']['length']['scale'],
+                                        'thigh_r_scale':marker_geometry_avg['thigh']['radius']['scale'],
 
                                         'shin_h_scale':marker_geometry_avg['shin']['length']['scale'],
+                                        'shin_r_scale':marker_geometry_avg['shin']['radius']['scale'],
 
                                         'foot_r_scale':marker_geometry_avg['foot']['length']['scale']
                                         },

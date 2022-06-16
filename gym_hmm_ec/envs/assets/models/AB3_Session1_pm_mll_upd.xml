@@ -11,72 +11,72 @@
   </asset>
   <worldbody>
     <geom name="floor" class="/" type="plane" conaffinity="1" size="100 100 0.20000000000000001" material="grid" pos="0 0 0"/>
-    <body name="torso" pos="0 0 0.84581186855799162">
+    <body name="torso" pos="0.0000 0.0000 0.8458">
       <light name="top" class="/" mode="trackcom" pos="0 0 2"/>
       <camera name="back" class="/" mode="trackcom" pos="-3 0 1" xyaxes="0 -1 0 1 0 2"/>
       <camera name="side" class="/" mode="trackcom" pos="0 -3 1" xyaxes="1 0 0 0 1 2"/>
       <freejoint name="root"/>
-      <geom name="head" class="/" type="sphere" size="0.10000000000000001" pos="0 0 0"/>
-      <site name="com" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0 0 0"/>
+      <geom name="head" class="/" type="sphere" size="0.1000" pos="0.0000 0.0000 0.0000"/>
+      <site name="com" class="/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0000 0.0000 0.0000"/>
       <camera name="egocentric" class="/" fovy="80.0" pos="0.089999999999999997 0 0" xyaxes="0 -1 0 0.10000000000000001 1 2"/>
-      <site name="RASI" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.048943999880708008 -0.14004190747163026 0.057850884871788529"/>
-      <site name="LASI" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.048943999880708008 0.14004190747163026 0.057850884871788529"/>
-      <site name="RPSI" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="-0.066488008791476927 -0.028008381494326055 0.0996938565740315"/>
-      <site name="LPSI" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="-0.066488008791476927 0.028008381494326055 0.0996938565740315"/>
+      <site name="RASI" class="/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0489 -0.1400 0.0579"/>
+      <site name="LASI" class="/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0489 0.1400 0.0579"/>
+      <site name="RPSI" class="/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="-0.0665 -0.0280 0.0997"/>
+      <site name="LPSI" class="/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="-0.0665 0.0280 0.0997"/>
       <site name="left_leg_site" class="/" size="9.9999999999999995e-07 9.9999999999999995e-07 9.9999999999999995e-07" pos="0 0.12336127164775351 0"/>
-      <body pos="0 0.12336127164775351 0" name="left_leg/">
-        <body name="left_leg/thigh">
+      <body pos="0.0000 0.1234 0.0000" name="left_leg/">
+        <body name="left_leg/thigh" pos="0.0000 0.0000 0.0000">
           <joint name="left_leg/hip_x" class="left_leg/" type="hinge" axis="1 0 0" limited="true" solimplimit="0 0.98999999999999999 0.01" range="-25 5"/>
           <joint name="left_leg/hip_y" class="left_leg/" type="hinge" axis="0 1 0" limited="true" solimplimit="0 0.98999999999999999 0.01" range="-110 20"/>
-          <geom name="left_leg/thigh" class="left_leg/" type="capsule" size="0.064800587918351138" mass="1e-06" fromto="0 0 0 0 0 -0.37368460417967581"/>
-          <site name="left_leg/LGT" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.041653015014319367 0.049640130285695673 0"/>
-          <site name="left_leg/LT1" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.064800587918351138 0 -0.13078961146288653"/>
-          <site name="left_leg/LT2" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.056118955317459064 0.032400293959175562 -0.1868423020898379"/>
-          <site name="left_leg/LT3" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.064800587918351138 0 -0.24289499271678927"/>
-          <site name="left_leg/LT4" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.056118955317459064 -0.032400293959175562 -0.1868423020898379"/>
-          <body name="left_leg/shin" pos="0 0 -0.45493333095078076">
+          <geom name="left_leg/thigh" class="left_leg/" type="capsule" size="0.0648" mass="1e-06" fromto="0.0000 0.0000 0.0000 0.0000 0.0000 -0.3737"/>
+          <site name="left_leg/LGT" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0417 0.0496 0.0000"/>
+          <site name="left_leg/LT1" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0648 0.0000 -0.1308"/>
+          <site name="left_leg/LT2" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0561 0.0324 -0.1868"/>
+          <site name="left_leg/LT3" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0648 0.0000 -0.2429"/>
+          <site name="left_leg/LT4" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0561 -0.0324 -0.1868"/>
+          <body name="left_leg/shin" pos="0.0000 0.0000 -0.4549">
             <joint name="left_leg/knee" class="left_leg/" type="slide" pos="0 0 0.02" axis="0 0 1" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="0.0" range="-160 2" armature="0.01" damping="0.0"/>
-            <geom name="left_leg/shin" class="left_leg/" type="capsule" size="0.035119856339967746" mass="1e-06" fromto="0 0 0 0 0 -0.30955686011002925"/>
-            <site name="left_leg/LKNL" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="2.1504709826628188e-18 0.035119856339967746 0"/>
-            <site name="left_leg/LKNM" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="-6.4514129479884569e-18 -0.035119856339967746 0"/>
-            <site name="left_leg/LS1" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.035119856339967746 0 -0.10834490103851024"/>
-            <site name="left_leg/LS2" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.030414687767672047 0.01755992816998387 -0.15477843005501463"/>
-            <site name="left_leg/LS3" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.035119856339967746 0 -0.20121195907151901"/>
-            <site name="left_leg/LS4" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.030414687767672047 -0.01755992816998387 -0.15477843005501463"/>
-            <site name="left_leg/LANL" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="2.1504709826628188e-18 0.035119856339967746 -0.30955686011002925"/>
-            <site name="left_leg/LANM" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="-6.4514129479884569e-18 -0.035119856339967746 -0.30955686011002925"/>
-            <body name="left_leg/foot" pos="0 0 -0.33570141974336248">
-              <geom name="left_leg/foot" class="left_leg/" type="sphere" size="0.026144559633333252" mass="0.1" pos="0 0 0"/>
-              <site name="left_leg/foot" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0 0 0"/>
+            <geom name="left_leg/shin" class="left_leg/" type="capsule" size="0.0351" mass="1e-06" fromto="0.0000 0.0000 0.0000 0.0000 0.0000 -0.3096"/>
+            <site name="left_leg/LKNL" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0000 0.0351 0.0000"/>
+            <site name="left_leg/LKNM" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="-0.0000 -0.0351 0.0000"/>
+            <site name="left_leg/LS1" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0351 0.0000 -0.1083"/>
+            <site name="left_leg/LS2" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0304 0.0176 -0.1548"/>
+            <site name="left_leg/LS3" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0351 0.0000 -0.2012"/>
+            <site name="left_leg/LS4" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0304 -0.0176 -0.1548"/>
+            <site name="left_leg/LANL" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0000 0.0351 -0.3096"/>
+            <site name="left_leg/LANM" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="-0.0000 -0.0351 -0.3096"/>
+            <body name="left_leg/foot" pos="0.0000 0.0000 -0.3357">
+              <geom name="left_leg/foot" class="left_leg/" type="sphere" size="0.0261" mass="0.1" pos="0.0000 0.0000 0.0000"/>
+              <site name="left_leg/foot" class="left_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0000 0.0000 0.0000"/>
             </body>
           </body>
         </body>
       </body>
       <site name="right_leg_site" class="/" size="9.9999999999999995e-07 9.9999999999999995e-07 9.9999999999999995e-07" pos="0 -0.12336127164775351 0"/>
-      <body pos="0 -0.12336127164775351 0" name="right_leg/">
-        <body name="right_leg/thigh">
+      <body pos="0.0000 -0.1234 0.0000" name="right_leg/">
+        <body name="right_leg/thigh" pos="0.0000 0.0000 0.0000">
           <joint name="right_leg/hip_x" class="right_leg/" type="hinge" axis="1 0 0" limited="true" solimplimit="0 0.98999999999999999 0.01" range="-25 5"/>
           <joint name="right_leg/hip_y" class="right_leg/" type="hinge" axis="0 1 0" limited="true" solimplimit="0 0.98999999999999999 0.01" range="-110 20"/>
-          <geom name="right_leg/thigh" class="right_leg/" type="capsule" size="0.064800587918351138" mass="1e-06" fromto="0 0 0 0 0 -0.37368460417967581"/>
-          <site name="right_leg/RGT" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.04165301501431936 -0.04964013028569568 0"/>
-          <site name="right_leg/RT1" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.064800587918351138 0 -0.13078961146288653"/>
-          <site name="right_leg/RT2" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.056118955317459064 0.032400293959175562 -0.1868423020898379"/>
-          <site name="right_leg/RT3" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.064800587918351138 0 -0.24289499271678927"/>
-          <site name="right_leg/RT4" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.056118955317459064 -0.032400293959175562 -0.1868423020898379"/>
-          <body name="right_leg/shin" pos="0 0 -0.45493333095078076">
+          <geom name="right_leg/thigh" class="right_leg/" type="capsule" size="0.0648" mass="1e-06" fromto="0.0000 0.0000 0.0000 0.0000 0.0000 -0.3737"/>
+          <site name="right_leg/RGT" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0417 -0.0496 0.0000"/>
+          <site name="right_leg/RT1" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0648 0.0000 -0.1308"/>
+          <site name="right_leg/RT2" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0561 0.0324 -0.1868"/>
+          <site name="right_leg/RT3" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0648 0.0000 -0.2429"/>
+          <site name="right_leg/RT4" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0561 -0.0324 -0.1868"/>
+          <body name="right_leg/shin" pos="0.0000 0.0000 -0.4549">
             <joint name="right_leg/knee" class="right_leg/" type="slide" pos="0 0 0.02" axis="0 0 1" limited="true" solimplimit="0 0.98999999999999999 0.01" stiffness="0.0" range="-160 2" armature="0.01" damping="0.0"/>
-            <geom name="right_leg/shin" class="right_leg/" type="capsule" size="0.035119856339967746" mass="1e-06" fromto="0 0 0 0 0 -0.30955686011002925"/>
-            <site name="right_leg/RKNL" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="-6.4514129479884569e-18 -0.035119856339967746 0"/>
-            <site name="right_leg/RKNM" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="2.1504709826628188e-18 0.035119856339967746 0"/>
-            <site name="right_leg/RS1" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.035119856339967746 0 -0.10834490103851024"/>
-            <site name="right_leg/RS2" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.030414687767672047 0.01755992816998387 -0.15477843005501463"/>
-            <site name="right_leg/RS3" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.035119856339967746 0 -0.20121195907151901"/>
-            <site name="right_leg/RS4" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0.030414687767672047 -0.01755992816998387 -0.15477843005501463"/>
-            <site name="right_leg/RANL" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="2.1504709826628188e-18 0.035119856339967746 -0.30955686011002925"/>
-            <site name="right_leg/RANM" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="-6.4514129479884569e-18 -0.035119856339967746 -0.30955686011002925"/>
-            <body name="right_leg/foot" pos="0 0 -0.33570141974336248">
-              <geom name="right_leg/foot" class="right_leg/" type="sphere" size="0.026144559633333252" mass="0.1" pos="0 0 0"/>
-              <site name="right_leg/foot" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0 0 0"/>
+            <geom name="right_leg/shin" class="right_leg/" type="capsule" size="0.0351" mass="1e-06" fromto="0.0000 0.0000 0.0000 0.0000 0.0000 -0.3096"/>
+            <site name="right_leg/RKNL" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="-0.0000 -0.0351 0.0000"/>
+            <site name="right_leg/RKNM" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0000 0.0351 0.0000"/>
+            <site name="right_leg/RS1" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0351 0.0000 -0.1083"/>
+            <site name="right_leg/RS2" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0304 0.0176 -0.1548"/>
+            <site name="right_leg/RS3" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0351 0.0000 -0.2012"/>
+            <site name="right_leg/RS4" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0304 -0.0176 -0.1548"/>
+            <site name="right_leg/RANL" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0000 0.0351 -0.3096"/>
+            <site name="right_leg/RANM" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="-0.0000 -0.0351 -0.3096"/>
+            <body name="right_leg/foot" pos="0.0000 0.0000 -0.3357">
+              <geom name="right_leg/foot" class="right_leg/" type="sphere" size="0.0261" mass="0.1" pos="0.0000 0.0000 0.0000"/>
+              <site name="right_leg/foot" class="right_leg/" type="sphere" rgba="1 0 0 1" size="0.0100" pos="0.0000 0.0000 0.0000"/>
             </body>
           </body>
         </body>
