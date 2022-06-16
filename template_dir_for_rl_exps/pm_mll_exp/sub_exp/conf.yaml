@@ -19,7 +19,7 @@ env_kwargs:
 
   set_on_rack: False
   render: True
-  model_name: 'default_pm_mll'
+  model_name: 'AB3_Session1_pm_mll' #'default_pm_mll'
 
   observations:
     current_model_state: null

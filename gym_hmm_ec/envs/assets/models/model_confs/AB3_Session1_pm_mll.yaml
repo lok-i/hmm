@@ -1,7 +1,7 @@
 com_radius: 0.1
 ground_clearence: 0.004
 knee_actuation:
-  joint: slide
+  joint: hinge
   series_spring_damping: 0.0
   series_spring_stiffness: 0.0
 leg_scales:

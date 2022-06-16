@@ -181,7 +181,7 @@ class Pm_mll(object):
                torso_b_scale = 1,
                knee_actuation = 
                {
-                    'joint':'slide',
+                    'joint':'hinge',
                     'series_spring_stiffness': 0.,
                     'series_spring_damping': 0.
                },
