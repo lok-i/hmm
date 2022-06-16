@@ -76,6 +76,13 @@ if __name__ == '__main__':
     # initialse the env,reset simualtion
     env.reset()
 
+
+
+
+
+
+
+
     # keep the similation in pause until activated manually
     if env.env_params['render']:
         env.viewer._paused = True
@@ -228,101 +235,101 @@ if __name__ == '__main__':
 
         time_scale = timestep*np.arange(id_solns.shape[0])
 
-        nrows = 6
-        ncols = 3
-        fig, axs = plt.subplots(nrows, ncols)
-        fig.set_size_inches(18.5, 10.5)
-        # plottinf should be reordered
-        joints_of_intrest = [
-            0,1,2,3,4,5, # root 6D
-            # 6,7,8, # abdomen joints
-
-            9, 10, 11, 12, 13, 14,  # left_leg
-            15, 16, 17, 18, 19, 20,  # right_leg
-
-        ]
-
         joint_id2name = {}
         joint_id = 0
-        root_dof = ['x','y','z','roll','pitch','yaw']
+        root_dof = ['fx','fy','fz','taux','tauy','tauz'] # for generalised forces
         for joint_name in env.model.joint_names:
             if joint_name == 'root':
-                for i in range(6):
+                for i in range(len(root_dof)):
                     joint_id2name[joint_id] = 'unactuated root_'+str(root_dof[i])
                     joint_id += 1
             else:
                 joint_id2name[joint_id] = joint_name
                 joint_id += 1
 
+        
+        total_plots_tbp = 0
+        for joint_id,joint_name in joint_id2name.items():
+            if 'leg' in joint_name or 'root' in joint_name:
+                total_plots_tbp +=1
+
+
+        ncols = 3 if 'humanoid' in args.model_filename else 4
+        nrows = int(total_plots_tbp / ncols )
+        fig, axs = plt.subplots(nrows, ncols)
+        fig.set_size_inches(18.5, 10.5)
+
+
         plot_id = 0
 
-        for joint_id in joints_of_intrest:
-
-            # row major
-            # row = plot_id // ncols
-            # col = plot_id % ncols
-
-            # col major
-            row = plot_id % nrows
-            col = plot_id // nrows
-
-            axs[row, col].plot(
-                time_scale,
-                id_solns[:, joint_id],
-                # label='id_solns'
-            )
-
-            # axs[row, col].plot(
-            #     time_scale,
-            #     qaccs[:, joint_id],
-            #     label='qaccs'
-            # )
-
-            # axs[row, col].plot(
-            #     time_scale,
-            #     qvels[:, joint_id],
-            #     label='qvels'
-
-            # )
-
-            axs[row, col].set_title(joint_id2name[joint_id])
+        for joint_id,joint_name in joint_id2name.items():
             
-            if col == 1:
-                # left grf
-                axs_twin = axs[row, col].twinx()
-                axs_twin.plot(
+            if 'leg' in joint_name or 'root' in joint_name:
+                # row major
+                # row = plot_id // ncols
+                # col = plot_id % ncols
+
+                # col major
+                row = plot_id % nrows
+                col = plot_id // nrows
+
+                axs[row, col].plot(
                     time_scale,
-                    grf_data[:,
-                                       marker_conf['forces_name2id']['Force.Fz2']],
-                    alpha=0.6,
-                    color='red',
-                    linestyle='-.'
+                    id_solns[:, joint_id],
+                    # label='id_solns'
                 )
-                axs_twin.set_ylabel('left_leg/Fz')
-            
-            elif col == 2:
-                # right grf
-                axs_twin = axs[row, col].twinx()
-                axs_twin.plot(
-                    time_scale,
-                    grf_data[:,
-                                       marker_conf['forces_name2id']['Force.Fz1']],
-                    alpha=0.6,
-                    color='red',
-                    linestyle='-.'
-                )
-                axs_twin.set_ylabel('right_leg/Fz')
-            
-            # axs[row,col].plot(timesteps, torques_of_joints_contact[:,plot_id],label=joint_name)
 
-            if col < 1 and row <3:
-                axs[row, col].set_ylabel("forces (N)")
-            else:
-                axs[row, col].set_ylabel("torques (Nm)")
-            axs[row, col].set_xlabel("time (s)")
-            # axs[row,col].legend(loc='upper right')
-            axs[row, col].grid()
-            plot_id += 1
+                # axs[row, col].plot(
+                #     time_scale,
+                #     qaccs[:, joint_id],
+                #     label='qaccs'
+                # )
+
+                # axs[row, col].plot(
+                #     time_scale,
+                #     qvels[:, joint_id],
+                #     label='qvels'
+
+                # )
+
+                axs[row, col].set_title(joint_id2name[joint_id])
+                
+                if 'left' in joint_name:
+                    # left grf
+                    axs_twin = axs[row, col].twinx()
+                    axs_twin.plot(
+                        time_scale,
+                        grf_data[:,
+                                        marker_conf['forces_name2id']['Force.Fz2']],
+                        alpha=0.6,
+                        color='red',
+                        linestyle='-.'
+                    )
+                    axs_twin.set_ylabel('left_leg/Fz')
+                
+                elif 'right' in joint_name:
+                    # right grf
+                    axs_twin = axs[row, col].twinx()
+                    axs_twin.plot(
+                        time_scale,
+                        grf_data[:,
+                                        marker_conf['forces_name2id']['Force.Fz1']],
+                        alpha=0.6,
+                        color='red',
+                        linestyle='-.'
+                    )
+                    axs_twin.set_ylabel('right_leg/Fz')
+                
+                # axs[row,col].plot(timesteps, torques_of_joints_contact[:,plot_id],label=joint_name)
+
+                if col < 1 and row <3:
+                    axs[row, col].set_ylabel("forces (N)")
+                else:
+                    axs[row, col].set_ylabel("torques (Nm)")
+                axs[row, col].set_xlabel("time (s)")
+                # axs[row,col].legend(loc='upper right')
+                axs[row, col].grid()
+                plot_id += 1
 
         fig.suptitle('ID Output: ')
         fig.tight_layout()

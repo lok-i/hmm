@@ -57,10 +57,13 @@ if __name__ == '__main__':
                         + args.processed_filepath.split('processed_data/')[-1].split('_from')[0]+'.yaml' #.('_from_')[0]+'.yaml'
 
 
-    marker_config_file = open(marker_confpath,'r+')
-    marker_conf = yaml.load(marker_config_file, Loader=yaml.FullLoader)
+    marker_conf_file = open(marker_confpath,'r+')
+    marker_conf = yaml.load(marker_conf_file, Loader=yaml.FullLoader)
     # exit()
 
+
+    model_conf_file = open(assets_path+"models/model_confs/"+ args.model_filename.replace('_upd','').replace('.xml','.yaml'),'r+')
+    model_conf = yaml.load(model_conf_file, Loader=yaml.FullLoader)
 
     env = BipedEnv(**env_conf)
     env.model.opt.gravity[2] = 0
@@ -86,25 +89,36 @@ if __name__ == '__main__':
                         ]
     
     elif 'pm_mll' in args.model_filename:
-        marker_names = [
-                        'RASI','LASI','RPSI','LPSI',
-                        # "right_leg/RKNL", "right_leg/RKNM",
-                        "right_leg/RANL","right_leg/RANM",
-                        # "right_leg/RHEE","right_leg/RM1","right_leg/RM5",
-                        
-                        # "left_leg/LKNL", "left_leg/LKNM",
-                        "left_leg/LANL","left_leg/LANM",
-                        # "left_leg/LHEE","left_leg/LM1","left_leg/LM5"
-                        ]
-        relavent_doFs = ['root',
-                        'right_leg/hip_x','right_leg/hip_y',
-                        'right_leg/knee',
-                        # 'right_leg/ankle_y','right_leg/ankle_x',
 
-                        'left_leg/hip_x','left_leg/hip_y',
-                        'left_leg/knee',
-                        #  'left_leg/ankle_y','left_leg/ankle_x',
-                        ]
+        if model_conf['knee_actuation']['joint'] == 'slide':
+            marker_names = [
+                            'RASI','LASI','RPSI','LPSI',
+                            "right_leg/RANL","right_leg/RANM",                            
+                            "left_leg/LANL","left_leg/LANM",
+                            ]
+            relavent_doFs = ['root',
+                            'right_leg/hip_x','right_leg/hip_y',
+                            'right_leg/knee',
+                            'left_leg/hip_x','left_leg/hip_y',
+                            'left_leg/knee',
+                            ]
+        elif model_conf['knee_actuation']['joint'] == 'hinge':
+            marker_names = [
+                            'RASI','LASI','RPSI','LPSI',
+                            "right_leg/RKNL", "right_leg/RKNM",
+                            "right_leg/RANL","right_leg/RANM",
+                            
+                            "left_leg/LKNL", "left_leg/LKNM",
+                            "left_leg/LANL","left_leg/LANM",
+
+                            ]
+            relavent_doFs = ['root',
+                            'right_leg/hip_x','right_leg/hip_y',
+                            'right_leg/knee',
+
+                            'left_leg/hip_x','left_leg/hip_y',
+                            'left_leg/knee',
+                            ]
 
     # keep the similation in pause until activated manually
     if env.env_params['render']:
@@ -213,30 +227,16 @@ if __name__ == '__main__':
                                 pelvis_xpos = pelvis_xpos,
                             )
         print("IK Solution written to:", output_filepath)
-    
-
-    '''
+        
     if args.plot_solns:
         timestep = 1. / 100.
         ik_solns = np.array(ik_solns)
         time_scale = timestep*np.arange(ik_solns.shape[0])
 
-        nrows = 6
-        ncols = 2
-        fig, axs = plt.subplots(nrows, ncols)
-        fig.set_size_inches(18.5, 10.5)
 
-        joints_of_intrest = [
-            # 0,1,2,3,4,5,6, # root 3D pos + 4D quat
-            # 7,8,9, # abdomen joints
-
-            10, 11, 12, 13, 14, 15,  # left_leg
-            16, 17, 18, 19, 20, 21,  # right_leg
-
-        ]
         joint_id2name = {}
         joint_id = 0
-        root_dof = ['x','y','z','qw','qx','qy','qz']
+        root_dof = ['x','y','z','qw','qx','qy','qz'] # for generalised positions
         for joint_name in env.model.joint_names:
             if joint_name == 'root':
                 for i in range(len(root_dof)):
@@ -246,36 +246,49 @@ if __name__ == '__main__':
                 joint_id2name[joint_id] = joint_name
                 joint_id += 1
 
+        total_plots_tbp = 0
+        for joint_id,joint_name in joint_id2name.items():
+            if 'leg' in joint_name:
+                total_plots_tbp +=1
+
+
+        ncols = 2
+        nrows = int(total_plots_tbp / ncols )
+        fig, axs = plt.subplots(nrows, ncols)
+        fig.set_size_inches(18.5, 10.5)
+
+
         plot_id = 0
 
-        for joint_id in joints_of_intrest:
+        for joint_id,joint_name in joint_id2name.items():
+            
+            if 'leg' in joint_name:
+                # row major
+                # row = plot_id // ncols
+                # col = plot_id % ncols
 
-            # row major
-            # row = plot_id // ncols
-            # col = plot_id % ncols
+                # col major
+                row = plot_id % nrows
+                col = plot_id // nrows
 
-            # col major
-            row = plot_id % nrows
-            col = plot_id // nrows
-
-            axs[row, col].plot(
-                time_scale,
-                ik_solns[:, joint_id],
-            )
+                axs[row, col].plot(
+                    time_scale,
+                    ik_solns[:, joint_id],
+                )
 
 
-            axs[row, col].set_title(joint_id2name[joint_id])
-                        
-            # axs[row,col].plot(timesteps, torques_of_joints_contact[:,plot_id],label=joint_name)
+                axs[row, col].set_title(joint_id2name[joint_id])
+                            
+                # axs[row,col].plot(timesteps, torques_of_joints_contact[:,plot_id],label=joint_name)
 
-            axs[row, col].set_ylabel("joint angles (rads)")
-            axs[row, col].set_xlabel("time (s)")
-            # axs[row,col].legend(loc='upper right')
-            axs[row, col].grid()
-            plot_id += 1
+                axs[row, col].set_ylabel("joint angles (rads)")
+                axs[row, col].set_xlabel("time (s)")
+                # axs[row,col].legend(loc='upper right')
+                axs[row, col].grid()
+                plot_id += 1
 
         fig.suptitle('IK Output: ')
         fig.tight_layout()
         # plt.savefig('./evaluation_plots/ip_type2_'+taskname+'.jpg')
         plt.show()
-        '''
+        

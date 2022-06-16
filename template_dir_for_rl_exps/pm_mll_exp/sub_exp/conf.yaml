@@ -1,0 +1,42 @@
+rl_setting:
+  alg: PPO
+  algo_hyperparameters:
+    batch_size: 128
+    learning_rate: !!float 3e-5
+    n_epochs: 10
+    n_steps: 2048
+    seed: 0
+    verbose: 1
+  policy:
+    kwargs:
+      activation_fn: ReLU
+      net_arch:
+      - 64
+      - 64
+    type: MlpPolicy
+  total_timesteps: 5000
+env_kwargs:
+
+  set_on_rack: False
+  render: True
+  model_name: 'default_pm_mll'
+
+  observations:
+    current_model_state: null
+  
+  actions:
+    joint_torques:
+      dim: 6
+      torque_max: 5
+    
+  rewards:
+    forward_x_base_vel:
+      k: 1
+      pow: 2
+
+  terminations:
+    min_base_height:
+      threshold: 0.45 
+    
+
+

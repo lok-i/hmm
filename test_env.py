@@ -7,7 +7,6 @@ import yaml
 import gym
 
 
-# TODO: Fix the mocap integration of env with the generated model
 # # environment config and setup
 # env_conf = {
 #             'set_on_rack': False,
@@ -15,7 +14,7 @@ import gym
 #             'model_name': 'hopper'#'AB1_Session1_upd',#'rand_1_updated',
 #             }
 
-config_file = open("./experiments/redu_exp/sub_exp/conf.yaml")
+config_file = open("./template_dir_for_rl_exps/redu_exp/sub_exp/conf.yaml")
 traning_config = yaml.load(config_file, Loader=yaml.FullLoader)
 env_conf =  traning_config['env_kwargs'].copy()
 

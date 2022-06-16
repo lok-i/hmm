@@ -74,6 +74,7 @@ if __name__ == '__main__':
     
     
     ############### COMPUTE IK #######################
+    
     c3d_removed_path = args.trial_c3dfilepath.replace('.c3d','')
     
     conf_filepath = c3d_removed_path.replace('c3ds','confs')+'.yaml'
@@ -81,7 +82,7 @@ if __name__ == '__main__':
     proceesed_filepath = c3d_removed_path.replace('c3ds','processed_data')\
                    +'_from_'+str(args.roi_start)+'_to_'+str(args.roi_stop)+'.npz'
 
-
+    
     ik_command = 'python3 utils/compute_ik.py --processed_filepath '+proceesed_filepath+' --model_filename '+upd_model_filename+' --export_solns'
 
 
@@ -91,7 +92,6 @@ if __name__ == '__main__':
         ik_command += ' --plot_solns'
     os.system(ik_command)
     
-    exit()
     ############### COMPUTE ID #######################
 
     id_command = 'python3 utils/compute_id.py --processed_filepath '+proceesed_filepath+' --model_filename '+upd_model_filename+' --export_solns'
