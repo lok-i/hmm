@@ -56,9 +56,11 @@ File Type | Example File Name                                 | Expected File Pa
 yaml      | AB3_Session1_pm_mll.yaml                          | gym_hmm_ec/envs/assets/models/model_confs/
 xml       | AB3_Session1_pm_mll.xml                           | gym_hmm_ec/envs/assets/models/
 
-**Note:** make_scaled_model.py, has some our marker-set specific implementation used for scaling. While the implementation is specific to our marker-set, the method will directly work for any other marker set aswell. You can update it for your marker set, simply by doing the following two steps:
+**Note:** `make_scaled_model.py`, has some our marker-set specific implementation used for scaling. While the implementation is specific to our marker-set, the method will directly work for any other marker set aswell. You can update it for your marker set, simply by doing the following two steps:
 
-* This requires you to customise the `to_compute` dict, [here](https://github.com/lok-i/hmm/blob/20c7f94388061f450820a4111f719b6649333639/utils/make_scaled_model.py#L27) This dict bascially tries approximate the link measurements from the marker data using simple aritmetc operations.
+* This requires you to customise the `to_compute` dict, [here](https://github.com/lok-i/hmm/blob/20c7f94388061f450820a4111f719b6649333639/utils/make_scaled_model.py#L27) 
+
+This dict bascially tries approximate the link measurements from the marker data using simple aritmetc operations.
 
 * Secondly, once updated, you are required to implement any new and custom opertations that you migh need to compute the link parameters. This could just be added as another elif block [here] (https://github.com/lok-i/hmm/blob/20c7f94388061f450820a4111f719b6649333639/utils/make_scaled_model.py#L100)
 
