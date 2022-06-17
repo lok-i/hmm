@@ -66,11 +66,11 @@ To generate an end to end demo of the tools in [./utils] , simply run
 
 #### For simple model (point mass massless leg)
 
-        python3 utils/compute_all.py --model_type pm_mll --static_c3dfilepath data/our_data/marker_data/c3ds/AB3_Session1_Static.c3d --trial_c3dfilepath data/our_data/marker_data/c3ds/AB3_Session1_Right10_Left10.c3d --roi_start 2000 --roi_stop 2100 --plot_ik_solns --plot_id_solns --render_ik --render_id
+        python3 utils/compute_all.py --model_type pm_mll --static_c3dfilepath data/mitmcl_data/marker_data/c3ds/AB3_Session1_Static.c3d --trial_c3dfilepath data/mitmcl_data/marker_data/c3ds/AB3_Session1_Right10_Left10.c3d --roi_start 2000 --roi_stop 2100 --plot_ik_solns --plot_id_solns --render_ik --render_id
 
 #### For full humanoid model
 
-        python3 utils/compute_all.py --model_type humanoid --static_c3dfilepath data/our_data/marker_data/c3ds/AB3_Session1_Static.c3d --trial_c3dfilepath data/our_data/marker_data/c3ds/AB3_Session1_Right10_Left10.c3d --roi_start 2000 --roi_stop 2100 --plot_ik_solns --plot_id_solns --render_ik --render_id
+        python3 utils/compute_all.py --model_type humanoid --static_c3dfilepath data/mitmcl_data/marker_data/c3ds/AB3_Session1_Static.c3d --trial_c3dfilepath data/mitmcl_data/marker_data/c3ds/AB3_Session1_Right10_Left10.c3d --roi_start 2000 --roi_stop 2100 --plot_ik_solns --plot_id_solns --render_ik --render_id
 
 # Colab Notebook
 
@@ -80,5 +80,7 @@ You can find the detaild usage of the various tools in this code base in thie go
 
 - [ ] Complete readme in utils/ and rl_policy/ (make illustrative figures aswell).
 - [ ] Add other deep rl algo support from sb3 in rl_policy/
+- [ ] Add n markers as a argument in the make_..._mjcf.py filesl
 - [ ] Add an well explained colab notebook, well explained and with exhaustive examples.
+- [ ] Add linear interpolation of grf application points for the humanoid model in [utils/compute_id.py](./utils/compute_id.py) 
 

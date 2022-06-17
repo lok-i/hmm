@@ -1,5 +1,18 @@
 import argparse
 import os
+
+
+PRINT_COMMANDS_RUNNING_COMMANDS = False
+
+def print_command_to_run(command):
+
+    if PRINT_COMMANDS_RUNNING_COMMANDS:
+        print("\n\n")
+        print(command)
+        print("\n\n")
+    return command
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -12,6 +25,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--plot_preprocess', help='whether to plot op of pre process',default=False, action='store_true')
 
+    parser.add_argument('--print_command',help='whether to print every command that is being run',default=False, action='store_true')
 
     parser.add_argument('--render_ik',help='whether to render while solving for ik',default=False, action='store_true')
     parser.add_argument('--plot_ik_solns', help='whether to plot the ik solns',default=False, action='store_true')
@@ -21,12 +35,15 @@ if __name__ == '__main__':
 
 
     args = parser.parse_args()
-    
+    PRINT_COMMANDS_RUNNING_COMMANDS = args.print_command
     ############### DATA PRE-PROCESSING #######################
     
     print("Pre-processing files ...")
     print("Static File:\n")
-    os.system('python3 utils/preprocess_data.py --c3d_filepath '+ args.static_c3dfilepath +' --static')
+
+
+    
+    os.system(print_command_to_run('python3 utils/preprocess_data.py --c3d_filepath '+ args.static_c3dfilepath +' --static') )
     print("\nTrial File:\n")
     
 
@@ -36,7 +53,7 @@ if __name__ == '__main__':
     if args.plot_preprocess:
         preprocess_command += ' --plot '
         
-    os.system(preprocess_command)
+    os.system(print_command_to_run(preprocess_command) )
     
     ############### MODEL GENERATION #######################
     
@@ -49,7 +66,7 @@ if __name__ == '__main__':
     print("\nPreparing scaled model ...")
     
     
-    os.system('python3 utils/make_scaled_model.py --static_confpath '+conf_filepath+' --static_processed_filepath '+ proceesed_filepath+' --model_type pm_mll')
+    os.system(print_command_to_run('python3 utils/make_scaled_model.py --static_confpath '+conf_filepath+' --static_processed_filepath '+ proceesed_filepath+' --model_type pm_mll') )
     subject_file_name = conf_filepath.split('/')[-1].replace('_Static','')
     
     model_filename = subject_file_name.replace('.yaml','_'+args.model_type+'.xml')
@@ -68,11 +85,11 @@ if __name__ == '__main__':
 
 
     if key == 'y':
-        os.system('python3 utils/mujoco_model_editor/main.py --input_modelpath '+model_filepath+' --static_filepath '+proceesed_filepath)
+        os.system(print_command_to_run('python3 utils/mujoco_model_editor/main.py --input_modelpath '+model_filepath+' --static_filepath '+proceesed_filepath))
         print("File Updated")
     else:
         print("here")
-        os.system('python3 utils/mujoco_model_editor/main.py --input_modelpath '+model_filepath+' --static_filepath '+proceesed_filepath+' --dont_update')
+        os.system(print_command_to_run('python3 utils/mujoco_model_editor/main.py --input_modelpath '+model_filepath+' --static_filepath '+proceesed_filepath+' --dont_update'))
         print("File Updated")   
     
     ############### COMPUTE IK #######################
@@ -92,7 +109,7 @@ if __name__ == '__main__':
         ik_command += ' --render'
     if args.plot_ik_solns:
         ik_command += ' --plot_solns'
-    os.system(ik_command)
+    os.system(print_command_to_run(ik_command))
     
     ############### COMPUTE ID #######################
 
@@ -102,4 +119,4 @@ if __name__ == '__main__':
         id_command += ' --render'
     if args.plot_id_solns:
         id_command += ' --plot_solns'
-    os.system(id_command)
+    os.system(print_command_to_run(id_command))

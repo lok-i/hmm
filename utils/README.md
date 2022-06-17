@@ -1,5 +1,74 @@
     
 
+# Utils
+
+
+
+## preprocess_data.py
+
+creates clean npy files of motion slices and metadata from the raw c3d motion file
+
+
+*Usage:*
+
+1. For Static File:
+
+    python3 utils/preprocess_data.py --c3d_filepath data/our_data/marker_data/c3ds/AB3_Session1_Static.c3d --static
+
+2. For Trial File:
+
+    python3 utils/preprocess_data.py --c3d_filepath data/mitmcl_data/marker_data/c3ds/AB3_Session1_Right10_Left10.c3d --roi_start 2000 --roi_stop 2100
+
+
+Input Files:
+
+File Type| Example File Name               | Expected File Path
+-------- | ------------                    | -------------
+c3d      | AB3_Session1_Static.c3d         | data/our_data/marker_data/c3ds/
+c3d      | AB3_Session1_Right10_Left10.c3d | data/our_data/marker_data/c3ds/
+
+Output Files:
+
+File Type | Example File Name                                 | Expected File Path
+--------  | ------------                                      | -------------
+yaml      | AB3_Session1_Static.yaml                          | data/our_data/marker_data/confs/
+yaml      | AB3_Session1_Right10_Left10.yaml                  | data/our_data/marker_data/confs/
+npz       | AB3_Session1_Static_from_0_to_None.npz            | data/our_data/marker_data/processed_data/
+npz       | AB3_Session1_Right10_Left10_from_2000_to_2100.npz | data/our_data/marker_data/processed_data/
+
+## make_scaled_model.py
+
+computes the scaling factors assosiated with the subject's static file and creates the corresponding mujoco model
+
+
+*Usage:*
+
+    python3 utils/make_scaled_model.py --static_confpath data/mitmcl_data/marker_data/confs/AB3_Session1_Static.yaml --static_processed_filepath data/mitmcl_data/marker_data/processed_data/AB3_Session1_Static_from_0_to_None.npz --model_type pm_mll
+
+
+
+Input Files:
+
+File Type | Example File Name                                 | Expected File Path
+--------  | ------------                                      | -------------
+yaml      | AB3_Session1_Static.yaml                          | data/our_data/marker_data/confs/
+npz       | AB3_Session1_Static_from_0_to_None.npz            | data/our_data/marker_data/
+
+
+Output Files:
+
+File Type | Example File Name                                 | Expected File Path
+--------  | ------------                                      | -------------
+yaml      | AB3_Session1_pm_mll.yaml                          | gym_hmm_ec/envs/assets/models/model_confs/
+yaml      | AB3_Session1_pm_mll.xml                           | gym_hmm_ec/envs/assets/models/
+
+
+
+
+
+
+
+
 For full syncronized demo and usage, checkout [./utils/compute_all.py](./compute_all.py)
 
 # Process motion trial, grf and cop data    
