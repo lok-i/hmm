@@ -72,6 +72,8 @@ if __name__ == '__main__':
     model_filename = subject_file_name.replace('.yaml','_'+args.model_type+'.xml')
     model_filepath = "./gym_hmm_ec/envs/assets/models/"+model_filename
         
+    '''
+    17/6/2022 : #GUI model editor disconinued, may revisit later on if required
 
     print("\nStatus of previous manual update of the file:",os.path.exists(model_filepath))
 
@@ -83,7 +85,6 @@ if __name__ == '__main__':
         key = 'n'
 
 
-
     if key == 'y':
         os.system(print_command_to_run('python3 utils/mujoco_model_editor/main.py --input_modelpath '+model_filepath+' --static_filepath '+proceesed_filepath))
         print("File Updated")
@@ -91,7 +92,7 @@ if __name__ == '__main__':
         print("here")
         os.system(print_command_to_run('python3 utils/mujoco_model_editor/main.py --input_modelpath '+model_filepath+' --static_filepath '+proceesed_filepath+' --dont_update'))
         print("File Updated")   
-    
+    '''
     ############### COMPUTE IK #######################
     
     c3d_removed_path = args.trial_c3dfilepath.replace('.c3d','')

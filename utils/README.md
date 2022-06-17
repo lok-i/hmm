@@ -1,6 +1,6 @@
     
 
-# Utils
+# utils:
 
 For a full syncronized demo from raw mocap data to model generation and computing ik,id, run
 

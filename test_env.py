@@ -7,17 +7,31 @@ import yaml
 import gym
 
 
-# # environment config and setup
-# env_conf = {
-#             'set_on_rack': False,
-#             'render': True,
-#             'model_name': 'hopper'#'AB1_Session1_upd',#'rand_1_updated',
-#             }
-
-config_file = open("./template_dir_for_rl_exps/pm_mll_exp/sub_exp/conf.yaml")
-traning_config = yaml.load(config_file, Loader=yaml.FullLoader)
-env_conf =  traning_config['env_kwargs'].copy()
-
+env_conf = {
+            'set_on_rack': False,
+            'render': True,
+            'model_name': 'default_humanoid',
+            'mocap':False,
+            'observations':
+            {
+                'current_model_state': None
+            },
+            'actions':
+            {   'joint_torques':
+                    {
+                        'dim': 15,
+                        'torque_max': 5
+                    }                
+            },
+            'rewards':
+            {
+                'zero_reward':None
+            },
+            'terminations':
+            {
+                'indefinite':None
+            }                
+            }
 
 env = BipedEnv(**env_conf)
 
