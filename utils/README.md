@@ -2,7 +2,19 @@
 
 # Utils
 
-For full syncronized demo and usage, checkout [./utils/compute_all.py](./compute_all.py)
+For a full syncronized demo from raw mocap data to model generation and computing ik,id, run
+
+1. For simple model (**p**oint **m**ass **m**ass**l**ess **l**eg)
+
+        python3 utils/compute_all.py --model_type pm_mll --static_c3dfilepath data/mitmcl_data/marker_data/c3ds/AB3_Session1_Static.c3d --trial_c3dfilepath data/mitmcl_data/marker_data/c3ds/AB3_Session1_Right10_Left10.c3d --roi_start 2000 --roi_stop 2100 --plot_ik_solns --plot_id_solns --render_ik --render_id
+
+2. For full humanoid model
+
+        python3 utils/compute_all.py --model_type humanoid --static_c3dfilepath data/mitmcl_data/marker_data/c3ds/AB3_Session1_Static.c3d --trial_c3dfilepath data/mitmcl_data/marker_data/c3ds/AB3_Session1_Right10_Left10.c3d --roi_start 2000 --roi_stop 2100 --plot_ik_solns --plot_id_solns --render_ik --render_id
+
+and usage, checkout the implementation [./utils/compute_all.py](./compute_all.py)
+
+# Executable files
 
 ## preprocess_data.py
 
@@ -94,8 +106,72 @@ File Type | Example File Name                                 | Expected File Pa
 xml       | AB3_Session1_pm_mll.xml                           | gym_hmm_ec/envs/assets/models/
 
 
+## compute_ik.py
+
+computes the invese kinematics by 'pose fitting' the given mujoco model to the given marker data through multi target damped least squares .
+
+*Usage:*
+
+    python3 utils/compute_ik.py --processed_filepath data/mitmcl_data/marker_data/processed_data/AB3_Session1_Right10_Left10_from_2000_to_2100.npz --model_filename AB3_Session1_pm_mll.xml --export_solns --render
+
+Input Files:
+
+File Type | Example File Name                                 | Expected File Path
+--------  | ------------                                      | -------------
+
+yaml      | AB3_Session1_Right10_Left10.yaml                  | data/our_data/marker_data/confs/
+npz       | AB3_Session1_Right10_Left10_from_2000_to_2100.npz | data/our_data/marker_data/processed_data/
+yaml      | AB3_Session1_pm_mll.yaml                          | gym_hmm_ec/envs/assets/models/model_confs/
+xml       | AB3_Session1_pm_mll.xml                           | gym_hmm_ec/envs/assets/models/
 
 
+Output Files:
+
+File Type | Example File Name                                 | Expected File Path
+--------  | ------------                                      | -------------
+npz       |AB3_Session1_Right10_Left10_from_2000_to_2100.npz  | data/mitmcl_data/ik_solns/
+
+## compute_id.py
+
+computes the invese dynamics by using the input mujoco `mj_inverse`. Once the ik is solves, the model is set at a given qpos, qvel and the obtained grounf reaction force is applied to the foot to compute id.
+
+**Note:**
+
+* There is no contact with the actual mujoco's ground as instead we directly apply the contact forces obtained from the thread mill mocap experiments.
+
+* The inbuilt analytical solution for inverse dynamics in mujoco, does not account for the underactuation. Hence the `mj_inverse` produces phantom/helper/fictitious forces to be applied even to the unactuated doF's of th model. To obtain an accurate solution (i.e. only actuated doF's), you can write a external nlp to solve it as an optimisation. 
+
+*Usage:*
+
+    python3 utils/compute_id.py --processed_filepath data/mitmcl_data/marker_data/processed_data/AB3_Session1_Right10_Left10_from_2000_to_2100.npz --model_filename AB3_Session1_pm_mll.xml --export_solns --render --plot_solns
 
 
+Input Files:
 
+File Type | Example File Name                                 | Expected File Path
+--------  | ------------                                      | -------------
+
+yaml      | AB3_Session1_Right10_Left10.yaml                  | data/our_data/marker_data/confs/
+npz       | AB3_Session1_Right10_Left10_from_2000_to_2100.npz | data/our_data/marker_data/processed_data/
+xml       | AB3_Session1_pm_mll.xml                           | gym_hmm_ec/envs/assets/models/
+
+
+Output Files:
+
+File Type | Example File Name                                 | Expected File Path
+--------  | ------------                                      | -------------
+npz       |AB3_Session1_Right10_Left10_from_2000_to_2100.npz  | data/mitmcl_data/id_solns/
+
+# Non-executable files
+
+## ik_solver.py
+
+contains the extended implementation of the multi target iverse kinematics through damped least squares using several easy to use dm_control functions .
+
+## misc_functions.py
+
+contains several handy functions (like euler2quat, quat2euler converstions, etc) used quite often throughout the code base.
+
+## parse_amc.py
+
+contains the dm_control implementation of amc parser, to read motion files of the format amc. Only compatible with the model `humanoid_CMU.xml`. run this [demo](../misc_demos/demo_parse_amc_cmu.py) to see it in action.
