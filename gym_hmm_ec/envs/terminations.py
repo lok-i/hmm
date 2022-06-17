@@ -1,5 +1,3 @@
- 
-
 class termination_base():
 
     def __init__(self,params) -> None:
@@ -20,10 +18,21 @@ class indefinite(termination_base):
 class min_base_height(termination_base):
 
     def step(self,input_dict):
-        if input_dict['q'][3] < self.params['threshold']:
+        if input_dict['q'][2] < self.params['threshold']: ## changed 3 -> 2
             return True
         else:
             return False
+    def reset(self):
+        pass
+
+class max_base_height(termination_base):
+
+    def step(self,input_dict):
+        if input_dict['q'][2] > self.params['threshold']: 
+            return True
+        else:
+            return False
+
     def reset(self):
         pass
 

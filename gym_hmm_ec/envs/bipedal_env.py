@@ -55,7 +55,7 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         dummy_obs = self.get_observation()
         self.obs_dim = dummy_obs.shape[0]
         self.action_dim = self.get_action(inital=True)
-
+        self.prev_action = np.zeros(self.action_dim)
 
         high = np.full(self.action_dim,np.inf)
         low =  np.full(self.action_dim,-np.inf)
@@ -116,10 +116,10 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     def step(self,action):
 
 
-        applied_actuator_torque = self.get_action(policy_output=action)
+        self.applied_actuator_torque = self.get_action(policy_output=action)
         
         n_step_same_target = 1
-        self.do_simulation(applied_actuator_torque, n_step_same_target)
+        self.do_simulation(self.applied_actuator_torque, n_step_same_target)
         
         obs = self.get_observation()
         reward = self.get_reward()
@@ -128,14 +128,15 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         if self.env_params['render']:
             self.render()
         
-        # print('ctrl:', applied_actuator_torque)#, reward, done)
+        # print('ctrl:', self.applied_actuator_torque)#, reward, done)
         # print('q :',  self.sim.data.qpos[:])#, reward, done)
         # if self.env_n_step == 0:
         #     print('rew :', reward)#, reward, done)
         # print('done:', done)#, reward, done)
+
         self.env_n_step += 1
         self.mocap_n_step += 1
-
+        self.prev_action = self.applied_actuator_torque
         return obs, reward, done, {}
 
     def reset_model(self):
@@ -189,7 +190,7 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         data_dict = {}
         data_dict['q'] = self.sim.data.qpos[:].copy()
-        data_dict['dq'] = self.sim.data.qpos[:].copy()
+        data_dict['dq'] = self.sim.data.qvel[:].copy()
         
         obs_vector = []
         for observation in self.observations:
@@ -207,6 +208,7 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
             for action in self.actions:
                 act_dim += action.params['dim']
             return act_dim 
+
         else:
             act_vector = []
             start_id = 0
@@ -224,8 +226,11 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         data_dict = {}
         data_dict['q'] = self.sim.data.qpos[:].copy()
-        data_dict['dq'] = self.sim.data.qpos[:].copy() 
+        data_dict['dq'] = self.sim.data.qvel[:].copy() 
         data_dict['ctrl'] = self.sim.data.ctrl[:].copy() 
+        data_dict['qrfc'] = self.sim.data.qfrc_applied[:].copy()
+        data_dict['prev_action'] = self.prev_action[:].cpoy()
+        data_dict['curr_action'] = self.applied_actuator_torque[:].cpoy()
 
         if 'mocap_data' in self.env_params.keys(): 
             data_dict['ik_solns'] = self.ik_solns
@@ -248,7 +253,10 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
             data_dict['motion_imitation'] = self.reward_value_list['motion_imitation']
 
         data_dict['q'] = self.sim.data.qpos[:].copy()
-        data_dict['dq'] = self.sim.data.qpos[:].copy() 
+        data_dict['dq'] = self.sim.data.qvel[:].copy() 
+
+        data_dict['left_foot'] = self.sim.data.body_xpos[self.model.body_name2id("left_leg/foot")]
+        data_dict['right_foot'] = self.sim.data.body_xpos[self.model.body_name2id("right_leg/foot")]
 
         dones = []
         for termination in self.terminations:

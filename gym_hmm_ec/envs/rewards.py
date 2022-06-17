@@ -11,14 +11,12 @@ class reward_base():
         raise NotImplementedError
 
 class zero_reward(reward_base):
-
-        
+ 
     def step(self,input_dict):
         return 0
 
     def reset(self):
         pass
-
 
 class forward_x_base_pos(reward_base):
 
@@ -27,13 +25,11 @@ class forward_x_base_pos(reward_base):
         px = input_dict['q'][0]
         return self.params['k']*np.power(px,self.params['pow'])
 
-
     def reset(self):
         pass
 
 class penalise_effort(reward_base):
-
-        
+   
     def step(self,input_dict):
         torques = input_dict['ctrl']
         return self.params['k']*np.power(torques,self.params['pow']).sum()
@@ -43,15 +39,46 @@ class penalise_effort(reward_base):
 
 class forward_x_base_vel(reward_base):
 
-        
     def step(self,input_dict):
         vx = input_dict['dq'][0]
         return self.params['k']*np.power(vx,self.params['pow'])
 
+    def reset(self):
+        pass
+
+class forward(reward_base):
+
+    def step(self,input_dict):
+        target_vel = abs(input_dict['dq'][0] - self.params['target_vel'])
+        y_vel = input_dict['dq'][1]
+        twist = input_dict['dq'][6]
+        r_alive = self.params['alive_bonus']*self.params['target_vel']
+        reward = -1*self.params['alpha_2']*target_vel -1*np.power(y_vel,2) - 1*np.power(twist,2) + r_alive
+
+        return reward
 
     def reset(self):
         pass
 
+class energy(reward_base):
+
+    def step(self,input_dict):
+        tau = np.array(input_dict['qfrc']).T
+        dq = input_dict['qvel']
+        return self.params['alpha_1']*(tau@dq)
+
+    def reset(self):
+        pass
+
+class smoothen_action(reward_base):
+
+    def step(self,input_dict):
+        torque_prev = input_dict['prev_action']
+        torque_curr = input_dict['curr_action']
+        return self.params['k']*np.linalg.norm(torque_curr-torque_prev)
+
+    def reset(self):
+        pass
 
 class motion_imitation(reward_base):
 
