@@ -4,11 +4,9 @@
 
 For full syncronized demo and usage, checkout [./utils/compute_all.py](./compute_all.py)
 
-
 ## preprocess_data.py
 
 creates clean npy files of motion slices and metadata from the raw c3d motion file
-
 
 *Usage:*
 
@@ -19,7 +17,6 @@ creates clean npy files of motion slices and metadata from the raw c3d motion fi
 2. For Trial File:
 
     python3 utils/preprocess_data.py --c3d_filepath data/mitmcl_data/marker_data/c3ds/AB3_Session1_Right10_Left10.c3d --roi_start 2000 --roi_stop 2100
-
 
 Input Files:
 
@@ -41,11 +38,9 @@ npz       | AB3_Session1_Right10_Left10_from_2000_to_2100.npz | data/our_data/ma
 
 computes the scaling factors assosiated with the subject's static file and creates (using make_pm_mll_mjcf.py / make_humanoid_mjcf.py) the corresponding mujoco model
 
-
 *Usage:*
 
     python3 utils/make_scaled_model.py --static_confpath data/mitmcl_data/marker_data/confs/AB3_Session1_Static.yaml --static_processed_filepath data/mitmcl_data/marker_data/processed_data/AB3_Session1_Static_from_0_to_None.npz --model_type pm_mll
-
 
 Input Files:
 
@@ -54,7 +49,6 @@ File Type | Example File Name                                 | Expected File Pa
 yaml      | AB3_Session1_Static.yaml                          | data/our_data/marker_data/confs/
 npz       | AB3_Session1_Static_from_0_to_None.npz            | data/our_data/marker_data/
 
-
 Output Files:
 
 File Type | Example File Name                                 | Expected File Path
@@ -62,6 +56,14 @@ File Type | Example File Name                                 | Expected File Pa
 yaml      | AB3_Session1_pm_mll.yaml                          | gym_hmm_ec/envs/assets/models/model_confs/
 xml       | AB3_Session1_pm_mll.xml                           | gym_hmm_ec/envs/assets/models/
 
+**Note:** make_scaled_model.py, has some our marker-set specific implementation used for scaling. While the implementation is specific to our marker-set, the method will directly work for any other marker set aswell. You can update it for your marker set, simply by doing the following two steps:
+
+* This requires you to customise the [to_compute](https://github.com/lok-i/hmm/blob/20c7f94388061f450820a4111f719b6649333639/utils/make_scaled_model.py#L27) dict. This dict bascially tries approximate the link measurements from the marker data using simple aritmetc operations.
+
+* Secondly, once updated, you are required to implement any new and custom opertations that you migh need to compute the link parameters. This could just be added as another elif block [here] (https://github.com/lok-i/hmm/blob/20c7f94388061f450820a4111f719b6649333639/utils/make_scaled_model.py#L100)
+
+Intutively, the flow of control and computation is explined below
+<!-- TODO: write down with figures -->
 
 ## make_pm_mll_mjcf.py / make_humanoid_mjcf.py
 
@@ -96,31 +98,3 @@ xml       | AB3_Session1_pm_mll.xml                           | gym_hmm_ec/envs/
 
 
 
-# Process motion trial, grf and cop data    
-
-## Static Data
-
-    python3 utils/preprocess_data.py --c3d_filepath `file path` --static
-
-## Dynamic Data: 
-    python3 utils/preprocess_data.py --c3d_filepath `file path` --roi_start 1200 --roi_stop 1500    
-
-# Make nominal mujoco model
-
-## unscaled default model
-    python3 utils/make_humanoid_mjcf.py --conf_xml_filename default_humanoid_mocap
-
-## scaled model from static file
-    python3 utils/make_scaled_model.py --static_confpath `file path` --processed_filepath `file path`
-
-# Update mujoco model form factor and marker placements
-
-    python3 utils/mujoco_model_editor/main.py --input gym_hmm_ec/envs/assets/models/rand_1.xml --static_input data/our_data/marker_data/processed_data/AB1_Session1_Static_from_0_to_None.npz
-
-# Compute inverse kinematics
-
-    python3 utils/compute_ik.py --processed_filepath `file path` --model_filename rand_1_updated --render  --export_solns
-
-# Compute inverse dynamics
-
-    python3 utils/compute_id.py --processed_filepath `file path` --model_filename rand_1_updated --export_solns  --render  --plot_solns 
