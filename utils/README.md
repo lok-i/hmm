@@ -1,32 +1,177 @@
     
 
-For full syncronized demo and usage, checkout [./utils/compute_all.py](./compute_all.py)
+# utils:
 
-# Process motion trial, grf and cop data    
+For a full syncronized demo from raw mocap data to model generation and computing ik,id, run
 
-## Static Data
+1. For simple model (**p**oint **m**ass **m**ass**l**ess **l**eg)
 
-    python3 utils/preprocess_data.py --c3d_filepath `file path` --static
+        python3 utils/compute_all.py --model_type pm_mll --static_c3dfilepath data/mitmcl_data/marker_data/c3ds/AB3_Session1_Static.c3d --trial_c3dfilepath data/mitmcl_data/marker_data/c3ds/AB3_Session1_Right10_Left10.c3d --roi_start 2000 --roi_stop 2100 --plot_ik_solns --plot_id_solns --render_ik --render_id
 
-## Dynamic Data: 
-    python3 utils/preprocess_data.py --c3d_filepath `file path` --roi_start 1200 --roi_stop 1500    
+2. For full humanoid model
 
-# Make nominal mujoco model
+        python3 utils/compute_all.py --model_type humanoid --static_c3dfilepath data/mitmcl_data/marker_data/c3ds/AB3_Session1_Static.c3d --trial_c3dfilepath data/mitmcl_data/marker_data/c3ds/AB3_Session1_Right10_Left10.c3d --roi_start 2000 --roi_stop 2100 --plot_ik_solns --plot_id_solns --render_ik --render_id
 
-## unscaled default model
-    python3 utils/make_humanoid_mjcf.py --conf_xml_filename default_humanoid_mocap
+and usage, checkout the implementation [./utils/compute_all.py](./compute_all.py)
 
-## scaled model from static file
-    python3 utils/make_scaled_model.py --static_confpath `file path` --processed_filepath `file path`
+# Executable files
 
-# Update mujoco model form factor and marker placements
+## preprocess_data.py
 
-    python3 utils/mujoco_model_editor/main.py --input gym_hmm_ec/envs/assets/models/rand_1.xml --static_input data/our_data/marker_data/processed_data/AB1_Session1_Static_from_0_to_None.npz
+creates clean npy files of motion slices and metadata from the raw c3d motion file
 
-# Compute inverse kinematics
+*Usage:*
 
-    python3 utils/compute_ik.py --processed_filepath `file path` --model_filename rand_1_updated --render  --export_solns
+1. For Static File:
 
-# Compute inverse dynamics
+    python3 utils/preprocess_data.py --c3d_filepath data/our_data/marker_data/c3ds/AB3_Session1_Static.c3d --static
 
-    python3 utils/compute_id.py --processed_filepath `file path` --model_filename rand_1_updated --export_solns  --render  --plot_solns 
+2. For Trial File:
+
+    python3 utils/preprocess_data.py --c3d_filepath data/mitmcl_data/marker_data/c3ds/AB3_Session1_Right10_Left10.c3d --roi_start 2000 --roi_stop 2100
+
+Input Files:
+
+File Type| Example File Name               | Expected File Path
+-------- | ------------                    | -------------
+c3d      | AB3_Session1_Static.c3d         | data/our_data/marker_data/c3ds/
+c3d      | AB3_Session1_Right10_Left10.c3d | data/our_data/marker_data/c3ds/
+
+Output Files:
+
+File Type | Example File Name                                 | Expected File Path
+--------  | ------------                                      | -------------
+yaml      | AB3_Session1_Static.yaml                          | data/our_data/marker_data/confs/
+yaml      | AB3_Session1_Right10_Left10.yaml                  | data/our_data/marker_data/confs/
+npz       | AB3_Session1_Static_from_0_to_None.npz            | data/our_data/marker_data/processed_data/
+npz       | AB3_Session1_Right10_Left10_from_2000_to_2100.npz | data/our_data/marker_data/processed_data/
+
+## make_scaled_model.py
+
+computes the scaling factors assosiated with the subject's static file and creates (using make_pm_mll_mjcf.py / make_humanoid_mjcf.py) the corresponding mujoco model
+
+*Usage:*
+
+    python3 utils/make_scaled_model.py --static_confpath data/mitmcl_data/marker_data/confs/AB3_Session1_Static.yaml --static_processed_filepath data/mitmcl_data/marker_data/processed_data/AB3_Session1_Static_from_0_to_None.npz --model_type pm_mll
+
+Input Files:
+
+File Type | Example File Name                                 | Expected File Path
+--------  | ------------                                      | -------------
+yaml      | AB3_Session1_Static.yaml                          | data/our_data/marker_data/confs/
+npz       | AB3_Session1_Static_from_0_to_None.npz            | data/our_data/marker_data/
+
+Output Files:
+
+File Type | Example File Name                                 | Expected File Path
+--------  | ------------                                      | -------------
+yaml      | AB3_Session1_pm_mll.yaml                          | gym_hmm_ec/envs/assets/models/model_confs/
+xml       | AB3_Session1_pm_mll.xml                           | gym_hmm_ec/envs/assets/models/
+
+**Note:** `make_scaled_model.py`, has some our marker-set specific implementation used for scaling. While the implementation is specific to our marker-set, the method will directly work for any other marker set aswell. You can update it for your marker set, simply by doing the following two steps:
+
+* This requires you to customise the `to_compute` dict, here:https://github.com/lok-i/hmm/blob/20c7f94388061f450820a4111f719b6649333639/utils/make_scaled_model.py#L27
+This dict bascially tries approximate the link measurements from the marker data using simple aritmetc operations.
+
+* Secondly, once updated, you are required to implement any new and custom opertations that you migh need to compute the link parameters. This could just be added as another elif block, here:https://github.com/lok-i/hmm/blob/20c7f94388061f450820a4111f719b6649333639/utils/make_scaled_model.py#L100
+
+Intutively, the flow of control and computation is explined below
+<!-- TODO: write down with figures -->
+
+## make_pm_mll_mjcf.py / make_humanoid_mjcf.py
+
+creates a mujoco model from the model conf file generated by `make_scaled_model.py` .
+
+*Usage:*
+
+1. For pm_mll model (**p**oint **m**ass **m**ass**l**ess **l**eg)
+
+    python3 utils/make_pm_mll_mjcf.py --conf_xml_filename AB3_Session1_pm_mll
+
+2. For humanoid model 
+
+    python3 utils/make_humanoid_mjcf.py --conf_xml_filename AB3_Session1_pm_mll
+
+
+Input Files:
+
+File Type | Example File Name                                 | Expected File Path
+--------  | ------------                                      | -------------
+yaml      | AB3_Session1_pm_mll.yaml                          | gym_hmm_ec/envs/assets/models/model_confs/
+
+Output Files:
+
+File Type | Example File Name                                 | Expected File Path
+--------  | ------------                                      | -------------
+xml       | AB3_Session1_pm_mll.xml                           | gym_hmm_ec/envs/assets/models/
+
+
+## compute_ik.py
+
+computes the invese kinematics by 'pose fitting' the given mujoco model to the given marker data through multi target damped least squares .
+
+*Usage:*
+
+    python3 utils/compute_ik.py --processed_filepath data/mitmcl_data/marker_data/processed_data/AB3_Session1_Right10_Left10_from_2000_to_2100.npz --model_filename AB3_Session1_pm_mll.xml --export_solns --render
+
+Input Files:
+
+File Type | Example File Name                                 | Expected File Path
+--------  | ------------                                      | -------------
+
+yaml      | AB3_Session1_Right10_Left10.yaml                  | data/our_data/marker_data/confs/
+npz       | AB3_Session1_Right10_Left10_from_2000_to_2100.npz | data/our_data/marker_data/processed_data/
+yaml      | AB3_Session1_pm_mll.yaml                          | gym_hmm_ec/envs/assets/models/model_confs/
+xml       | AB3_Session1_pm_mll.xml                           | gym_hmm_ec/envs/assets/models/
+
+
+Output Files:
+
+File Type | Example File Name                                 | Expected File Path
+--------  | ------------                                      | -------------
+npz       |AB3_Session1_Right10_Left10_from_2000_to_2100.npz  | data/mitmcl_data/ik_solns/
+
+## compute_id.py
+
+computes the invese dynamics by using the input mujoco `mj_inverse`. Once the ik is solves, the model is set at a given qpos, qvel and the obtained grounf reaction force is applied to the foot to compute id.
+
+**Note:**
+
+* There is no contact with the actual mujoco's ground as instead we directly apply the contact forces obtained from the thread mill mocap experiments.
+
+* The inbuilt analytical solution for inverse dynamics in mujoco, does not account for the underactuation. Hence the `mj_inverse` produces phantom/helper/fictitious forces to be applied even to the unactuated doF's of th model. To obtain an accurate solution (i.e. only actuated doF's), you can write a external nlp to solve it as an optimisation. 
+
+*Usage:*
+
+    python3 utils/compute_id.py --processed_filepath data/mitmcl_data/marker_data/processed_data/AB3_Session1_Right10_Left10_from_2000_to_2100.npz --model_filename AB3_Session1_pm_mll.xml --export_solns --render --plot_solns
+
+
+Input Files:
+
+File Type | Example File Name                                 | Expected File Path
+--------  | ------------                                      | -------------
+
+yaml      | AB3_Session1_Right10_Left10.yaml                  | data/our_data/marker_data/confs/
+npz       | AB3_Session1_Right10_Left10_from_2000_to_2100.npz | data/our_data/marker_data/processed_data/
+xml       | AB3_Session1_pm_mll.xml                           | gym_hmm_ec/envs/assets/models/
+
+
+Output Files:
+
+File Type | Example File Name                                 | Expected File Path
+--------  | ------------                                      | -------------
+npz       |AB3_Session1_Right10_Left10_from_2000_to_2100.npz  | data/mitmcl_data/id_solns/
+
+# Non-executable files
+
+## ik_solver.py
+
+contains the extended implementation of the multi target iverse kinematics through damped least squares using several easy to use dm_control functions .
+
+## misc_functions.py
+
+contains several handy functions (like euler2quat, quat2euler converstions, etc) used quite often throughout the code base.
+
+## parse_amc.py
+
+contains the dm_control implementation of amc parser, to read motion files of the format amc. Only compatible with the model `humanoid_CMU.xml`. run this [demo](../misc_demos/demo_parse_amc_cmu.py) to see it in action.

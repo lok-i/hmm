@@ -12,9 +12,6 @@ from stable_baselines3.common.vec_env import VecNormalize
 from gym_hmm_ec.envs.bipedal_env import BipedEnv as Env 
 
 
-
-
-
 # callback to save the trinaining normalisation stastics
 class SaveNormDataCallback(BaseCallback):
     """
@@ -68,13 +65,13 @@ class TensorboardCallback(BaseCallback):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--exp_path',help='path to exp folder with exp config', default='')
+    parser.add_argument('--single_trng_path',help='path to exp folder with exp config', default='')
     args = parser.parse_args()
     # NOTE: The exp_path comes with a '/' in the last
 
     
     #load the configuration    
-    config_file = open(args.exp_path+"conf.yaml")
+    config_file = open(args.single_trng_path+"conf.yaml")
     training_config = yaml.load(config_file, Loader=yaml.FullLoader)
     # print(training_config['env_kwrgs']['reward_weights'])
     
@@ -111,7 +108,7 @@ if __name__ == '__main__':
                         
         model =  PPO(policy=training_config['rl_setting']['policy']['type'], 
                     env = env, 
-                    tensorboard_log=args.exp_path, 
+                    tensorboard_log=args.single_trng_path, 
                     policy_kwargs=policy_kwargs,                    
                     **training_config['rl_setting']['algo_hyperparameters']
                     )
@@ -119,15 +116,15 @@ if __name__ == '__main__':
         print("No hyper parameters defined for PPO, default initialisations being used")
         model =  PPO(policy=training_config['rl_setting']['policy']['type'], 
                     env = env, 
-                    tensorboard_log=args.exp_path, 
+                    tensorboard_log=args.single_trng_path, 
                     policy_kwargs=policy_kwargs,                    
                     )
 
     # to checkpoint polices along training
-    if os.path.isdir(args.exp_path +"checkpoints/") == False:
-        os.mkdir(args.exp_path +"checkpoints/")
+    if os.path.isdir(args.single_trng_path +"checkpoints/") == False:
+        os.mkdir(args.single_trng_path +"checkpoints/")
 
-    path_to_checkpts = args.exp_path +"checkpoints/"
+    path_to_checkpts = args.single_trng_path +"checkpoints/"
     
     checkpoint_callback = CheckpointCallback(save_freq=25000, save_path=path_to_checkpts,name_prefix='rl_model')
     trng_norm_stat_callback = SaveNormDataCallback(save_freq=25000, save_path=path_to_checkpts)
@@ -141,9 +138,9 @@ if __name__ == '__main__':
     log_interval=1,  
     n_eval_episodes=5, 
     tb_log_name='PPO', 
-    eval_log_path=args.exp_path)
+    eval_log_path=args.single_trng_path)
 
-    model.save(args.exp_path+"Final_Policy")
-    model.env.save(args.exp_path+"/vec_normalize.pkl")
+    model.save(args.single_trng_path+"Final_Policy")
+    model.env.save(args.single_trng_path+"/vec_normalize.pkl")
     
 	

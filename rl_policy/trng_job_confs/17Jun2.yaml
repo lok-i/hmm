@@ -3,7 +3,7 @@ rl_setting:
   algo_hyperparameters:
     batch_size: 128
     learning_rate: !!float 3e-5
-    n_epochs: 10
+    n_epochs: <start>10<next>20<stop>
     n_steps: 2048
     seed: 0
     verbose: 1
