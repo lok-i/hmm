@@ -5,7 +5,7 @@ rl_setting:
     learning_rate: !!float 3e-5
     n_epochs: <start>10<next>20<stop>
     n_steps: 2048
-    seed: 0
+    seed: <start>10<next>20<next>40<next>90<stop>
     verbose: 1
   policy:
     kwargs:

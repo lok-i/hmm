@@ -13,6 +13,8 @@ import gym_hmm_ec.envs.actions as act
 import gym_hmm_ec.envs.rewards as rew
 import gym_hmm_ec.envs.terminations as trm
 
+import random
+
 class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
     def __init__(self,**kwargs):
@@ -50,12 +52,12 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                                       )
         utils.EzPickle.__init__(self)
 
+        self.reset_model()
         
         # TODO: obs - action deicsion
         dummy_obs = self.get_observation()
         self.obs_dim = dummy_obs.shape[0]
         self.action_dim = self.get_action(inital=True)
-        self.prev_action = np.zeros(self.action_dim)
 
         high = np.full(self.action_dim,np.inf)
         low =  np.full(self.action_dim,-np.inf)
@@ -115,11 +117,10 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
     def step(self,action):
 
-
-        self.applied_actuator_torque = self.get_action(policy_output=action)
+        applied_actuator_torque = self.get_action(policy_output=action)
         
         n_step_same_target = 1
-        self.do_simulation(self.applied_actuator_torque, n_step_same_target)
+        self.do_simulation(applied_actuator_torque, n_step_same_target)
         
         obs = self.get_observation()
         reward = self.get_reward()
@@ -128,7 +129,7 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         if self.env_params['render']:
             self.render()
         
-        # print('ctrl:', self.applied_actuator_torque)#, reward, done)
+        # print('ctrl:', applied_actuator_torque)#, reward, done)
         # print('q :',  self.sim.data.qpos[:])#, reward, done)
         # if self.env_n_step == 0:
         #     print('rew :', reward)#, reward, done)
@@ -136,7 +137,6 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         self.env_n_step += 1
         self.mocap_n_step += 1
-        self.prev_action = self.applied_actuator_torque
         return obs, reward, done, {}
 
     def reset_model(self):
@@ -156,7 +156,8 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         # set any cutom initialisation here
         if 'initalisation' in self.env_params.keys():
-            if self.env_params['initalisation'] == 'random_on_mocap_trajectory':
+
+            if 'random_on_mocap_trajectory' in self.env_params['initalisation'].keys():
                 mocap_len = self.ik_solns.shape[0]
                 self.mocap_n_step = np.random.randint(low=0,high=mocap_len)
 
@@ -174,7 +175,122 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                     (qpos[7:]-prev_qpos[7:]) / timestep
                 ]
                 ).ravel()
+
+            if 'initial_pose' in self.env_params['initalisation'].keys():
+                mocap_len = self.ik_solns.shape[0]
+                self.mocap_n_step = np.random.randint(low=0,high=mocap_len)
+
+                frame_rate = self.mocap_data['frame_rate']
+                timestep = self.model.opt.timestep if self.model.opt.timestep < (1. / frame_rate) else (1. / frame_rate)
+
+                qpos = self.ik_solns[0]
+                qpos[2] = 0.82
+                # prev_qpos =self.ik_solns[0]
                 
+                self.sim.data.qpos[:] = qpos
+                # self.sim.data.qvel[:] = np.concatenate([
+                #     (qpos[:3]-prev_qpos[:3]) / timestep,
+                #     misc_functions.mj_quat2vel(
+                #         misc_functions.mj_quatdiff(prev_qpos[3:7], qpos[3:7]), timestep),
+                #     (qpos[7:]-prev_qpos[7:]) / timestep
+                # ]
+                # ).ravel()
+
+            if 'initial_pose_2D' in self.env_params['initalisation'].keys():
+                mocap_len = self.ik_solns.shape[0]
+                self.mocap_n_step = 1
+
+                frame_rate = self.mocap_data['frame_rate']
+                timestep = self.model.opt.timestep if self.model.opt.timestep < (1. / frame_rate) else (1. / frame_rate)
+                
+                qpos = self.ik_solns[self.mocap_n_step]
+                prev_qpos =self.ik_solns[self.mocap_n_step-1]
+                
+                qpos_2D = np.zeros(9)
+                prev_qpos_2D = np.zeros(9)
+
+                qpos_2D[0] = qpos[0]
+                qpos_2D[1] = qpos[2]
+                qpos_2D[2] = misc_functions.quat2euler(qpos[3:7])[1]
+                qpos_2D[3:] = qpos[7:]
+
+                prev_qpos_2D[0] = prev_qpos[0]
+                prev_qpos_2D[1] = prev_qpos[2]
+                prev_qpos_2D[2] = misc_functions.quat2euler(prev_qpos[3:7])[1]
+                prev_qpos_2D[3:] = prev_qpos[7:]
+
+                self.sim.data.qpos[:] = qpos_2D
+                self.sim.data.qpos[1] = -0.04
+                self.sim.data.qvel[:] = (qpos_2D-prev_qpos_2D) / timestep
+
+            if 'random_on_mocap_trajectory_2D' in self.env_params['initalisation'].keys():
+                mocap_len = self.ik_solns.shape[0]
+                # self.mocap_n_step = np.random.randint(low=0,high=mocap_len)
+                self.mocap_n_step = np.random.randint(low=0,high=200)
+
+                frame_rate = self.mocap_data['frame_rate']
+                timestep = self.model.opt.timestep if self.model.opt.timestep < (1. / frame_rate) else (1. / frame_rate)
+
+                qpos = self.ik_solns[self.mocap_n_step]
+                prev_qpos =self.ik_solns[self.mocap_n_step-1]
+                
+                qpos_2D = np.zeros(9)
+                prev_qpos_2D = np.zeros(9)
+
+                qpos_2D[0] = qpos[0]
+                qpos_2D[1] = qpos[2]
+                qpos_2D[2] = misc_functions.quat2euler(qpos[3:7])[1]
+                qpos_2D[3:] = qpos[7:]
+
+                prev_qpos_2D[0] = prev_qpos[0]
+                prev_qpos_2D[1] = prev_qpos[2]
+                prev_qpos_2D[2] = misc_functions.quat2euler(prev_qpos[3:7])[1]
+                prev_qpos_2D[3:] = prev_qpos[7:]
+
+                self.sim.data.qpos[:] = qpos_2D
+                self.sim.data.qpos[1] = -0.04
+
+                self.sim.data.qvel[:] = (qpos_2D-prev_qpos_2D) / timestep
+                    
+
+
+            if 'base_velocity' in self.env_params['initalisation'].keys():
+                self.sim.data.qvel[0] = self.env_params['initalisation']['base_velocity'] 
+
+            if 'initial_base_height' in self.env_params['initalisation'].keys():
+                self.sim.data.qpos[2] = self.env_params['initalisation']['initial_base_height']
+
+            if 'initial_base_height_2D' in self.env_params['initalisation'].keys():
+                self.sim.data.qpos[1] = self.env_params['initalisation']['initial_base_height_2D']
+
+            if 'step_position'in self.env_params['initalisation'].keys():
+                # self.sim.data.qpos[2] = self.env_params['initalisation']['step_position']
+                # self.sim.data.qpos[3] = 1 + random.random()
+                # self.sim.data.qpos[4] = 0 + self.env_params['initalisation']['random']*random.random()
+                # self.sim.data.qpos[5] = 0.1 + self.env_params['initalisation']['random']*random.random()
+                # self.sim.data.qpos[6] = 2 + self.env_params['initalisation']['step_position']*random.random()
+                # self.sim.data.qpos[7] = 0.2 + self.env_params['initalisation']['random']*random.random()
+                self.sim.data.qpos[8] = -0.3 + self.env_params['initalisation']['step_position']*random.random()
+                self.sim.data.qpos[9] = -0.14 + self.env_params['initalisation']['step_position']*random.random()
+                # self.sim.data.qpos[10] = 1 + self.env_params['initalisation']['random']*random.random()
+                # self.sim.data.qpos[11] = -0.5 + self.env_params['initalisation']['random']*random.random()
+                self.sim.data.qpos[12] = -0.5 + self.env_params['initalisation']['step_position']*random.random()
+
+            if 'step_position_2D'in self.env_params['initalisation'].keys():
+                self.sim.data.qpos[1] = -0.03
+                self.sim.data.qpos[3] = 0 + self.env_params['initalisation']['step_position_2D']*random.uniform(-1,1)
+                self.sim.data.qpos[4] = 0.1 + self.env_params['initalisation']['step_position_2D']*random.uniform(-1,1)
+                self.sim.data.qpos[5] = -0.2 + self.env_params['initalisation']['step_position_2D']*random.uniform(-1,1)
+                self.sim.data.qpos[6] = 0 + self.env_params['initalisation']['step_position_2D']*random.uniform(-1,1)
+                self.sim.data.qpos[7] = -0.2 + self.env_params['initalisation']['step_position_2D']*random.uniform(-1,1)
+                self.sim.data.qpos[8] = -0.1 + self.env_params['initalisation']['step_position_2D']*random.uniform(-1,1)
+                self.sim.data.qvel[7] = 0.8 + self.env_params['initalisation']['step_position_2D']*random.uniform(-1,1)
+
+
+            if 'randomness'in self.env_params['initalisation'].keys():
+                self.sim.data.qpos[:] += self.env_params['initalisation']['randomness']*random.uniform(-1,1)
+                
+
         self.sim.forward()
         
         # depreciated
@@ -202,6 +318,9 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         return obs_vector
 
     def get_action(self,inital=False,policy_output=None):
+        
+        data_dict = {}
+        data_dict['env'] = self
 
         if inital:
             act_dim = 0
@@ -213,7 +332,9 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
             act_vector = []
             start_id = 0
             for action in self.actions:
-                act_vector.append(action.step(policy_output = policy_output[start_id: start_id+action.params['dim']]) )
+                act_vector.append(action.step(policy_output = policy_output[start_id: start_id+action.params['dim']],input_dict = data_dict) )
+                # act_vector.append(action.step(policy_output = policy_output[start_id: start_id+action.params['dim']]))
+
                 start_id += action.params['dim']
             act_vector = np.array(act_vector)
             
@@ -225,22 +346,21 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     def get_reward(self):
 
         data_dict = {}
-        data_dict['q'] = self.sim.data.qpos[:].copy()
-        data_dict['dq'] = self.sim.data.qvel[:].copy() 
-        data_dict['ctrl'] = self.sim.data.ctrl[:].copy() 
-        data_dict['qrfc'] = self.sim.data.qfrc_applied[:].copy()
-        data_dict['prev_action'] = self.prev_action[:].cpoy()
-        data_dict['curr_action'] = self.applied_actuator_torque[:].cpoy()
+        data_dict['sim.data'] = self.sim.data
+        data_dict['sim.model'] = self.sim.model
+        
 
         if 'mocap_data' in self.env_params.keys(): 
             data_dict['ik_solns'] = self.ik_solns
+            data_dict['mocap_data'] = self.mocap_data
 
         total_reward = 0
         self.reward_value_list = {}
         
         for reward,rew_name in zip(self.rewards,self.reward_list):
             reward_val = reward.step(input_dict = data_dict)         
-            self.reward_value_list = {rew_name:reward_val}
+            # self.reward_value_list = {rew_name:reward_val}
+            self.reward_value_list[rew_name] = reward_val 
             total_reward += reward_val
 
         return total_reward
@@ -250,7 +370,7 @@ class BipedEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         if 'mocap_data' in self.env_params.keys():
             data_dict['mocap_len'] = self.ik_solns.shape[0]
             data_dict['mocap_n_step'] = self.mocap_n_step
-            data_dict['motion_imitation'] = self.reward_value_list['motion_imitation']
+            # data_dict['motion_imitation'] = self.reward_value_list['motion_imitation']
 
         data_dict['q'] = self.sim.data.qpos[:].copy()
         data_dict['dq'] = self.sim.data.qvel[:].copy() 

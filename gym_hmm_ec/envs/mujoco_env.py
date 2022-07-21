@@ -143,15 +143,20 @@ class MujocoEnv(gym.Env):
 
     def render(self, mode='human'):
         if mode == 'rgb_array':
-            self._get_viewer().render()
-            # window size used for old mujoco-py:
-            width, height = 500, 500
-            # data = self._get_viewer()read_pixels(width, height, depth=False)
-            data =  self._read_pixels_as_in_window()
-            # cv2.imshow("test:",data)
-            # exit()
-            # original image is upside-down, so flip it
-            # return data#[::-1, :, :]
+
+            self.viewer.cam.distance = 3
+            cam_pos = [0.0, 0.0, 0.75]
+
+            for i in range(3):        
+                self.viewer.cam.lookat[i]= cam_pos[i] 
+            self.viewer.cam.elevation = -10
+            self.viewer.cam.azimuth = 90
+
+            # self._get_viewer().render()
+            width, height = 1920 , 1080 
+            data = self._get_viewer().read_pixels(width, height, depth=False)
+            return data[::-1, :, :]
+
         elif mode == 'human':
             self._get_viewer().render()
 

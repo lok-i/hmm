@@ -2,22 +2,31 @@ from gym_hmm_ec.envs.bipedal_env import BipedEnv
 from gym_hmm_ec.controllers.pd_controller import PDController 
 import matplotlib.pyplot as plt
 import numpy as np
+from utils import misc_functions
+
 
 # environment config and setup
 
 env_conf = {
-            'set_on_rack': True,
+            'set_on_rack': False,
             'render':True,
-            'model_name': 'default_humanoid',
-            'mocap':False,
+            'model_name': 'AB3_Session1_pm_mll',
+            'mocap_data':{
+            'processed_data_path': './data/mitmcl_data/marker_data/processed_data/AB3_Session1_Right10_Left10_from_2000_to_2500.npz',
+            'ik_solns_path': './data/mitmcl_data/ik_solns/AB3_Session1_Right10_Left10_from_2000_to_2500.npz'
+            },
             'observations':
             {
                 'current_model_state': None
             },
+            'initalisation':
+            {
+                'initial_pose': None,      
+            },
             'actions':
             {   'joint_torques':
                     {
-                        'dim': 15,
+                        'dim': 6,
                         'torque_max': 5
                     }                
             },
@@ -32,11 +41,18 @@ env_conf = {
             }
 
 env = BipedEnv(**env_conf)
+mocap_data = np.load('data/mitmcl_data/marker_data/processed_data/AB3_Session1_Right10_Left10_from_2000_to_2500.npz')
+ik_solns = np.load('data/mitmcl_data/ik_solns/AB3_Session1_Right10_Left10_from_2000_to_2500.npz')['ik_solns']
+mocap_len = ik_solns.shape[0]
+frame_rate = mocap_data['frame_rate']
+timestep = env.model.opt.timestep if env.model.opt.timestep < (1. / frame_rate) else (1. / frame_rate)
+
 
 # Joint level PD controller setup
 # torque = Kp ( q_des - q) + Kd (dq_des - dq)
+
 pd_controller = PDController(
-                             kps=np.full(env.n_act_joints,10.),
+                             kps=np.full(env.n_act_joints,10),
                              kds=np.full(env.n_act_joints,0.1),
                              )
 
@@ -65,7 +81,12 @@ for _ in range(2000):
 
     qpos = env.sim.data.qpos[:].copy()
     qvel = env.sim.data.qvel[:].copy()
-    q_act_des[actuator_id_being_chkd] = np.radians(50*np.sin(0.01*_))
+
+    qpos_ik = ik_solns[_+1][7:]
+    prev_qpos_ik = ik_solns[_][7:]
+    q_act_des = qpos_ik
+    dq_act_des = (qpos_ik - prev_qpos_ik) / timestep
+
     torque = pd_controller.get_torque(
                                       q_des = q_act_des,
                                       dq_des= dq_act_des,

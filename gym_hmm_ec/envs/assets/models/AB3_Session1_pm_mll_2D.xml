@@ -15,7 +15,9 @@
       <light name="top" class="/" mode="trackcom" pos="0 0 2"/>
       <camera name="back" class="/" mode="trackcom" pos="-3 0 1" xyaxes="0 -1 0 1 0 2"/>
       <camera name="side" class="/" mode="trackcom" pos="0 -3 1" xyaxes="1 0 0 0 1 2"/>
-      <freejoint name="root"/>
+      <joint armature="0" axis="1 0 0" damping="0" limited="false" name="rootx" pos="0 0 0" stiffness="0" type="slide"/>
+      <joint armature="0" axis="0 0 1" damping="0" limited="false" name="rootz" pos="0 0 0" stiffness="0" type="slide"/>
+      <joint armature="0" axis="0 1 0" damping="0" limited="false" name="rooty" pos="0 0 0" stiffness="0" type="hinge"/>
       <geom name="head" class="/" type="sphere" size="0.10000000000000001" pos="0 0 0"/>
       <site name="com" class="/" type="sphere" rgba="1 0 0 1" size="0.01" pos="0 0 0"/>
       <camera name="egocentric" class="/" fovy="80.0" pos="0.089999999999999997 0 0" xyaxes="0 -1 0 0.10000000000000001 1 2"/>
